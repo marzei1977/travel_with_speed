@@ -14,10 +14,13 @@ schnellere Fahrer in der Praxis früher ankommt.
 ## Wie es funktioniert
 
 1. **`config/corridors.json`** definiert Fernstrecken ("Korridore") mit je zwei
-   oder mehr Alternativ-Routen. Jede Route wird über Zwischenpunkte (`waypoints`)
-   festgelegt, die den [OSRM-Demo-Router](http://project-osrm.org/) zwingen, die
-   gewünschte Autobahn-Kombination zu fahren (z. B. via Würzburg/Frankfurt für die
-   A3, via Kreuz Speyer für die A61).
+   oder mehr Alternativ-Routen. Jede Route wird über Zwischenpunkte (`via`, aufgelöst
+   aus der `punkte`-Tabelle) festgelegt, die den
+   [OSRM-Demo-Router](http://project-osrm.org/) zwingen, die gewünschte
+   Autobahn-Kombination zu fahren (z. B. via Würzburg/Frankfurt für die A3, via
+   Kreuz Speyer für die A61). **Hin- und Rückrichtung sind eigene Korridore**, kein
+   Spiegelbild: Baustellen werden richtungsscharf zugeordnet, und tatsächlich
+   betreffen von den gefundenen Meldungen nur rund 7 % beide Richtungen.
 2. **`scripts/fetch-route-speedlimits.mjs`** holt darüber die reale
    Routengeometrie, zerlegt sie in 1-km-Abschnitte und ordnet jedem Abschnitt via
    [Overpass-API](https://overpass-api.de/) das dort in OpenStreetMap getaggte
@@ -29,21 +32,64 @@ schnellere Fahrer in der Praxis früher ankommt.
    Autobahnen aktuelle Baustellen & Verkehrsmeldungen von der
    [Autobahn-API des Bundes](https://verkehr.autobahn.de) und ordnet sie anhand
    ihrer tatsächlichen Geometrie (nicht nur eines Einzelpunkts) den betroffenen
-   1-km-Abschnitten zu. Ergebnis: `data/roadworks.json`. Läuft **alle 30 Minuten**
-   – siehe `.github/workflows/routenplaner-roadworks.yml`.
-4. **`index.html`** lädt beide JSON-Dateien und berechnet komplett im Browser
-   (bei jeder Änderung der Wunschgeschwindigkeit neu, ohne Serveraufruf) für jede
-   Route: `effektive Geschwindigkeit pro Abschnitt = min(Wunschgeschwindigkeit,
-   Tempolimit bzw. Baustellen-Limit)`, daraus die Gesamtfahrzeit.
+   1-km-Abschnitten zu. Dabei werden auch die **Gültigkeitsfenster** aus dem
+   Beschreibungstext extrahiert ("18.08.26 von 08:00 bis 16:00 Uhr", "Jeden Montag …"),
+   damit später nur zählt, was zur gewählten Abfahrtszeit wirklich steht.
+   Ergebnis: `data/roadworks.json`. Läuft **alle 30 Minuten** – siehe
+   `.github/workflows/routenplaner-roadworks.yml`.
+4. **`scripts/fetch-traffic.mjs`** holt die Jahresauswertung der automatischen
+   Dauerzählstellen der [BASt](https://www.bast.de) und legt je Zählstelle und
+   Richtung ab: Verkehrsstärke, Schwerverkehr und **Fahrstreifenzahl**, jeweils
+   getrennt nach Tagestyp (Werktag / Samstag / Sonntag / Urlaub).
+   Ergebnis: `data/traffic.json`. Läuft **monatlich** (die Daten erscheinen jährlich)
+   – siehe `.github/workflows/routenplaner-traffic.yml`.
+5. **`index.html`** lädt die drei JSON-Dateien und berechnet komplett im Browser
+   (bei jeder Eingabeänderung neu, ohne Serveraufruf) für jede Route:
+   `effektive Geschwindigkeit pro Abschnitt = min(Wunschgeschwindigkeit,
+   Tempolimit, ggf. Baustellen-Limit, ggf. verkehrsbedingt fahrbares Tempo)`,
+   daraus die Gesamtfahrzeit.
 
 Kein eigener Server nötig – alles läuft als statische Seite (z. B. via GitHub
-Pages), die Datenpflege übernehmen die beiden GitHub-Actions-Cronjobs.
+Pages), die Datenpflege übernehmen die drei GitHub-Actions-Cronjobs.
+
+## Abfahrtszeit und Verkehrsaufkommen
+
+Die Fahrzeit hängt stark davon ab, *wann* man fährt – deshalb gibt es ein
+Abfahrtsfeld und einen Schalter für das Verkehrsaufkommen.
+
+**Die Abfahrtszeit wirkt auf zwei Dinge:**
+
+- *Welche Baustellen gelten.* Ein Teil der Meldungen sind reine Tagesbaustellen
+  oder wiederkehrende Wochentagsfenster. Nachts und sonntags fallen sie weg. Der
+  Rest sind Dauerbaustellen, die immer zählen.
+- *Wie dicht der Verkehr ist.* Über eine Tagesganglinie (Modellannahme, siehe
+  Grenzen) und den BASt-Tagestyp. Freitagnachmittag und Sonntagabend bekommen
+  einen Zuschlag für die bekannten Reisewellen.
+
+**Der Verkehrsschalter unterscheidet zwei Lesarten:**
+
+- *Aus* – die rechtlich mögliche Fahrzeit bei freier Bahn. Das ist der Bestfall,
+  den man nachts oder früh am Morgen tatsächlich fährt.
+- *Ein* – zusätzlich gebremst durch Verkehrsdichte und LKW-Anteil. Das ist die
+  realistische Erwartung für einen normalen Tag.
+
+Beide Zahlen sind richtig, sie beantworten nur verschiedene Fragen. Ein einzelner
+Wert kann beides nicht leisten: der Bestfall-Referenzwert (siehe Kalibrierung)
+lässt sich nicht mit einem Durchschnitts-Verkehrsaufschlag verrechnen.
+
+Warum der LKW-Anteil so stark eingeht: auf einer zweispurigen Richtungsfahrbahn
+blockiert ein überholender LKW beide Fahrstreifen, ab drei Spuren bleibt links
+meist Platz. Die BASt-Daten zeigen das deutlich – die A61 hat mit im Mittel 2,1
+Fahrstreifen die wenigsten und mit rund 20 % den höchsten Schwerverkehrsanteil,
+die A9 dagegen 3,1 Spuren bei rund 13 %.
 
 ## Einen weiteren Korridor hinzufügen
 
-In `config/corridors.json` einen neuen Eintrag mit `id`, `name` und mehreren
-`routes` (je mit `id`, `label`, `waypoints` als Liste von `{name, lon, lat}`)
-ergänzen. Die Zwischenpunkte sollten möglichst genau auf der gewünschten Autobahn
+In `config/corridors.json` zuerst benötigte Wegpunkte in die `punkte`-Tabelle
+eintragen, dann einen Korridor mit `id`, `name`, `von`, `nach` und mehreren
+`routes` (je mit `id`, `label`, `via` als Liste von Punkt-Schlüsseln) ergänzen.
+Für die Gegenrichtung einen zweiten Korridor mit umgekehrter `via`-Reihenfolge
+anlegen. Die Zwischenpunkte sollten möglichst genau auf der gewünschten Autobahn
 liegen (am besten eine Anschlussstelle/ein Autobahnkreuz statt eines Stadtzentrums
 wählen, sonst kann OSRM unnötige Umwege über Stadtstraßen nehmen). Danach einmal
 `node routenplaner/scripts/fetch-route-speedlimits.mjs` laufen lassen (lokal oder
@@ -53,19 +99,35 @@ per "Run workflow"), anschließend `node routenplaner/scripts/fetch-roadworks.mj
 
 Referenzfahrt München (Döllingerstr.) → Köln (Lokomotivstr.), bei 180–190 km/h
 auf freier Strecke: real ca. **4 h 40 min** reine Fahrzeit. Das Modell liefert für
-die A9/A3-Route bei 185 km/h **4 h 42 min** – die Zeitberechnung passt damit gut.
+die A9/A3-Route bei 185 km/h **4 h 42 min ohne Verkehrsaufkommen** – passt.
+Mit eingerechnetem Verkehr an einem Werktagvormittag sind es rund 5 h 17 min, und
+die A9/A3 setzt sich dann korrekt vor die A61.
+
+Ohne Verkehrsfaktor liegt die A61-Route zeitlich knapp vorn, obwohl der
+A61-Abschnitt selbst nur zu rund einem Drittel unbegrenzt ist – sie kompensiert
+das über einen langen, fast durchgehend unbegrenzten A8-Abschnitt und weniger
+Stadtanteil. Erst das Verkehrsaufkommen (zwei Spuren, hoher LKW-Anteil) dreht
+die Reihenfolge um. Die Praxiserfahrung wird also vom Verkehrsmodell abgebildet,
+nicht von den Tempolimits allein.
 
 ## Annahmen & bekannte Grenzen
 
-- **Verkehrsdichte wird nicht abgebildet** – das ist die größte Einschränkung.
-  Berechnet wird, was rechtlich und baustellenbedingt möglich ist, nicht wie voll
-  die Strecke ist. Konkret: die A61-Route wird knapp als schnellste ausgewiesen,
-  obwohl der A61-Abschnitt selbst nur zu 32 % unbegrenzt ist (60 % limitiert) –
-  sie kompensiert das über einen langen, fast durchgehend unbegrenzten
-  A8-Abschnitt und weniger Stadtanteil. In der Praxis ist die A61 eine stark
-  befahrene LKW-Transitachse, was die Modellzeit dort zu optimistisch macht. Die
-  Aufteilung "unbegrenzt / begrenzt" pro Route ist deshalb oft aussagekräftiger
-  als die reine Zeitangabe.
+- **Stundenverteilung ist eine Modellannahme.** Die BASt liefert Tagessummen je
+  Tagestyp, keine Stundenwerte. Die Verteilung über den Tag (inklusive der
+  Zuschläge für Freitagnachmittag und Sonntagabend) ist eine typisierte Kurve im
+  Code, keine Messung. Die Tagestypen selbst – und damit der große
+  Sonntagseffekt – stammen dagegen direkt aus den Daten.
+- **Richtungszuordnung der Zählstellen fehlt.** Die BASt misst richtungsgetrennt,
+  aber welche der beiden Zählrichtungen der eigenen Fahrtrichtung entspricht,
+  ließe sich nur über Geocoding der Fernziel-Namen bestimmen. Daher wird über
+  beide Richtungen gemittelt; bei der Fahrstreifenzahl wird konservativ das
+  Minimum genommen. Baustellen sind davon nicht betroffen – die werden über die
+  Geometrie richtungsscharf zugeordnet.
+- **Die Verkehrs-Koeffizienten sind kalibriert, nicht hergeleitet.** Sie sind so
+  gewählt, dass die Referenzfahrt und die bekannte Rangfolge getroffen werden.
+  Für andere Strecken können sie danebenliegen.
+- **Kein Live-Verkehr.** Die BASt-Daten sind Jahresmittel, keine aktuelle
+  Verkehrslage. Ein Stau von heute Mittag steckt nicht darin.
 - **Fehlendes `maxspeed`-Tag auf einer erkannten Autobahn**: OSM taggt nicht jeden
   Abschnitt lückenlos. In diesem Fall wird die Richtgeschwindigkeit (130 km/h)
   angenommen – in der UI als "begrenzt/Baustelle"-Farbe sichtbar, da nicht
@@ -81,7 +143,11 @@ die A9/A3-Route bei 185 km/h **4 h 42 min** – die Zeitberechnung passt damit g
 - **Gegenfahrbahn wird ausgefiltert**: Baustellen werden je Richtung gemeldet;
   über einen Richtungsvergleich der Geometrie zählen nur die der eigenen
   Fahrtrichtung.
-- **Geplante Baustellen** (`future`-Flag bzw. künftiger Beginn) bleiben außen vor.
+- **Geplante Baustellen** (`future`-Flag bzw. Beginn jenseits des 14-Tage-Horizonts)
+  bleiben außen vor.
+- **Zeitfenster nur, wo angegeben.** Rund ein Fünftel der Meldungen nennt konkrete
+  Gültigkeitsfenster; der Rest sind Dauerbaustellen und gilt rund um die Uhr. Eine
+  Meldung ohne erkennbares Fenster wird also immer eingerechnet.
 - **Routen-Alternativen** werden über feste Zwischenpunkte erzwungen, nicht über
   eine Nachbildung dessen, was ein bestimmter kommerzieller Kartendienst gerade
   empfiehlt – die berechneten Distanzen können daher von Google/Apple Maps &

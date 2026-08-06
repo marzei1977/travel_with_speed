@@ -226,8 +226,8 @@ function stepIntervalAt(intervals, distM) {
   return intervals[intervals.length - 1] || null;
 }
 
-async function buildRoute(routeConfig) {
-  const osrmRoute = await fetchOsrmRoute(routeConfig.waypoints);
+async function buildRoute(routeConfig, waypoints) {
+  const osrmRoute = await fetchOsrmRoute(waypoints);
   const steps = osrmRoute.legs.flatMap((leg) => leg.steps);
   const stepIntervals = buildStepIntervals(steps);
 
@@ -305,8 +305,15 @@ async function main() {
     const routes = [];
     for (const routeConfig of corridor.routes) {
       console.log(`Verarbeite ${corridor.name} – ${routeConfig.label} …`);
+      // Wegpunkte werden aus der zentralen punkte-Tabelle aufgelöst, damit
+      // Hin- und Rückrichtung garantiert dieselben Koordinaten benutzen.
+      const waypoints = routeConfig.via.map((key) => {
+        const p = config.punkte[key];
+        if (!p) throw new Error(`Unbekannter Wegpunkt "${key}" in ${corridor.id}/${routeConfig.id}`);
+        return p;
+      });
       try {
-        routes.push(await buildRoute(routeConfig));
+        routes.push(await buildRoute(routeConfig, waypoints));
       } catch (err) {
         console.error(`  Fehler: ${err.message}`);
         routes.push({
@@ -318,7 +325,13 @@ async function main() {
       }
       await sleep(DELAY_BETWEEN_REQUESTS_MS);
     }
-    corridors.push({ id: corridor.id, name: corridor.name, routes });
+    corridors.push({
+      id: corridor.id,
+      name: corridor.name,
+      von: corridor.von,
+      nach: corridor.nach,
+      routes,
+    });
   }
 
   const output = {

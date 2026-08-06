@@ -79,10 +79,14 @@ function parseLengthKmFromDescription(description) {
   return Number.isFinite(n) ? n : null;
 }
 
-// Prüft, ob die im Freitext genannte Bauphase gerade läuft. Die API liefert auch
-// weit in der Zukunft geplante Maßnahmen (rund ein Drittel aller Einträge) – die
-// dürfen die heutige Fahrzeit nicht belasten.
-function parseIsCurrentlyActive(description) {
+// Prüft, ob die im Freitext genannte Bauphase im relevanten Zeitraum liegt. Die API
+// liefert auch weit in der Zukunft geplante Maßnahmen (rund ein Drittel aller
+// Einträge) sowie abgelaufene – beide dürfen die Fahrzeit nicht belasten.
+// Der Horizont ist bewusst großzügig, weil die Auswahl der konkreten Abfahrtszeit
+// erst im Browser passiert (siehe timeWindows).
+const PLANNING_HORIZON_DAYS = 14;
+
+function parseIsInHorizon(description) {
   const text = (description || []).join(" ");
   const parse = (re) => {
     const m = text.match(re);
@@ -93,9 +97,73 @@ function parseIsCurrentlyActive(description) {
   const begin = parse(/Beginn:\s*(\d{2})\.(\d{2})\.(\d{2})/);
   const end = parse(/Ende:\s*(\d{2})\.(\d{2})\.(\d{2})/);
   const now = new Date();
-  if (begin && begin > now) return false;
+  const horizon = new Date(now.getTime() + PLANNING_HORIZON_DAYS * 86400_000);
+  if (begin && begin > horizon) return false;
   if (end && end < now) return false;
   return true;
+}
+
+const WEEKDAYS = {
+  sonntag: 0, montag: 1, dienstag: 2, mittwoch: 3,
+  donnerstag: 4, freitag: 5, samstag: 6,
+};
+
+// Viele Meldungen sind reine Tagesbaustellen ("18.08.26 von 08:00 bis 16:00 Uhr")
+// oder wiederkehrende Wochentagsfenster ("Jeden Montag, Dienstag ... von 07:00 bis
+// 16:00 Uhr"). Nachts und am Wochenende sind sie schlicht nicht da – deshalb werden
+// die Fenster extrahiert, damit der Browser sie gegen die gewählte Abfahrtszeit
+// prüfen kann. Ohne erkennbares Fenster gilt die Meldung als durchgehend aktiv.
+function parseTimeWindows(description) {
+  const lines = description || [];
+  const text = lines.join("\n");
+  const windows = [];
+
+  // Konkrete Einzeltage: "18.08.26 von 08:00 bis 16:00 Uhr"
+  const dayRe = /(\d{2})\.(\d{2})\.(\d{2})\s+von\s+(\d{2}):(\d{2})\s+bis\s+(\d{2}):(\d{2})\s+Uhr/g;
+  let m;
+  while ((m = dayRe.exec(text)) !== null) {
+    const [, dd, mm, yy, h1, min1, h2, min2] = m;
+    windows.push({
+      art: "datum",
+      datum: `20${yy}-${mm}-${dd}`,
+      vonMin: Number(h1) * 60 + Number(min1),
+      bisMin: Number(h2) * 60 + Number(min2),
+    });
+  }
+
+  // Wiederkehrend: "Jeden Montag, Dienstag und Donnerstag zwischen dem 03.08.26
+  // und dem 12.08.26 von 07:00 bis 16:00 Uhr"
+  const recRe =
+    /Jeden\s+([A-Za-zÄÖÜäöü,\s und]+?)\s+zwischen\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+und\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+von\s+(\d{2}):(\d{2})\s+bis\s+(\d{2}):(\d{2})/g;
+  while ((m = recRe.exec(text)) !== null) {
+    const [, tageRaw, d1, m1, y1, d2, m2, y2, h1, mi1, h2, mi2] = m;
+    const tage = [];
+    for (const [name, idx] of Object.entries(WEEKDAYS)) {
+      if (tageRaw.toLowerCase().includes(name)) tage.push(idx);
+    }
+    if (!tage.length) continue;
+    windows.push({
+      art: "wochentage",
+      tage,
+      abDatum: `20${y1}-${m1}-${d1}`,
+      bisDatum: `20${y2}-${m2}-${d2}`,
+      vonMin: Number(h1) * 60 + Number(mi1),
+      bisMin: Number(h2) * 60 + Number(mi2),
+    });
+  }
+
+  // Ausgenommene Tage: "Die Baustelle gilt nicht an folgenden Tagen: 07.08.26"
+  const ausnahmen = [];
+  const exIdx = lines.findIndex((l) => /gilt nicht an folgenden Tagen/i.test(l));
+  if (exIdx >= 0) {
+    for (const line of lines.slice(exIdx + 1)) {
+      const e = line.trim().match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+      if (!e) break;
+      ausnahmen.push(`20${e[3]}-${e[2]}-${e[1]}`);
+    }
+  }
+
+  return { windows, ausnahmen };
 }
 
 async function fetchItemsForRef(ref, kind) {
@@ -105,7 +173,7 @@ async function fetchItemsForRef(ref, kind) {
     return (data[key] || [])
       // Geplante, noch nicht begonnene Maßnahmen ausblenden – die API markiert sie
       // per `future`-Flag bzw. über einen künftigen Beginn im Beschreibungstext.
-      .filter((item) => !item.future && parseIsCurrentlyActive(item.description))
+      .filter((item) => !item.future && parseIsInHorizon(item.description))
       .map((item) => {
         // Die API liefert die tatsächlich betroffene Teilstrecke als GeoJSON
         // LineString (item.geometry) – nur einen einzelnen "coordinate"-Punkt zu
@@ -129,6 +197,7 @@ async function fetchItemsForRef(ref, kind) {
           isBlocked: item.isBlocked === "true" || item.isBlocked === true,
           speedLimitKmh: parseSpeedLimitFromDescription(item.description),
           lengthKm: parseLengthKmFromDescription(item.description),
+          ...parseTimeWindows(item.description),
           coordinate: item.coordinate
             ? { lat: Number(item.coordinate.lat), lon: Number(item.coordinate.long) }
             : null,

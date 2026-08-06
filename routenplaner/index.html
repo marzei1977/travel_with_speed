@@ -86,9 +86,21 @@
     color: var(--text);
     font-size: 0.95rem;
   }
-  .speed-row { display: flex; align-items: center; gap: 0.6rem; }
-  .speed-row input { max-width: 110px; }
+  .speed-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .speed-row input[type="number"] { max-width: 110px; }
+  .speed-row input[type="datetime-local"] { max-width: 230px; }
+  .speed-row input.chk { width: auto; margin: 0; }
   .speed-row span { color: var(--muted); font-size: 0.9rem; }
+  .mini-btn {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   .updated {
     text-align: center;
@@ -250,11 +262,35 @@
         <label for="speed-input">Wunschgeschwindigkeit auf unbegrenzten Abschnitten</label>
         <div class="speed-row">
           <input type="number" id="speed-input" min="80" max="260" step="5" />
-          <span>km/h, wenn kein Verkehr / keine Baustelle im Weg ist</span>
+          <span>km/h, wenn nichts im Weg ist</span>
         </div>
         <div class="hint">
           Wird auf allen Abschnitten ohne Tempolimit angesetzt. Auf begrenzten Abschnitten
           gilt automatisch das dortige Limit, bei Baustellen ein Sicherheitsabschlag.
+        </div>
+      </div>
+      <div class="field">
+        <label for="depart-input">Abfahrt</label>
+        <div class="speed-row">
+          <input type="datetime-local" id="depart-input" />
+          <button type="button" id="now-btn" class="mini-btn">jetzt</button>
+        </div>
+        <div class="hint">
+          Bestimmt zweierlei: welche Baustellen zu dieser Zeit überhaupt aktiv sind
+          (viele gelten nur tagsüber an Werktagen) und wie dicht der Verkehr ist –
+          nachts und sonntags fahren kaum LKW.
+        </div>
+      </div>
+      <div class="field">
+        <label for="traffic-toggle">Verkehrsaufkommen einrechnen</label>
+        <div class="speed-row">
+          <input type="checkbox" id="traffic-toggle" class="chk" />
+          <span>BASt-Zähldaten (Verkehrsstärke, LKW-Anteil, Fahrstreifen) berücksichtigen</span>
+        </div>
+        <div class="hint">
+          Aus: rein rechtlich mögliche Fahrzeit (freie Bahn). Ein: zusätzlich gebremst
+          durch Verkehrsdichte und LKW – auf zweispurigen Abschnitten deutlich stärker,
+          weil überholende LKW dort beide Spuren blockieren.
         </div>
       </div>
     </div>
@@ -278,11 +314,14 @@
     <div class="navi-compare" id="navi-compare"></div>
 
     <footer>
-      Tempolimit-Daten aus OpenStreetMap (Overpass API), Routengeometrie vom
+      Tempolimits aus OpenStreetMap (Overpass API), Routengeometrie vom
       OSRM-Demo-Router, Baustellen/Sperrungen von der offiziellen
-      <a href="https://verkehr.autobahn.de" target="_blank" rel="noopener">Autobahn-API des Bundes</a>.
-      Alles automatisch per GitHub Actions aktualisiert – siehe
+      <a href="https://verkehr.autobahn.de" target="_blank" rel="noopener">Autobahn-API des Bundes</a>,
+      Verkehrsstärke &amp; Fahrstreifen aus der
+      <a href="https://www.bast.de" target="_blank" rel="noopener">BASt</a>-Jahresauswertung
+      der Dauerzählstellen. Alles automatisch per GitHub Actions aktualisiert – siehe
       <a href="README.md">README</a> für Annahmen &amp; Grenzen dieser Schätzung.
+      Die Stundenverteilung über den Tag ist eine Modellannahme, kein Messwert.
     </footer>
   </div>
 
@@ -291,6 +330,7 @@
 <script>
   const SPEED_STORAGE_KEY = "routenplaner:wunschgeschwindigkeit";
   const CORRIDOR_STORAGE_KEY = "routenplaner:korridor";
+  const TRAFFIC_STORAGE_KEY = "routenplaner:verkehr";
   const DEFAULT_SPEED = 185;
   // Angenommenes Tempo in einer als gesperrt gemeldeten Stelle ohne eigene
   // Geschwindigkeitsangabe.
@@ -300,6 +340,184 @@
 
   let routesData = null;
   let roadworksData = null;
+  let trafficData = null;
+
+  // ---------------------------------------------------------------------------
+  // Zeitpunkt der Fahrt
+  // ---------------------------------------------------------------------------
+
+  // Anteil des Tagesverkehrs je Stunde (typische Autobahn-Fernverkehrsganglinie).
+  // Modellannahme, nicht aus den BASt-Daten – die liefern Tagessummen, keine
+  // Stundenwerte. Wird normiert, die Absolutwerte müssen sich nicht auf 100 addieren.
+  const HOURLY_SHARE = [
+    1.2, 0.9, 0.8, 0.8, 1.0, 1.8, 3.5, 5.5, 5.8, 5.5, 5.5, 5.6,
+    5.6, 5.7, 6.0, 6.5, 7.0, 7.2, 6.3, 4.8, 3.6, 2.8, 2.2, 1.4,
+  ];
+  const HOURLY_MEAN = HOURLY_SHARE.reduce((a, b) => a + b, 0) / 24;
+
+  // LKW verteilen sich deutlich gleichmäßiger über den Tag als PKW und fahren
+  // überproportional nachts – deshalb eine eigene, flachere Kurve.
+  const HOURLY_SHARE_SV = [
+    3.0, 2.8, 2.8, 2.9, 3.3, 4.0, 4.8, 5.2, 5.2, 5.1, 5.1, 5.0,
+    4.9, 5.0, 5.0, 5.0, 4.9, 4.6, 4.2, 3.9, 3.7, 3.6, 3.4, 3.2,
+  ];
+  const HOURLY_MEAN_SV = HOURLY_SHARE_SV.reduce((a, b) => a + b, 0) / 24;
+
+  // Bekannte Reisewellen, die eine reine Tagesganglinie nicht abbildet.
+  function travelWaveFactor(day, hour) {
+    if (day === 5 && hour >= 14 && hour <= 19) return 1.25; // Freitagnachmittag
+    if (day === 0 && hour >= 15 && hour <= 20) return 1.20; // Sonntag Rückreise
+    return 1.0;
+  }
+
+  // BASt-Tagestyp zum gewählten Wochentag.
+  function dayTypeFor(date) {
+    const d = date.getDay();
+    if (d === 0) return "sonntag";
+    if (d === 6) return "samstag";
+    return "werktag";
+  }
+
+  function departure() {
+    const raw = document.getElementById("depart-input").value;
+    const d = raw ? new Date(raw) : new Date();
+    return Number.isNaN(d.getTime()) ? new Date() : d;
+  }
+
+  function localDateKey(d) {
+    const p = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Baustellen-Zeitfenster
+  // ---------------------------------------------------------------------------
+
+  function windowCoversMinute(win, minutes) {
+    // Fenster über Mitternacht (z.B. 20:00–00:00) korrekt behandeln.
+    if (win.bisMin <= win.vonMin) return minutes >= win.vonMin || minutes < win.bisMin;
+    return minutes >= win.vonMin && minutes < win.bisMin;
+  }
+
+  // Ist die Meldung zum gewählten Zeitpunkt überhaupt aktiv? Ohne erkanntes
+  // Zeitfenster gilt sie als Dauerbaustelle und damit immer aktiv.
+  function isActiveAt(item, date) {
+    const key = localDateKey(date);
+    if ((item.ausnahmen || []).includes(key)) return false;
+    const wins = item.windows || [];
+    if (!wins.length) return true;
+
+    const minutes = date.getHours() * 60 + date.getMinutes();
+    const day = date.getDay();
+    return wins.some((w) => {
+      if (w.art === "datum") {
+        return w.datum === key && windowCoversMinute(w, minutes);
+      }
+      if (w.art === "wochentage") {
+        if (!w.tage.includes(day)) return false;
+        if (key < w.abDatum || key > w.bisDatum) return false;
+        return windowCoversMinute(w, minutes);
+      }
+      return false;
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Verkehrsaufkommen (BASt)
+  // ---------------------------------------------------------------------------
+
+  let trafficIndex = null;
+  function buildTrafficIndex() {
+    trafficIndex = new Map();
+    for (const s of trafficData.stationen || []) {
+      const key = `${s.ref}|${Math.round(s.lat * 4)}|${Math.round(s.lon * 4)}`;
+      if (!trafficIndex.has(key)) trafficIndex.set(key, []);
+      trafficIndex.get(key).push(s);
+    }
+  }
+
+  function distanceKm(aLat, aLon, bLat, bLon) {
+    const R = 6371;
+    const dLat = ((bLat - aLat) * Math.PI) / 180;
+    const dLon = ((bLon - aLon) * Math.PI) / 180;
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((aLat * Math.PI) / 180) * Math.cos((bLat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+
+  // Nächstgelegene Zählstelle auf derselben Autobahn (max. 25 km entfernt).
+  function nearestStation(ref, lat, lon) {
+    if (!trafficIndex) return null;
+    let best = null;
+    let bestD = Infinity;
+    const gi = Math.round(lat * 4);
+    const gj = Math.round(lon * 4);
+    for (let di = -1; di <= 1; di++) {
+      for (let dj = -1; dj <= 1; dj++) {
+        for (const s of trafficIndex.get(`${ref}|${gi + di}|${gj + dj}`) || []) {
+          const d = distanceKm(lat, lon, s.lat, s.lon);
+          if (d < bestD) {
+            bestD = d;
+            best = s;
+          }
+        }
+      }
+    }
+    return bestD <= 25 ? best : null;
+  }
+
+  // Zählstellen messen richtungsgetrennt (ri1/ri2). Welche Richtung unserer
+  // Fahrtrichtung entspricht, ist aus den Daten nicht sicher ableitbar (die
+  // Fernziel-Namen müssten dafür geocodiert werden), daher wird gemittelt. Die
+  // Fahrstreifenzahl wird konservativ als Minimum genommen, weil der Engpass zählt.
+  function trafficAt(ref, lat, lon, dayType) {
+    const s = nearestStation(ref, lat, lon);
+    if (!s) return null;
+    const dirs = ["ri1", "ri2"].map((k) => s[k]).filter(Boolean);
+    if (!dirs.length) return null;
+    let kfz = 0;
+    let sv = 0;
+    let n = 0;
+    let lanes = Infinity;
+    for (const d of dirs) {
+      const t = d.tage[dayType] || d.tage.mittel;
+      if (!t) continue;
+      kfz += t[0];
+      sv += t[1];
+      n++;
+      lanes = Math.min(lanes, d.fs || 2);
+    }
+    if (!n) return null;
+    return { kfz: kfz / n, sv: sv / n, lanes: Math.max(1, lanes) };
+  }
+
+  // Praktisch fahrbares Tempo bei freier Strecke. Zwei Effekte:
+  //  - Dichte: je mehr Fahrzeuge pro Spur und Stunde, desto seltener freie Bahn.
+  //  - LKW: auf zwei Spuren blockiert ein überholender LKW beide Fahrstreifen
+  //    ("Elefantenrennen"); ab drei Spuren bleibt links meist Platz.
+  const TRAFFIC_DENSITY_WEIGHT = 4.0;
+  const TRAFFIC_TRUCK_WEIGHT = 50.0;
+
+  function practicalSpeed(wishSpeed, t, date) {
+    if (!t) return wishSpeed;
+    const hour = date.getHours();
+    const day = date.getDay();
+    const wave = travelWaveFactor(day, hour);
+
+    // Tagessumme -> Stundenwert über die Ganglinie.
+    const kfzHour = (t.kfz / 24) * (HOURLY_SHARE[hour] / HOURLY_MEAN) * wave;
+    const svHour = (t.sv / 24) * (HOURLY_SHARE_SV[hour] / HOURLY_MEAN_SV);
+
+    const perLane = kfzHour / t.lanes;
+    const svPerLane = svHour / t.lanes;
+    const laneRelief = t.lanes < 2.5 ? 1.0 : t.lanes < 3.5 ? 0.45 : 0.25;
+
+    const densityPenalty = Math.pow(perLane / 1000, 1.6) * TRAFFIC_DENSITY_WEIGHT;
+    const truckPenalty = (svPerLane / 100) * TRAFFIC_TRUCK_WEIGHT * laneRelief;
+
+    return Math.max(90, wishSpeed - densityPenalty - truckPenalty);
+  }
 
   function fmtDate(iso) {
     if (!iso) return "unbekannt";
@@ -351,25 +569,42 @@
     return Math.min(1, item.lengthKm / segmentsOnThisRoute);
   }
 
-  function computeRoute(corridor, route, userSpeed) {
+  function computeRoute(corridor, route, userSpeed, opts) {
+    const { date, useTraffic } = opts;
+    const dayType = dayTypeFor(date);
     let timeHours = 0;
     let distKm = 0;
     let noneKm = 0;
     let limitedKm = 0;
     let localKm = 0;
     let roadworkKm = 0;
+    let trafficLossHours = 0;
     const roadworkItems = new Map();
 
     route.segments.forEach((segment, index) => {
       const segKm = segment.distanceMeters / 1000;
       distKm += segKm;
 
-      const allNearby = roadworksAffectingSegment(route, corridor.id, index);
+      // Nur Meldungen, die zum gewählten Zeitpunkt tatsächlich gelten.
+      const allNearby = roadworksAffectingSegment(route, corridor.id, index).filter((item) =>
+        isActiveAt(item, date)
+      );
       allNearby.forEach((item) => roadworkItems.set(item.id, item));
       const affecting = allNearby.filter(hasSpeedImpact);
 
       const baseCap = segmentCapKmh(segment);
-      const baseSpeed = baseCap === null ? userSpeed : Math.min(userSpeed, baseCap);
+      let baseSpeed = baseCap === null ? userSpeed : Math.min(userSpeed, baseCap);
+
+      // Verkehrsaufkommen bremst zusätzlich – aber nie über das Tempolimit hinaus
+      // hinauf, nur herunter.
+      if (useTraffic && segment.ref) {
+        const freeSpeed = baseSpeed;
+        const t = trafficAt(segment.ref, segment.start.lat, segment.start.lon, dayType);
+        baseSpeed = Math.min(baseSpeed, practicalSpeed(userSpeed, t, date));
+        if (baseSpeed < freeSpeed) {
+          trafficLossHours += segKm / baseSpeed - segKm / freeSpeed;
+        }
+      }
 
       if (affecting.length === 0) {
         timeHours += segKm / baseSpeed;
@@ -384,7 +619,8 @@
       const roadworkCap = Math.min(
         ...affecting.map((item) => item.speedLimitKmh ?? BLOCKED_SPEED_FALLBACK)
       );
-      const roadworkSpeed = Math.min(userSpeed, baseCap === null ? roadworkCap : Math.min(baseCap, roadworkCap));
+      // baseSpeed enthält bereits Tempolimit und ggf. Verkehrsbremse.
+      const roadworkSpeed = Math.min(baseSpeed, roadworkCap);
 
       // Anteil des Segments, der wirklich Baustelle ist (größte Abdeckung gewinnt).
       const fraction = Math.max(...affecting.map((item) => roadworkCoverageFraction(item, route)));
@@ -408,6 +644,7 @@
       limitedKm,
       localKm,
       roadworkKm,
+      trafficLossHours,
       avgSpeed: distKm / timeHours,
       roadworks: [...roadworkItems.values()],
     };
@@ -442,19 +679,24 @@
   }
 
   function renderRouteCard(result, isFastest) {
-    const { route, timeHours, distKm, noneKm, limitedKm, localKm, roadworkKm, avgSpeed, roadworks } = result;
+    const { route, timeHours, distKm, noneKm, limitedKm, localKm, roadworkKm,
+            trafficLossHours, avgSpeed, roadworks } = result;
     const noneP = (noneKm / distKm) * 100;
     const limitedP = (limitedKm / distKm) * 100;
     const localP = (localKm / distKm) * 100;
+
+    const details = [`${distKm.toFixed(0)} km Gesamtstrecke`];
+    if (roadworkKm >= 0.5) details.push(`${roadworkKm.toFixed(0)} km Baustelle`);
+    if (trafficLossHours >= 1 / 60) {
+      details.push(`${Math.round(trafficLossHours * 60)} min durch Verkehr`);
+    }
 
     return `
       <div class="route-card ${isFastest ? "fastest" : ""}">
         <div class="route-head">
           <div>
             <h3>${route.label}</h3>
-            <div class="meta">${distKm.toFixed(0)} km Gesamtstrecke${
-              roadworkKm >= 0.5 ? ` · ${roadworkKm.toFixed(0)} km durch Baustellen gebremst` : ""
-            }</div>
+            <div class="meta">${details.join(" · ")}</div>
           </div>
           ${isFastest ? '<span class="badge fastest">Schnellste für dich</span>' : ""}
         </div>
@@ -543,10 +785,14 @@
       .join("");
   }
 
+  const DAY_LABEL = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+
   function render() {
     const corridorId = document.getElementById("corridor-select").value;
     const corridor = routesData.corridors.find((c) => c.id === corridorId);
     const userSpeed = Number(document.getElementById("speed-input").value) || DEFAULT_SPEED;
+    const date = departure();
+    const useTraffic = document.getElementById("traffic-toggle").checked;
 
     const emptyBox = document.getElementById("empty");
     const routesEl = document.getElementById("routes");
@@ -563,7 +809,7 @@
 
     const results = corridor.routes
       .filter((r) => r.segments && r.segments.length)
-      .map((r) => computeRoute(corridor, r, userSpeed))
+      .map((r) => computeRoute(corridor, r, userSpeed, { date, useTraffic }))
       .sort((a, b) => a.timeHours - b.timeHours);
 
     routesEl.innerHTML = results
@@ -572,12 +818,16 @@
 
     renderMap(results);
 
-    const longest = results.reduce((a, b) => (a.distKm > b.distKm ? a : b));
-    const naviTime = longest.distKm / NAVI_AVERAGE_SPEED;
-    naviEl.textContent =
-      `Zum Vergleich: ein Standard-Navi mit angenommenem Ø ${NAVI_AVERAGE_SPEED} km/h ` +
-      `käme auf der längsten Route auf ca. ${fmtHours(naviTime)} – unabhängig davon, welche ` +
-      `Route tatsächlich am meisten unbegrenzte Abschnitte hat.`;
+    const totalMeldungen = new Set(
+      results.flatMap((r) => r.roadworks.map((x) => x.id))
+    ).size;
+    const tagTyp = { werktag: "Werktag", samstag: "Samstag", sonntag: "Sonn-/Feiertag" }[dayTypeFor(date)];
+    naviEl.innerHTML =
+      `Berechnet für <strong>${DAY_LABEL[date.getDay()]}, ${date.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })}</strong> ` +
+      `(${tagTyp}) – ${totalMeldungen} zu dieser Zeit aktive Meldung(en) auf den Alternativen. ` +
+      (useTraffic
+        ? `Verkehrsaufkommen ist eingerechnet.`
+        : `Verkehrsaufkommen ist <strong>nicht</strong> eingerechnet – die Zeiten gelten für freie Bahn.`);
   }
 
   function populateCorridorSelect() {
@@ -605,23 +855,55 @@
     });
   }
 
+  // Auf die volle Viertelstunde gerundeter Startwert für das Abfahrtsfeld.
+  function setDepartureToNow() {
+    const d = new Date();
+    d.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0);
+    const p = (n) => String(n).padStart(2, "0");
+    document.getElementById("depart-input").value =
+      `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  function setupDepartureInput() {
+    setDepartureToNow();
+    document.getElementById("depart-input").addEventListener("input", render);
+    document.getElementById("now-btn").addEventListener("click", () => {
+      setDepartureToNow();
+      render();
+    });
+  }
+
+  function setupTrafficToggle() {
+    const box = document.getElementById("traffic-toggle");
+    box.checked = localStorage.getItem(TRAFFIC_STORAGE_KEY) === "1";
+    box.addEventListener("change", () => {
+      localStorage.setItem(TRAFFIC_STORAGE_KEY, box.checked ? "1" : "0");
+      render();
+    });
+  }
+
   async function load() {
     try {
-      const [routesRes, roadworksRes] = await Promise.all([
+      const [routesRes, roadworksRes, trafficRes] = await Promise.all([
         fetch("data/routes.json", { cache: "no-store" }),
         fetch("data/roadworks.json", { cache: "no-store" }),
+        fetch("data/traffic.json", { cache: "no-store" }),
       ]);
       if (!routesRes.ok) throw new Error("HTTP " + routesRes.status + " (routes.json)");
       routesData = await routesRes.json();
       roadworksData = roadworksRes.ok ? await roadworksRes.json() : { items: [] };
+      trafficData = trafficRes.ok ? await trafficRes.json() : { stationen: [] };
+      buildTrafficIndex();
 
       populateCorridorSelect();
       setupSpeedInput();
+      setupDepartureInput();
+      setupTrafficToggle();
 
-      const routesUpdated = fmtDate(routesData.updatedAt);
-      const roadworksUpdated = fmtDate(roadworksData.updatedAt);
       document.getElementById("updated").textContent =
-        `Tempolimits aktualisiert: ${routesUpdated} · Baustellen aktualisiert: ${roadworksUpdated}`;
+        `Tempolimits: ${fmtDate(routesData.updatedAt)} · ` +
+        `Baustellen: ${fmtDate(roadworksData.updatedAt)} · ` +
+        `Verkehrsdaten: ${trafficData.quelle || "nicht geladen"}`;
 
       render();
     } catch (err) {

@@ -1,38 +1,57 @@
 {
+  "_hinweis": "Beide Fahrtrichtungen sind eigene Korridore, kein Spiegelbild: Baustellen werden richtungsscharf gematcht, und die BASt-Verkehrsdaten unterscheiden ebenfalls nach Richtung.",
+  "punkte": {
+    "muenchen": { "name": "München, Döllingerstraße", "lon": 11.5143581, "lat": 48.1577596 },
+    "koeln": { "name": "Köln, Lokomotivstraße", "lon": 6.9440646, "lat": 50.9658135 },
+    "biebelried": { "name": "Kreuz Biebelried (A3/A7)", "lon": 10.0489, "lat": 49.7669 },
+    "frankfurterKreuz": { "name": "Frankfurter Kreuz (A3)", "lon": 8.5697, "lat": 50.0374 },
+    "ulmElchingen": { "name": "Kreuz Ulm/Elchingen (A7)", "lon": 10.1131857, "lat": 48.4699964 },
+    "speyer": { "name": "Kreuz Speyer (A61)", "lon": 8.4172, "lat": 49.3532 }
+  },
   "corridors": [
     {
       "id": "muenchen-koeln",
-      "name": "München (Döllingerstr.) → Köln (Lokomotivstr.)",
+      "name": "München → Köln",
+      "von": "Döllingerstraße, München",
+      "nach": "Lokomotivstraße, Köln",
       "routes": [
         {
           "id": "a3",
           "label": "via A9/A3 (Nürnberg – Würzburg – Frankfurt)",
-          "waypoints": [
-            { "name": "München, Döllingerstraße", "lon": 11.5143581, "lat": 48.1577596 },
-            { "name": "Kreuz Biebelried (A3/A7)", "lon": 10.0489, "lat": 49.7669 },
-            { "name": "Frankfurter Kreuz (A3)", "lon": 8.5697, "lat": 50.0374 },
-            { "name": "Köln, Lokomotivstraße", "lon": 6.9440646, "lat": 50.9658135 }
-          ]
+          "via": ["muenchen", "biebelried", "frankfurterKreuz", "koeln"]
         },
         {
           "id": "a8-a7",
           "label": "via A8/A7 (Ulm – Würzburg – Frankfurt)",
-          "waypoints": [
-            { "name": "München, Döllingerstraße", "lon": 11.5143581, "lat": 48.1577596 },
-            { "name": "Kreuz Ulm/Elchingen (A7)", "lon": 10.1131857, "lat": 48.4699964 },
-            { "name": "Kreuz Biebelried (A3/A7)", "lon": 10.0489, "lat": 49.7669 },
-            { "name": "Frankfurter Kreuz (A3)", "lon": 8.5697, "lat": 50.0374 },
-            { "name": "Köln, Lokomotivstraße", "lon": 6.9440646, "lat": 50.9658135 }
-          ]
+          "via": ["muenchen", "ulmElchingen", "biebelried", "frankfurterKreuz", "koeln"]
         },
         {
           "id": "a61",
           "label": "via A61 (Speyer)",
-          "waypoints": [
-            { "name": "München, Döllingerstraße", "lon": 11.5143581, "lat": 48.1577596 },
-            { "name": "Kreuz Speyer (A61)", "lon": 8.4172, "lat": 49.3532 },
-            { "name": "Köln, Lokomotivstraße", "lon": 6.9440646, "lat": 50.9658135 }
-          ]
+          "via": ["muenchen", "speyer", "koeln"]
+        }
+      ]
+    },
+    {
+      "id": "koeln-muenchen",
+      "name": "Köln → München",
+      "von": "Lokomotivstraße, Köln",
+      "nach": "Döllingerstraße, München",
+      "routes": [
+        {
+          "id": "a3",
+          "label": "via A3/A9 (Frankfurt – Würzburg – Nürnberg)",
+          "via": ["koeln", "frankfurterKreuz", "biebelried", "muenchen"]
+        },
+        {
+          "id": "a8-a7",
+          "label": "via A7/A8 (Frankfurt – Würzburg – Ulm)",
+          "via": ["koeln", "frankfurterKreuz", "biebelried", "ulmElchingen", "muenchen"]
+        },
+        {
+          "id": "a61",
+          "label": "via A61 (Speyer)",
+          "via": ["koeln", "speyer", "muenchen"]
         }
       ]
     }
