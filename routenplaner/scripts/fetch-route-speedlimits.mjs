@@ -11,8 +11,11 @@ import { setTimeout as sleep } from "node:timers/promises";
 
 const OSRM_BASE = "https://router.project-osrm.org/route/v1/driving";
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; AutobahnRoutenplaner/1.0; personal project) Node.js";
+// Bewusst kein browserartiger User-Agent: die Overpass-API weist Anfragen mit
+// "Mozilla/..."-Kennung mit HTTP 406 ab, um Abfragen direkt aus Webseiten zu
+// unterbinden. Ein schlichter Bezeichner ist ohnehin das, was die
+// Nutzungsbedingungen der OSM-Dienste verlangen.
+const USER_AGENT = "AutobahnRoutenplaner/1.0 (privates Projekt)";
 const REQUEST_TIMEOUT_MS = 30_000;
 const OVERPASS_TIMEOUT_MS = 90_000;
 const DELAY_BETWEEN_REQUESTS_MS = 2_000;
@@ -334,6 +337,44 @@ async function main() {
     });
   }
 
+  // Fehlgeschlagene Routen dürfen bestehende, gute Daten nicht wegwerfen: bei einem
+  // Ausfall von OSRM oder Overpass entstünden sonst leere Segmentlisten, und die
+  // Seite zeigt für diese Route gar nichts mehr an. Der Cronjob würde den Schaden
+  // anschließend committen.
+  const ok = corridors.flatMap((c) => c.routes).filter((r) => r.segments.length > 0).length;
+  const total = corridors.flatMap((c) => c.routes).length;
+  if (ok === 0) {
+    throw new Error(
+      `Keine einzige Route konnte aufgebaut werden (${total} versucht) – ` +
+        `routes.json bleibt unverändert.`
+    );
+  }
+  if (ok < total) {
+    // Teilausfall: die bisherigen Segmente der fehlgeschlagenen Routen behalten.
+    let previous = null;
+    try {
+      previous = JSON.parse(
+        await readFile(new URL("../data/routes.json", import.meta.url), "utf-8")
+      );
+    } catch {
+      // Erster Lauf ohne Vorgängerdatei – dann bleibt die Route eben leer.
+    }
+    if (previous) {
+      for (const corridor of corridors) {
+        const prevCorridor = previous.corridors?.find((c) => c.id === corridor.id);
+        if (!prevCorridor) continue;
+        corridor.routes = corridor.routes.map((r) => {
+          if (r.segments.length > 0) return r;
+          const prev = prevCorridor.routes?.find((p) => p.id === r.id);
+          if (!prev?.segments?.length) return r;
+          console.warn(`  ${corridor.id}/${r.id}: behalte vorherige Daten (${prev.segments.length} Segmente)`);
+          return { ...prev, staleSince: new Date().toISOString(), lastError: r.error };
+        });
+      }
+    }
+    console.warn(`Warnung: nur ${ok} von ${total} Routen neu aufgebaut.`);
+  }
+
   const output = {
     updatedAt: new Date().toISOString(),
     corridors,
@@ -345,7 +386,7 @@ async function main() {
     "utf-8"
   );
 
-  console.log("routes.json geschrieben.");
+  console.log(`routes.json geschrieben (${ok}/${total} Routen neu).`);
 }
 
 main().catch((err) => {

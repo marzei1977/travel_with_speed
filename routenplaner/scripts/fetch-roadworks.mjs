@@ -9,8 +9,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const API_BASE = "https://verkehr.autobahn.de/o/autobahn";
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; AutobahnRoutenplaner/1.0; personal project) Node.js";
+// Schlichte, ehrliche Kennung – kein getarnter Browser-User-Agent.
+const USER_AGENT = "AutobahnRoutenplaner/1.0 (privates Projekt)";
 const REQUEST_TIMEOUT_MS = 15_000;
 const DELAY_BETWEEN_REQUESTS_MS = 800;
 // Wie nah die tatsächliche Baustellen-/Meldungsstrecke (nicht nur ihr Startpunkt!)

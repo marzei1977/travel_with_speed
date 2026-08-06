@@ -17,8 +17,8 @@ import { writeFile } from "node:fs/promises";
 
 // Jahresauswertung; das jeweils aktuellste verfügbare Jahr wird automatisch gesucht.
 const BASE = "https://www.bast.de/DE/Themen/Digitales/HF_1/Massnahmen/verkehrszaehlung/Daten";
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; AutobahnRoutenplaner/1.0; personal project) Node.js";
+// Schlichte, ehrliche Kennung – kein getarnter Browser-User-Agent.
+const USER_AGENT = "AutobahnRoutenplaner/1.0 (privates Projekt)";
 const REQUEST_TIMEOUT_MS = 120_000;
 
 function jaweUrl(year) {
