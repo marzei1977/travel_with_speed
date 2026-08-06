@@ -1,0 +1,35 @@
+name: Routenplaner – Baustellen aktualisieren
+
+on:
+  schedule:
+    # alle 30 Minuten (UTC)
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: routenplaner-roadworks
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Baustellen & Sperrungen abrufen
+        run: node routenplaner/scripts/fetch-roadworks.mjs
+
+      - name: Ergebnis committen
+        run: |
+          git config user.name "routenplaner-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add routenplaner/data/roadworks.json
+          git commit -m "Routenplaner: Baustellen aktualisiert [skip ci]" || echo "Keine Änderungen"
+          git push

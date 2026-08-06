@@ -1,0 +1,35 @@
+name: Routenplaner – Tempolimits aktualisieren
+
+on:
+  schedule:
+    # einmal wöchentlich (Tempolimits/Baustrecken ändern sich selten) – Montag 03:00 UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: routenplaner-routes
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Tempolimits & Routengeometrie ermitteln
+        run: node routenplaner/scripts/fetch-route-speedlimits.mjs
+
+      - name: Ergebnis committen
+        run: |
+          git config user.name "routenplaner-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add routenplaner/data/routes.json
+          git commit -m "Routenplaner: Tempolimits aktualisiert [skip ci]" || echo "Keine Änderungen"
+          git push
