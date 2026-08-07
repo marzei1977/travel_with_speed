@@ -6,7 +6,15 @@
     "biebelried": { "name": "Kreuz Biebelried (A3/A7)", "lon": 10.0489, "lat": 49.7669 },
     "frankfurterKreuz": { "name": "Frankfurter Kreuz (A3)", "lon": 8.5697, "lat": 50.0374 },
     "ulmElchingen": { "name": "Kreuz Ulm/Elchingen (A7)", "lon": 10.1131857, "lat": 48.4699964 },
-    "speyer": { "name": "Kreuz Speyer (A61)", "lon": 8.4172, "lat": 49.3532 }
+    "speyer": { "name": "Kreuz Speyer (A61)", "lon": 8.4172, "lat": 49.3532 },
+    "norddeich": { "name": "Norddeich, Norden (Ostfriesland)", "lon": 7.1619, "lat": 53.6138 },
+    "hattenbach": { "name": "Hattenbacher Dreieck (A7/A5)", "lon": 9.5429, "lat": 50.8135 },
+    "bremerKreuz": { "name": "Bremer Kreuz (A1/A27)", "lon": 8.9777, "lat": 53.0455 },
+    "dreieckLeer": { "name": "Dreieck Leer (A28/A31)", "lon": 7.5007, "lat": 53.2666 },
+    "gambach": { "name": "Gambacher Kreuz (A45/A5)", "lon": 8.7210, "lat": 50.4631 },
+    "westhofen": { "name": "Westhofener Kreuz (A45/A1)", "lon": 7.5252, "lat": 51.4352 },
+    "schuettorf": { "name": "Kreuz Schüttorf (A30/A31)", "lon": 7.2582, "lat": 52.3377 },
+    "dreieckSuhl": { "name": "Dreieck Suhl (A71/A73)", "lon": 10.6421, "lat": 50.6085 }
   },
   "corridors": [
     {
@@ -52,6 +60,39 @@
           "id": "a61",
           "label": "via A61 (Speyer)",
           "via": ["koeln", "speyer", "muenchen"]
+        }
+      ]
+    },
+    {
+      "id": "muenchen-norddeich",
+      "name": "München → Norddeich/Norden",
+      "von": "Döllingerstraße, München",
+      "nach": "Norddeich, Norden (Ostfriesland)",
+      "routes": [
+        {
+          "id": "a9-a3-a7",
+          "label": "via A9/A3/A7 (Nürnberg – Würzburg – Kassel – Bremen)",
+          "via": ["muenchen", "biebelried", "hattenbach", "bremerKreuz", "dreieckLeer", "norddeich"]
+        },
+        {
+          "id": "a8-a7",
+          "label": "via A8/A7 durchgehend (Ulm – Würzburg – Kassel – Bremen)",
+          "via": ["muenchen", "ulmElchingen", "hattenbach", "bremerKreuz", "dreieckLeer", "norddeich"]
+        },
+        {
+          "id": "a9-a71-a7",
+          "label": "via A9/A71 (Nürnberg – Suhl – Erfurt) und A7",
+          "via": ["muenchen", "dreieckSuhl", "hattenbach", "bremerKreuz", "dreieckLeer", "norddeich"]
+        },
+        {
+          "id": "a45-a31",
+          "label": "via A3/A45 Sauerlandlinie und A31 (Emsland)",
+          "via": ["muenchen", "biebelried", "gambach", "westhofen", "schuettorf", "norddeich"]
+        },
+        {
+          "id": "a3-a1-a31",
+          "label": "via A3 (Frankfurt – Köln), A1 und A31 – umgeht die A45",
+          "via": ["muenchen", "biebelried", "frankfurterKreuz", "koeln", "schuettorf", "norddeich"]
         }
       ]
     }
