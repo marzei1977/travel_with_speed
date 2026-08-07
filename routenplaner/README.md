@@ -114,6 +114,19 @@ anzupassen.
 Die Fahrzeit hängt stark davon ab, *wann* man fährt – deshalb gibt es ein
 Abfahrtsfeld und einen Schalter für das Verkehrsaufkommen.
 
+**Die Zeit schreitet während der Fahrt fort.** Jeder Kilometer wird mit dem
+Zeitpunkt bewertet, zu dem man ihn tatsächlich erreicht – nicht mit der
+Abfahrtszeit. Wer um 14 Uhr in Köln startet, ist bei Würzburg erst gegen 16:30
+und dort in einer anderen Verkehrslage. Da die Zeit an einem Abschnitt nur von
+den Abschnitten davor abhängt, genügt dafür ein Vorwärtsdurchlauf.
+
+Der Unterschied ist erheblich: gegenüber einer starren Bewertung mit der
+Abfahrtszeit verschieben sich die Fahrzeiten um bis zu 14 Minuten, je nachdem ob
+man in eine Spitze hinein- oder aus ihr herausfährt. Auch der Tagestyp wechselt
+unterwegs korrekt – eine Fahrt Samstag 22 Uhr kommt sonntags an und profitiert
+auf dem zweiten Teil vom LKW-Fahrverbot. Die berechnete Ankunftszeit steht auf
+jeder Routenkarte.
+
 **Die Abfahrtszeit wirkt auf zwei Dinge:**
 
 - *Welche Baustellen gelten.* Ein Teil der Meldungen sind reine Tagesbaustellen

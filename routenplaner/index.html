@@ -676,7 +676,6 @@
 
   function computeRoute(corridor, route, userSpeed, opts) {
     const { date, useTraffic, tolerance = 0 } = opts;
-    const dayType = dayTypeFor(date);
     let timeHours = 0;
     let distKm = 0;
     let noneKm = 0;
@@ -690,9 +689,18 @@
       const segKm = segment.distanceMeters / 1000;
       distKm += segKm;
 
-      // Nur Meldungen, die zum gewählten Zeitpunkt tatsächlich gelten.
+      // Entscheidend: nicht die Abfahrtszeit, sondern der Zeitpunkt, zu dem man
+      // diesen Abschnitt tatsächlich erreicht. Auf 600 km liegen mehrere Stunden
+      // zwischen Start und Ziel – wer um 14 Uhr in Köln losfährt, ist bei Würzburg
+      // erst gegen 16:30 und damit in einer ganz anderen Verkehrslage. Da die Zeit
+      // an Abschnitt i nur von den Abschnitten davor abhängt, genügt ein
+      // Vorwärtsdurchlauf ohne Iteration.
+      const segTime = new Date(date.getTime() + timeHours * 3600_000);
+      const dayType = dayTypeFor(segTime);
+
+      // Nur Meldungen, die zum Zeitpunkt der Durchfahrt tatsächlich gelten.
       const allNearby = roadworksAffectingSegment(route, corridor.id, index).filter((item) =>
-        isActiveAt(item, date)
+        isActiveAt(item, segTime)
       );
       allNearby.forEach((item) => roadworkItems.set(item.id, item));
       const affecting = allNearby.filter(hasSpeedImpact);
@@ -705,7 +713,7 @@
       if (useTraffic && segment.ref) {
         const freeSpeed = baseSpeed;
         const t = trafficAt(segment.ref, segment.start.lat, segment.start.lon, dayType);
-        baseSpeed = Math.min(baseSpeed, practicalSpeed(userSpeed, t, date));
+        baseSpeed = Math.min(baseSpeed, practicalSpeed(userSpeed, t, segTime));
         if (baseSpeed < freeSpeed) {
           trafficLossHours += segKm / baseSpeed - segKm / freeSpeed;
         }
@@ -755,6 +763,7 @@
       roadworkKm,
       trafficLossHours,
       avgSpeed: distKm / timeHours,
+      arrival: new Date(date.getTime() + timeHours * 3600_000),
       roadworks: [...roadworkItems.values()],
     };
   }
@@ -789,7 +798,7 @@
 
   function renderRouteCard(result, isFastest) {
     const { route, timeHours, distKm, noneKm, limitedKm, localKm, roadworkKm,
-            trafficLossHours, avgSpeed, roadworks } = result;
+            trafficLossHours, avgSpeed, arrival, roadworks } = result;
     const noneP = (noneKm / distKm) * 100;
     const limitedP = (limitedKm / distKm) * 100;
     const localP = (localKm / distKm) * 100;
@@ -810,7 +819,10 @@
           ${isFastest ? '<span class="badge fastest">Schnellste für dich</span>' : ""}
         </div>
         <div class="time-big">${fmtHours(timeHours)}</div>
-        <div class="time-sub">Ø ${avgSpeed.toFixed(0)} km/h effektiv</div>
+        <div class="time-sub">Ø ${avgSpeed.toFixed(0)} km/h effektiv · Ankunft ${arrival.toLocaleString(
+          "de-DE",
+          { weekday: "short", hour: "2-digit", minute: "2-digit" }
+        )}</div>
         <div class="bar">
           <div class="seg-none" style="width:${noneP}%"></div>
           <div class="seg-limited" style="width:${limitedP}%"></div>
