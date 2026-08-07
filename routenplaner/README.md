@@ -52,6 +52,31 @@ schnellere Fahrer in der Praxis früher ankommt.
 Kein eigener Server nötig – alles läuft als statische Seite (z. B. via GitHub
 Pages), die Datenpflege übernehmen die drei GitHub-Actions-Cronjobs.
 
+## Übersichtstabelle und Google-Maps-Export
+
+Über den Routenkarten steht eine Vergleichstabelle mit Strecke und
+Zwischenzielen, Distanz, Anteil unbegrenzt/begrenzt inklusive Baustellenkilometer
+sowie zwei Fahrzeiten samt Durchschnittsgeschwindigkeit: **Dienstag 08:00** als
+Werktagsfall und **Sonntag 07:00** als ruhiger Fall, beide mit eingerechnetem
+Verkehr.
+
+Diese beiden Zeitpunkte sind bewusst fest verdrahtet und folgen *nicht* dem
+Abfahrtsfeld – sonst wären die Zeilen nicht mehr untereinander vergleichbar. Wer
+eine konkrete Abfahrt bewerten will, nutzt das Feld oben und liest die
+Routenkarten darunter.
+
+Die Spalte **Maps** öffnet die jeweilige Route in Google Maps, mit Start, Ziel und
+den Autobahnkreuzen als Zwischenziele (Maps-URL-Schema `api=1`, maximal neun
+Zwischenziele). Wichtig: Maps übernimmt nur diese Stützpunkte – *zwischen* ihnen
+wählt es den Weg weiterhin nach eigener Logik. Da die Stützpunkte Autobahnkreuze
+sind, entspricht das Ergebnis der berechneten Route in aller Regel, garantiert
+ist es aber nicht. Für den Export lädt die Seite zusätzlich
+`config/corridors.json`, weil nur dort die Wegpunkt-Koordinaten stehen.
+
+Ganz unten listet der Abschnitt **Datenstand** für jede Quelle Herkunft und
+Abrufzeitpunkt auf, inklusive des Hinweises, dass die Stundenverteilung eine
+Modellannahme ist.
+
 ## Abfahrtszeit und Verkehrsaufkommen
 
 Die Fahrzeit hängt stark davon ab, *wann* man fährt – deshalb gibt es ein

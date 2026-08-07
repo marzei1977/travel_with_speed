@@ -165,6 +165,42 @@
   .legend .i-limited { background: var(--amber); }
   .legend .i-local { background: var(--muted); opacity: 0.5; }
 
+  /* Breite Tabellen dürfen scrollen, die Seite selbst nie. */
+  .table-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  th, td { padding: 0.5rem 0.6rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tr.best td { background: var(--green-bg); }
+  tr.best td:first-child { font-weight: 600; }
+  .sub { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 400; }
+  .via { color: var(--muted); font-size: 0.75rem; }
+  .split { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .split .free { color: var(--green); font-weight: 600; }
+  .split .lim { color: var(--amber); font-weight: 600; }
+
+  .maps-btn {
+    display: inline-block;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--accent);
+    border-radius: 7px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .maps-btn:hover { border-color: var(--accent); }
+
+  .data-table td:first-child { color: var(--muted); width: 38%; }
+
   #map {
     height: 420px;
     border-radius: 10px;
@@ -297,6 +333,14 @@
 
     <div class="updated" id="updated"></div>
 
+    <div class="panel" id="overview-panel" style="display:none">
+      <h2>Übersicht</h2>
+      <div class="table-scroll">
+        <table id="overview-table"></table>
+      </div>
+      <div class="hint" id="overview-note"></div>
+    </div>
+
     <div class="panel" id="map-panel" style="display:none">
       <h2>Kartenansicht</h2>
       <div id="map"></div>
@@ -312,6 +356,11 @@
     <div id="routes"></div>
 
     <div class="navi-compare" id="navi-compare"></div>
+
+    <div class="panel" id="datastate-panel" style="display:none">
+      <h2>Datenstand</h2>
+      <table class="data-table" id="datastate-table"></table>
+    </div>
 
     <footer>
       Tempolimits aus OpenStreetMap (Overpass API), Routengeometrie vom
@@ -341,6 +390,21 @@
   let routesData = null;
   let roadworksData = null;
   let trafficData = null;
+  let configData = null;
+
+  // Referenzzeitpunkte für die Übersichtstabelle: bewusst feste Werte, damit die
+  // Zeilen untereinander vergleichbar bleiben und nicht von der gewählten Abfahrt
+  // abhängen. Gesucht wird der jeweils nächste passende Tag.
+  function nextWeekday(targetDay, hour) {
+    const d = new Date();
+    d.setHours(hour, 0, 0, 0);
+    let guard = 0;
+    while (d.getDay() !== targetDay || d < new Date()) {
+      d.setDate(d.getDate() + 1);
+      if (++guard > 14) break;
+    }
+    return d;
+  }
 
   // ---------------------------------------------------------------------------
   // Zeitpunkt der Fahrt
@@ -787,6 +851,161 @@
 
   const DAY_LABEL = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
 
+  // ---------------------------------------------------------------------------
+  // Wegpunkte und Google-Maps-Export
+  // ---------------------------------------------------------------------------
+
+  // Die Wegpunkte stehen nur in der Konfiguration, nicht in den generierten Daten.
+  function waypointsFor(corridorId, routeId) {
+    const corridor = configData?.corridors?.find((c) => c.id === corridorId);
+    const route = corridor?.routes?.find((r) => r.id === routeId);
+    if (!route || !configData.punkte) return [];
+    return route.via.map((key) => configData.punkte[key]).filter(Boolean);
+  }
+
+  // Nur die Punkte zwischen Start und Ziel, gekürzt um den Klammerzusatz
+  // ("Kreuz Biebelried (A3/A7)" -> "Kreuz Biebelried").
+  function viaLabel(corridorId, routeId) {
+    const pts = waypointsFor(corridorId, routeId);
+    if (pts.length < 3) return "direkt";
+    return pts
+      .slice(1, -1)
+      .map((p) => p.name.replace(/\s*\(.*?\)\s*$/, ""))
+      .join(" › ");
+  }
+
+  // Google Maps übernimmt Start, Ziel und bis zu neun Zwischenziele aus der URL.
+  // Damit fährt Maps im Wesentlichen unsere Route nach – die Wegpunkte sind
+  // Autobahnkreuze, dazwischen wählt Maps aber weiter selbst.
+  function googleMapsUrl(corridorId, routeId) {
+    const pts = waypointsFor(corridorId, routeId);
+    if (pts.length < 2) return null;
+    const coord = (p) => `${p.lat},${p.lon}`;
+    const params = new URLSearchParams({
+      api: "1",
+      origin: coord(pts[0]),
+      destination: coord(pts[pts.length - 1]),
+      travelmode: "driving",
+    });
+    const via = pts.slice(1, -1).slice(0, 9);
+    if (via.length) params.set("waypoints", via.map(coord).join("|"));
+    // URLSearchParams kodiert "|" als %7C – das akzeptiert Maps.
+    return `https://www.google.com/maps/dir/?${params.toString()}`;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Übersichtstabelle
+  // ---------------------------------------------------------------------------
+
+  function renderOverview(corridor, userSpeed) {
+    const panel = document.getElementById("overview-panel");
+    const routes = corridor.routes.filter((r) => r.segments && r.segments.length);
+    if (!routes.length) {
+      panel.style.display = "none";
+      return;
+    }
+    panel.style.display = "block";
+
+    // Werktag morgens gegen ruhiges Wochenende – beide mit Verkehr, sonst wäre der
+    // Unterschied definitionsgemäß null.
+    const werktag = nextWeekday(2, 8); // Dienstag 08:00
+    const wochenende = nextWeekday(0, 7); // Sonntag 07:00
+
+    const rows = routes
+      .map((r) => ({
+        route: r,
+        w: computeRoute(corridor, r, userSpeed, { date: werktag, useTraffic: true }),
+        e: computeRoute(corridor, r, userSpeed, { date: wochenende, useTraffic: true }),
+      }))
+      .sort((a, b) => a.w.timeHours - b.w.timeHours);
+
+    const body = rows
+      .map((row, i) => {
+        const { route, w, e } = row;
+        const freeP = Math.round((w.noneKm / w.distKm) * 100);
+        const limP = Math.round(((w.limitedKm + w.localKm) / w.distKm) * 100);
+        const url = googleMapsUrl(corridor.id, route.id);
+        return `
+        <tr class="${i === 0 ? "best" : ""}">
+          <td>
+            ${route.label.replace(/^via\s+/, "")}
+            <span class="via">${viaLabel(corridor.id, route.id)}</span>
+          </td>
+          <td class="num">${w.distKm.toFixed(0)}</td>
+          <td class="num split">
+            <span class="free">${freeP}%</span> / <span class="lim">${limP}%</span>
+            <span class="sub">${w.roadworkKm.toFixed(0)} km Baustelle</span>
+          </td>
+          <td class="num">${fmtHours(w.timeHours)}<span class="sub">Ø ${w.avgSpeed.toFixed(0)} km/h</span></td>
+          <td class="num">${fmtHours(e.timeHours)}<span class="sub">Ø ${e.avgSpeed.toFixed(0)} km/h</span></td>
+          <td class="num">${url ? `<a class="maps-btn" href="${url}" target="_blank" rel="noopener">Maps ↗</a>` : ""}</td>
+        </tr>`;
+      })
+      .join("");
+
+    document.getElementById("overview-table").innerHTML = `
+      <thead>
+        <tr>
+          <th>Strecke</th>
+          <th class="num">km</th>
+          <th class="num">unbegrenzt /<br>begrenzt</th>
+          <th class="num">Werktag<span class="sub">Di 08:00</span></th>
+          <th class="num">Wochenende<span class="sub">So 07:00</span></th>
+          <th class="num">Export</th>
+        </tr>
+      </thead>
+      <tbody>${body}</tbody>`;
+
+    document.getElementById("overview-note").textContent =
+      `Beide Zeitspalten mit eingerechnetem Verkehr und ${userSpeed} km/h Wunschgeschwindigkeit, ` +
+      `zu festen Referenzzeitpunkten – dadurch untereinander vergleichbar, unabhängig von der oben ` +
+      `gewählten Abfahrt. "Maps" öffnet die Route mit denselben Zwischenzielen in Google Maps; ` +
+      `zwischen den Kreuzen wählt Maps den Weg weiterhin selbst.`;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Datenstand
+  // ---------------------------------------------------------------------------
+
+  function renderDataState() {
+    const rows = [
+      [
+        "Tempolimits",
+        "OpenStreetMap über die Overpass-API",
+        `abgerufen ${fmtDate(routesData.updatedAt)}`,
+      ],
+      [
+        "Routenverlauf",
+        "OSRM-Demo-Router (Kartenstand OpenStreetMap)",
+        `abgerufen ${fmtDate(routesData.updatedAt)}`,
+      ],
+      [
+        "Baustellen & Sperrungen",
+        "Autobahn GmbH des Bundes (verkehr.autobahn.de)",
+        `abgerufen ${fmtDate(roadworksData.updatedAt)}`,
+      ],
+      [
+        "Verkehrsstärke, LKW-Anteil, Fahrstreifen",
+        trafficData.quelle || "BASt",
+        trafficData.jahr
+          ? `Erhebungsjahr ${trafficData.jahr}, abgerufen ${fmtDate(trafficData.updatedAt)}`
+          : `abgerufen ${fmtDate(trafficData.updatedAt)}`,
+      ],
+      [
+        "Stundenverteilung über den Tag",
+        "Modellannahme im Code, keine Messung",
+        "typisierte Ganglinie mit Zuschlag für Freitagnachmittag und Sonntagabend",
+      ],
+    ];
+    document.getElementById("datastate-table").innerHTML = rows
+      .map(
+        ([was, quelle, stand]) =>
+          `<tr><td>${was}</td><td>${quelle}<span class="sub">${stand}</span></td></tr>`
+      )
+      .join("");
+    document.getElementById("datastate-panel").style.display = "block";
+  }
+
   function render() {
     const corridorId = document.getElementById("corridor-select").value;
     const corridor = routesData.corridors.find((c) => c.id === corridorId);
@@ -803,9 +1022,11 @@
       routesEl.innerHTML = "";
       naviEl.textContent = "";
       document.getElementById("map-panel").style.display = "none";
+      document.getElementById("overview-panel").style.display = "none";
       return;
     }
     emptyBox.style.display = "none";
+    renderOverview(corridor, userSpeed);
 
     const results = corridor.routes
       .filter((r) => r.segments && r.segments.length)
@@ -884,15 +1105,18 @@
 
   async function load() {
     try {
-      const [routesRes, roadworksRes, trafficRes] = await Promise.all([
+      const [routesRes, roadworksRes, trafficRes, configRes] = await Promise.all([
         fetch("data/routes.json", { cache: "no-store" }),
         fetch("data/roadworks.json", { cache: "no-store" }),
         fetch("data/traffic.json", { cache: "no-store" }),
+        // Nur für Wegpunkt-Namen und den Maps-Export – die Berechnung braucht sie nicht.
+        fetch("config/corridors.json", { cache: "no-store" }),
       ]);
       if (!routesRes.ok) throw new Error("HTTP " + routesRes.status + " (routes.json)");
       routesData = await routesRes.json();
       roadworksData = roadworksRes.ok ? await roadworksRes.json() : { items: [] };
       trafficData = trafficRes.ok ? await trafficRes.json() : { stationen: [] };
+      configData = configRes.ok ? await configRes.json() : null;
       buildTrafficIndex();
 
       populateCorridorSelect();
@@ -905,6 +1129,7 @@
         `Baustellen: ${fmtDate(roadworksData.updatedAt)} · ` +
         `Verkehrsdaten: ${trafficData.quelle || "nicht geladen"}`;
 
+      renderDataState();
       render();
     } catch (err) {
       document.getElementById("load-error").style.display = "block";
