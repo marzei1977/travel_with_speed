@@ -14,7 +14,10 @@
     "gambach": { "name": "Gambacher Kreuz (A45/A5)", "lon": 8.7210, "lat": 50.4631 },
     "westhofen": { "name": "Westhofener Kreuz (A45/A1)", "lon": 7.5252, "lat": 51.4352 },
     "schuettorf": { "name": "Kreuz Schüttorf (A30/A31)", "lon": 7.2582, "lat": 52.3377 },
-    "dreieckSuhl": { "name": "Dreieck Suhl (A71/A73)", "lon": 10.6421, "lat": 50.6085 }
+    "dreieckSuhl": { "name": "Dreieck Suhl (A71/A73)", "lon": 10.6421, "lat": 50.6085 },
+    "schkeuditz": { "name": "Schkeuditzer Kreuz (A9/A14)", "lon": 12.1950, "lat": 51.4218 },
+    "kreuzMagdeburg": { "name": "Kreuz Magdeburg (A2/A14)", "lon": 11.5321, "lat": 52.1664 },
+    "hannoverOst": { "name": "Kreuz Hannover-Ost (A2/A7)", "lon": 9.9078, "lat": 52.3963 }
   },
   "corridors": [
     {
@@ -93,6 +96,11 @@
           "id": "a3-a1-a31",
           "label": "via A3 (Frankfurt – Köln), A1 und A31 – umgeht die A45",
           "via": ["muenchen", "biebelried", "frankfurterKreuz", "koeln", "schuettorf", "norddeich"]
+        },
+        {
+          "id": "a9-a14-a2",
+          "label": "via A9 durchgehend (Nürnberg – Leipzig), A14 Magdeburg und A2 westwärts",
+          "via": ["muenchen", "schkeuditz", "kreuzMagdeburg", "hannoverOst", "bremerKreuz", "dreieckLeer", "norddeich"]
         }
       ]
     }
