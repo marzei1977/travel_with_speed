@@ -180,6 +180,10 @@
   td.num, th.num { text-align: right; white-space: nowrap; }
   tr.best td { background: var(--green-bg); }
   tr.best td:first-child { font-weight: 600; }
+  tr.selectable { cursor: pointer; }
+  tr.selectable:hover td { background: var(--accent-bg); }
+  /* Die in der Karte hervorgehobene Zeile bekommt einen Marker links. */
+  tr.active td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
   .sub { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 400; }
   .via { color: var(--muted); font-size: 0.75rem; }
   .split { white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -216,6 +220,16 @@
   }
   .map-legend span { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; }
   .map-legend .swatch { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
+  /* Nicht hervorgehobene Routen: gestrichelt gezeichnet, auch in der Legende. */
+  .map-legend .swatch.dashed {
+    background: none !important;
+    height: 0;
+    border-top: 4px dashed currentColor;
+    border-radius: 0;
+  }
+  .map-legend .legend-item { cursor: pointer; }
+  .map-legend .legend-item:not(.active) { color: var(--muted); font-weight: 400; }
+  .map-legend .legend-item:hover { color: var(--accent); }
   /* Leaflet-Popups/Tooltips ans Farbschema anpassen */
   .leaflet-popup-content-wrapper, .leaflet-popup-tip, .leaflet-tooltip {
     background: var(--card-bg);
@@ -306,6 +320,24 @@
         </div>
       </div>
       <div class="field">
+        <label for="tolerance-select">Tempo über ausgeschilderten Limits</label>
+        <div class="speed-row">
+          <select id="tolerance-select">
+            <option value="0">exakt nach Limit</option>
+            <option value="5">+5 km/h</option>
+            <option value="10">+10 km/h</option>
+            <option value="15">+15 km/h</option>
+            <option value="20">+20 km/h</option>
+          </select>
+        </div>
+        <div class="hint">
+          Gilt für ausgeschilderte Tempolimits einschließlich Baustellen – dort, wo
+          real meist etwas schneller gefahren wird als angeordnet. Nicht angewendet
+          auf Ortsdurchfahrten und Zubringer: deren Tempo ist bereits eine Schätzung
+          der tatsächlich gefahrenen Geschwindigkeit, kein Limit.
+        </div>
+      </div>
+      <div class="field">
         <label for="depart-input">Abfahrt</label>
         <div class="speed-row">
           <input type="datetime-local" id="depart-input" />
@@ -380,6 +412,7 @@
   const SPEED_STORAGE_KEY = "routenplaner:wunschgeschwindigkeit";
   const CORRIDOR_STORAGE_KEY = "routenplaner:korridor";
   const TRAFFIC_STORAGE_KEY = "routenplaner:verkehr";
+  const TOLERANCE_STORAGE_KEY = "routenplaner:toleranz";
   const DEFAULT_SPEED = 185;
   // Angenommenes Tempo in einer als gesperrt gemeldeten Stelle ohne eigene
   // Geschwindigkeitsangabe.
@@ -597,10 +630,18 @@
   }
 
   // Segment-Cap ohne Nutzer-Wunschgeschwindigkeit: null = unbegrenzt (maxspeed=none).
-  function segmentCapKmh(segment) {
+  //
+  // Die Toleranz wird nur auf echte Tempolimits angewendet – also auf getaggte
+  // maxspeed-Werte und auf die als Limit-Ersatz angesetzte Richtgeschwindigkeit auf
+  // Autobahnen ohne Tag. Nicht auf Ortsdurchfahrten und Zubringer: dort steht in
+  // fallbackSpeedKmh die von OSRM aus dem Straßentyp abgeleitete tatsächliche
+  // Reisegeschwindigkeit, kein Limit – die um 15 zu erhöhen wäre Unsinn.
+  function segmentCapKmh(segment, tolerance) {
+    const t = tolerance || 0;
     if (segment.maxspeedTag === "none") return null;
-    if (typeof segment.maxspeedTag === "number") return segment.maxspeedTag;
-    return segment.fallbackSpeedKmh; // Richtgeschwindigkeit oder OSRM-Schätzung
+    if (typeof segment.maxspeedTag === "number") return segment.maxspeedTag + t;
+    if (segment.ref) return segment.fallbackSpeedKmh + t; // Richtgeschwindigkeit
+    return segment.fallbackSpeedKmh; // Ort/Zubringer: unverändert
   }
 
   function roadworksAffectingSegment(route, corridorId, segmentIndex) {
@@ -634,7 +675,7 @@
   }
 
   function computeRoute(corridor, route, userSpeed, opts) {
-    const { date, useTraffic } = opts;
+    const { date, useTraffic, tolerance = 0 } = opts;
     const dayType = dayTypeFor(date);
     let timeHours = 0;
     let distKm = 0;
@@ -656,7 +697,7 @@
       allNearby.forEach((item) => roadworkItems.set(item.id, item));
       const affecting = allNearby.filter(hasSpeedImpact);
 
-      const baseCap = segmentCapKmh(segment);
+      const baseCap = segmentCapKmh(segment, tolerance);
       let baseSpeed = baseCap === null ? userSpeed : Math.min(userSpeed, baseCap);
 
       // Verkehrsaufkommen bremst zusätzlich – aber nie über das Tempolimit hinaus
@@ -680,8 +721,12 @@
 
       // Baustellen-Tempo: strengster Wert aller betroffenen Meldungen (eigene
       // Angabe bevorzugt, sonst pauschale Annahme).
+      // Auch das Baustellen-Limit ist ein ausgeschildertes Limit, die Toleranz gilt
+      // hier ebenso. Eine gemeldete Sperrung dagegen bleibt unangetastet.
       const roadworkCap = Math.min(
-        ...affecting.map((item) => item.speedLimitKmh ?? BLOCKED_SPEED_FALLBACK)
+        ...affecting.map((item) =>
+          item.speedLimitKmh ? item.speedLimitKmh + tolerance : BLOCKED_SPEED_FALLBACK
+        )
       );
       // baseSpeed enthält bereits Tempolimit und ggf. Verkehrsbremse.
       const roadworkSpeed = Math.min(baseSpeed, roadworkCap);
@@ -786,6 +831,9 @@
 
   let leafletMap = null;
   let routeLayerGroup = null;
+  // Angeklickte Route: wird durchgezogen gezeichnet, alle anderen gestrichelt.
+  // null = keine Auswahl, dann ist die schnellste durchgezogen.
+  let selectedRouteId = null;
 
   function ensureMap() {
     if (leafletMap) return;
@@ -820,19 +868,27 @@
     routeLayerGroup.clearLayers();
     const allPoints = [];
 
+    // Ohne Auswahl gilt die schnellste als hervorgehoben.
+    const highlighted = selectedRouteId || results[0]?.route.id;
+
     results.forEach((r, i) => {
       const latlngs = segmentsToLatLngs(r.route.segments);
       if (!latlngs.length) return;
       allPoints.push(...latlngs);
       const color = ROUTE_MAP_COLORS[i % ROUTE_MAP_COLORS.length];
+      const isActive = r.route.id === highlighted;
       const line = L.polyline(latlngs, {
         color,
-        weight: i === 0 ? 5 : 4,
-        opacity: 0.85,
-        dashArray: i === 0 ? null : "9 7",
+        weight: isActive ? 6 : 3,
+        opacity: isActive ? 0.95 : 0.5,
+        dashArray: isActive ? null : "8 8",
       });
       line.bindTooltip(`${r.route.label} – ${fmtHours(r.timeHours)}`, { sticky: true });
+      // Auch direkt auf der Karte auswählbar.
+      line.on("click", () => selectRoute(r.route.id));
       line.addTo(routeLayerGroup);
+      // Die hervorgehobene Linie nach vorn holen, damit sie nicht verdeckt wird.
+      if (isActive) line.bringToFront();
     });
 
     if (allPoints.length) {
@@ -842,11 +898,25 @@
     document.getElementById("map-legend").innerHTML = results
       .map((r, i) => {
         const color = ROUTE_MAP_COLORS[i % ROUTE_MAP_COLORS.length];
-        return `<span><i class="swatch" style="background:${color}"></i> ${r.route.label}${
-          i === 0 ? " (schnellste)" : ""
-        }</span>`;
+        const isActive = r.route.id === highlighted;
+        // Durchgezogen = gefüllter Balken, gestrichelt = gestrichelter Rahmen in
+        // derselben Farbe; deshalb je nach Zustand eine andere Style-Eigenschaft.
+        const swatchStyle = isActive ? `background:${color}` : `border-top-color:${color}`;
+        return `<span class="legend-item ${isActive ? "active" : ""}" data-route="${r.route.id}">
+          <i class="swatch ${isActive ? "" : "dashed"}" style="${swatchStyle}"></i>
+          ${r.route.label}${i === 0 ? " (schnellste)" : ""}</span>`;
       })
       .join("");
+
+    document.querySelectorAll("#map-legend .legend-item").forEach((el) => {
+      el.addEventListener("click", () => selectRoute(el.dataset.route));
+    });
+  }
+
+  // Auswahl umschalten: erneuter Klick auf dieselbe Route hebt sie wieder auf.
+  function selectRoute(routeId) {
+    selectedRouteId = selectedRouteId === routeId ? null : routeId;
+    render();
   }
 
   const DAY_LABEL = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -875,20 +945,48 @@
   }
 
   // Google Maps übernimmt Start, Ziel und bis zu neun Zwischenziele aus der URL.
-  // Damit fährt Maps im Wesentlichen unsere Route nach – die Wegpunkte sind
-  // Autobahnkreuze, dazwischen wählt Maps aber weiter selbst.
+  //
+  // Die Zwischenziele stammen bewusst NICHT aus den konfigurierten Kreuz-Koordinaten:
+  // Maps ordnet eine Koordinate der nächstgelegenen adressierbaren Stelle zu, und
+  // neben einem Autobahnkreuz ist das gern ein Gewerbebetrieb an der Nebenstraße –
+  // dann leitet Maps über diese Straße statt über die Autobahn. Stattdessen werden
+  // Punkte direkt aus der berechneten Streckengeometrie entnommen; die liegen
+  // garantiert auf der Fahrbahn.
+  const MAPS_MAX_WAYPOINTS = 8;
+
   function googleMapsUrl(corridorId, routeId) {
-    const pts = waypointsFor(corridorId, routeId);
-    if (pts.length < 2) return null;
-    const coord = (p) => `${p.lat},${p.lon}`;
+    const corridor = routesData.corridors.find((c) => c.id === corridorId);
+    const route = corridor?.routes?.find((r) => r.id === routeId);
+    const segs = route?.segments || [];
+    const ends = waypointsFor(corridorId, routeId);
+    if (segs.length < 2 || ends.length < 2) return null;
+
+    const fmt = (lat, lon) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
+
+    // Zwischenziele gleichmäßig über die Strecke verteilen, aber nur dort, wo die
+    // Route auf einer Autobahn läuft – sonst landet ein Stützpunkt im Stadtverkehr
+    // und erzwingt genau den Umweg, den wir vermeiden wollen.
+    const onMotorway = segs
+      .map((s, i) => ({ s, i }))
+      .filter((x) => x.s.ref && x.i > 2 && x.i < segs.length - 3);
+    const via = [];
+    if (onMotorway.length) {
+      const count = Math.min(MAPS_MAX_WAYPOINTS, Math.max(2, Math.round(segs.length / 120)));
+      for (let k = 1; k <= count; k++) {
+        const pick = onMotorway[Math.floor((onMotorway.length * k) / (count + 1))];
+        if (pick) via.push(fmt(pick.s.start.lat, pick.s.start.lon));
+      }
+    }
+
     const params = new URLSearchParams({
       api: "1",
-      origin: coord(pts[0]),
-      destination: coord(pts[pts.length - 1]),
+      origin: fmt(ends[0].lat, ends[0].lon),
+      destination: fmt(ends[ends.length - 1].lat, ends[ends.length - 1].lon),
       travelmode: "driving",
     });
-    const via = pts.slice(1, -1).slice(0, 9);
-    if (via.length) params.set("waypoints", via.map(coord).join("|"));
+    // Doppelte Stützpunkte (kurze Routen) entfernen.
+    const uniq = [...new Set(via)];
+    if (uniq.length) params.set("waypoints", uniq.join("|"));
     // URLSearchParams kodiert "|" als %7C – das akzeptiert Maps.
     return `https://www.google.com/maps/dir/?${params.toString()}`;
   }
@@ -897,7 +995,7 @@
   // Übersichtstabelle
   // ---------------------------------------------------------------------------
 
-  function renderOverview(corridor, userSpeed) {
+  function renderOverview(corridor, userSpeed, tolerance) {
     const panel = document.getElementById("overview-panel");
     const routes = corridor.routes.filter((r) => r.segments && r.segments.length);
     if (!routes.length) {
@@ -914,8 +1012,8 @@
     const rows = routes
       .map((r) => ({
         route: r,
-        w: computeRoute(corridor, r, userSpeed, { date: werktag, useTraffic: true }),
-        e: computeRoute(corridor, r, userSpeed, { date: wochenende, useTraffic: true }),
+        w: computeRoute(corridor, r, userSpeed, { date: werktag, useTraffic: true, tolerance }),
+        e: computeRoute(corridor, r, userSpeed, { date: wochenende, useTraffic: true, tolerance }),
       }))
       .sort((a, b) => a.w.timeHours - b.w.timeHours);
 
@@ -925,8 +1023,10 @@
         const freeP = Math.round((w.noneKm / w.distKm) * 100);
         const limP = Math.round(((w.limitedKm + w.localKm) / w.distKm) * 100);
         const url = googleMapsUrl(corridor.id, route.id);
+        const active = (selectedRouteId || rows[0].route.id) === route.id;
         return `
-        <tr class="${i === 0 ? "best" : ""}">
+        <tr class="${i === 0 ? "best" : ""} ${active ? "active" : ""} selectable" data-route="${route.id}"
+            title="Klicken, um diese Strecke in der Karte hervorzuheben">
           <td>
             ${route.label.replace(/^via\s+/, "")}
             <span class="via">${viaLabel(corridor.id, route.id)}</span>
@@ -957,10 +1057,19 @@
       <tbody>${body}</tbody>`;
 
     document.getElementById("overview-note").textContent =
-      `Beide Zeitspalten mit eingerechnetem Verkehr und ${userSpeed} km/h Wunschgeschwindigkeit, ` +
-      `zu festen Referenzzeitpunkten – dadurch untereinander vergleichbar, unabhängig von der oben ` +
-      `gewählten Abfahrt. "Maps" öffnet die Route mit denselben Zwischenzielen in Google Maps; ` +
-      `zwischen den Kreuzen wählt Maps den Weg weiterhin selbst.`;
+      `Beide Zeitspalten mit eingerechnetem Verkehr, ${userSpeed} km/h Wunschgeschwindigkeit` +
+      `${tolerance ? ` und +${tolerance} km/h über ausgeschilderten Limits` : ""}, zu festen ` +
+      `Referenzzeitpunkten – dadurch untereinander vergleichbar, unabhängig von der oben gewählten ` +
+      `Abfahrt. Eine Zeile anklicken hebt die Strecke in der Karte hervor. "Maps" öffnet sie in ` +
+      `Google Maps mit Stützpunkten auf der Autobahn; dazwischen wählt Maps den Weg weiterhin selbst.`;
+
+    document.querySelectorAll("#overview-table tr.selectable").forEach((tr) => {
+      tr.addEventListener("click", (ev) => {
+        // Klick auf den Maps-Link soll die Auswahl nicht mit umschalten.
+        if (ev.target.closest("a")) return;
+        selectRoute(tr.dataset.route);
+      });
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -1012,6 +1121,7 @@
     const userSpeed = Number(document.getElementById("speed-input").value) || DEFAULT_SPEED;
     const date = departure();
     const useTraffic = document.getElementById("traffic-toggle").checked;
+    const tolerance = Number(document.getElementById("tolerance-select").value) || 0;
 
     const emptyBox = document.getElementById("empty");
     const routesEl = document.getElementById("routes");
@@ -1026,11 +1136,11 @@
       return;
     }
     emptyBox.style.display = "none";
-    renderOverview(corridor, userSpeed);
+    renderOverview(corridor, userSpeed, tolerance);
 
     const results = corridor.routes
       .filter((r) => r.segments && r.segments.length)
-      .map((r) => computeRoute(corridor, r, userSpeed, { date, useTraffic }))
+      .map((r) => computeRoute(corridor, r, userSpeed, { date, useTraffic, tolerance }))
       .sort((a, b) => a.timeHours - b.timeHours);
 
     routesEl.innerHTML = results
@@ -1062,6 +1172,19 @@
     }
     select.addEventListener("change", () => {
       localStorage.setItem(CORRIDOR_STORAGE_KEY, select.value);
+      // Routen-IDs wiederholen sich über Korridore hinweg ("a3" gibt es mehrfach) –
+      // die Auswahl darf deshalb nicht in den neuen Korridor übernommen werden.
+      selectedRouteId = null;
+      render();
+    });
+  }
+
+  function setupToleranceSelect() {
+    const el = document.getElementById("tolerance-select");
+    const saved = localStorage.getItem(TOLERANCE_STORAGE_KEY);
+    if (saved !== null && [...el.options].some((o) => o.value === saved)) el.value = saved;
+    el.addEventListener("change", () => {
+      localStorage.setItem(TOLERANCE_STORAGE_KEY, el.value);
       render();
     });
   }
@@ -1121,6 +1244,7 @@
 
       populateCorridorSelect();
       setupSpeedInput();
+      setupToleranceSelect();
       setupDepartureInput();
       setupTrafficToggle();
 

@@ -65,17 +65,49 @@ Abfahrtsfeld – sonst wären die Zeilen nicht mehr untereinander vergleichbar. 
 eine konkrete Abfahrt bewerten will, nutzt das Feld oben und liest die
 Routenkarten darunter.
 
-Die Spalte **Maps** öffnet die jeweilige Route in Google Maps, mit Start, Ziel und
-den Autobahnkreuzen als Zwischenziele (Maps-URL-Schema `api=1`, maximal neun
-Zwischenziele). Wichtig: Maps übernimmt nur diese Stützpunkte – *zwischen* ihnen
-wählt es den Weg weiterhin nach eigener Logik. Da die Stützpunkte Autobahnkreuze
-sind, entspricht das Ergebnis der berechneten Route in aller Regel, garantiert
-ist es aber nicht. Für den Export lädt die Seite zusätzlich
-`config/corridors.json`, weil nur dort die Wegpunkt-Koordinaten stehen.
+Ein Klick auf eine Zeile hebt die Strecke in der Karte hervor: durchgezogene
+Linie, alle anderen gestrichelt. Erneuter Klick hebt die Auswahl auf, dann ist
+die schnellste hervorgehoben. Dasselbe geht über die Kartenlegende oder direkt
+auf einer Linie.
+
+Die Spalte **Maps** öffnet die jeweilige Route in Google Maps (URL-Schema
+`api=1`). Die Zwischenziele stammen bewusst **nicht** aus den konfigurierten
+Kreuz-Koordinaten, sondern werden gleichmäßig aus der berechneten
+Streckengeometrie entnommen – und nur dort, wo die Route auf einer Autobahn
+läuft. Grund: Maps ordnet eine Koordinate der nächstgelegenen adressierbaren
+Stelle zu, und neben einem Autobahnkreuz ist das gern ein Gewerbebetrieb an der
+Nebenstraße; Maps leitet dann über diese Straße statt über die Autobahn. Punkte
+aus der Geometrie liegen dagegen exakt auf der Fahrbahn.
+
+Auch damit gilt: Maps übernimmt nur die Stützpunkte, *zwischen* ihnen wählt es
+den Weg weiterhin selbst. Start und Ziel bleiben die konfigurierten Adressen;
+dafür lädt die Seite zusätzlich `config/corridors.json`.
 
 Ganz unten listet der Abschnitt **Datenstand** für jede Quelle Herkunft und
 Abrufzeitpunkt auf, inklusive des Hinweises, dass die Stundenverteilung eine
 Modellannahme ist.
+
+## Toleranz über ausgeschilderten Limits
+
+Praktisch niemand fährt exakt das ausgeschilderte Limit. Über die Einstellung
+„Tempo über ausgeschilderten Limits" lässt sich ein Zuschlag von 0 bis 20 km/h
+wählen, der auf **echte Limits** angewendet wird: getaggte `maxspeed`-Werte, die
+als Limit-Ersatz angesetzte Richtgeschwindigkeit auf ungetaggten
+Autobahnabschnitten und Baustellen-Tempolimits.
+
+Nicht angewendet wird er auf Ortsdurchfahrten und Zubringer. Dort steht kein
+Limit in den Daten, sondern die von OSRM aus dem Straßentyp abgeleitete
+tatsächliche Reisegeschwindigkeit – die um 15 zu erhöhen wäre sinnlos. Ebenso
+unberührt bleiben gemeldete Sperrungen.
+
+Größenordnung auf der Referenzstrecke Köln → München (604 km, davon rund 100 km
+mit ausgeschildertem Limit): +15 km/h sparen etwa zehn Minuten. Der Effekt ist
+also spürbar, aber deutlich kleiner als der Einfluss der Wunschgeschwindigkeit
+auf den unbegrenzten Abschnitten.
+
+Die ausgeschilderten Limits sind selbstverständlich verbindlich – die
+Einstellung dient dazu, die Schätzung an das tatsächliche Fahrverhalten
+anzupassen.
 
 ## Abfahrtszeit und Verkehrsaufkommen
 
@@ -127,6 +159,19 @@ auf freier Strecke: real ca. **4 h 40 min** reine Fahrzeit. Das Modell liefert f
 die A9/A3-Route bei 185 km/h **4 h 42 min ohne Verkehrsaufkommen** – passt.
 Mit eingerechnetem Verkehr an einem Werktagvormittag sind es rund 5 h 17 min, und
 die A9/A3 setzt sich dann korrekt vor die A61.
+
+Zweite Referenzfahrt, Gegenrichtung: Köln → München über A3/A7/A8 an einem
+Sonntagnachmittag (16:15), real **4 h 40 min**. Das Modell bei 185 km/h und
+eingerechnetem Verkehr:
+
+| Toleranz | Modell | Abweichung |
+|---|---|---|
+| 0 | 4 h 54 min | +14 min |
+| +10 km/h | 4 h 47 min | +7 min |
+| +15 km/h | 4 h 44 min | +4 min |
+
+Beide Referenzfahrten werden also mit +10 bis +15 km/h Toleranz auf wenige
+Minuten genau getroffen.
 
 Ohne Verkehrsfaktor liegt die A61-Route zeitlich knapp vorn, obwohl der
 A61-Abschnitt selbst nur zu rund einem Drittel unbegrenzt ist – sie kompensiert
