@@ -31,5 +31,22 @@ jobs:
           git config user.name "routenplaner-bot"
           git config user.email "actions@users.noreply.github.com"
           git add routenplaner/data/traffic.json
-          git commit -m "Routenplaner: Verkehrsdaten aktualisiert [skip ci]" || echo "Keine Änderungen"
-          git push
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen"
+            exit 0
+          fi
+          git commit -m "Routenplaner: Verkehrsdaten aktualisiert [skip ci]"
+          # Die drei Datenjobs laufen unabhängig voneinander und überholen sich
+          # beim Push. Der Tempolimit-Job braucht rund zehn Minuten und findet
+          # danach regelmäßig einen veränderten Stand vor. Deshalb vor jedem
+          # Versuch neu aufsetzen statt den Lauf scheitern zu lassen.
+          for versuch in 1 2 3 4 5; do
+            if git pull --rebase --autostash origin main && git push; then
+              echo "Gepusht im Versuch $versuch"
+              exit 0
+            fi
+            echo "Push-Versuch $versuch fehlgeschlagen, neuer Anlauf ..."
+            sleep $((versuch * 10))
+          done
+          echo "Push nach fünf Versuchen fehlgeschlagen" >&2
+          exit 1
