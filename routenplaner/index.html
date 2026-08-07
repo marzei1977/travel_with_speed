@@ -365,13 +365,15 @@
 
     <div class="updated" id="updated"></div>
 
-    <div class="panel" id="overview-panel" style="display:none">
-      <h2>Übersicht</h2>
-      <div class="table-scroll">
-        <table id="overview-table"></table>
-      </div>
-      <div class="hint" id="overview-note"></div>
+    <div id="empty" class="empty-box" style="display:none">
+      Für diese Strecke liegen noch keine Daten vor. Führe
+      <code>node routenplaner/scripts/fetch-route-speedlimits.mjs</code> aus (oder warte auf
+      den nächsten automatischen Lauf), um <code>data/routes.json</code> zu erzeugen.
     </div>
+
+    <div class="navi-compare" id="navi-compare"></div>
+
+    <div id="routes"></div>
 
     <div class="panel" id="map-panel" style="display:none">
       <h2>Kartenansicht</h2>
@@ -379,15 +381,13 @@
       <div class="map-legend" id="map-legend"></div>
     </div>
 
-    <div id="empty" class="empty-box" style="display:none">
-      Für diese Strecke liegen noch keine Daten vor. Führe
-      <code>node routenplaner/scripts/fetch-route-speedlimits.mjs</code> aus (oder warte auf
-      den nächsten automatischen Lauf), um <code>data/routes.json</code> zu erzeugen.
+    <div class="panel" id="overview-panel" style="display:none">
+      <h2>Übersicht &amp; Vergleich</h2>
+      <div class="table-scroll">
+        <table id="overview-table"></table>
+      </div>
+      <div class="hint" id="overview-note"></div>
     </div>
-
-    <div id="routes"></div>
-
-    <div class="navi-compare" id="navi-compare"></div>
 
     <div class="panel" id="datastate-panel" style="display:none">
       <h2>Datenstand</h2>
@@ -926,9 +926,16 @@
   }
 
   // Auswahl umschalten: erneuter Klick auf dieselbe Route hebt sie wieder auf.
-  function selectRoute(routeId) {
+  //
+  // Die Übersichtstabelle steht unter der Karte. Wird von dort ausgewählt, ändert
+  // sich die Hervorhebung außerhalb des Sichtfelds – deshalb wird die Karte dann
+  // herangeholt. Bei Klick auf die Karte selbst oder ihre Legende wäre das unnötig.
+  function selectRoute(routeId, opts) {
     selectedRouteId = selectedRouteId === routeId ? null : routeId;
     render();
+    if (opts && opts.revealMap) {
+      document.getElementById("map-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }
 
   const DAY_LABEL = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -1079,7 +1086,7 @@
       tr.addEventListener("click", (ev) => {
         // Klick auf den Maps-Link soll die Auswahl nicht mit umschalten.
         if (ev.target.closest("a")) return;
-        selectRoute(tr.dataset.route);
+        selectRoute(tr.dataset.route, { revealMap: true });
       });
     });
   }
