@@ -1,0 +1,51 @@
+name: Routenplaner – Tempolimit-Raster aktualisieren
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: routenplaner-speedgrid
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bundesweites Tempolimit-Raster bauen
+        run: node routenplaner/scripts/fetch-speedgrid.mjs
+
+      - name: Ergebnis committen
+        run: |
+          git config user.name "routenplaner-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add routenplaner/data/speedgrid.json
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen"
+            exit 0
+          fi
+          git commit -m "Routenplaner: Tempolimit-Raster aktualisiert [skip ci]"
+          # Die drei Datenjobs laufen unabhängig voneinander und überholen sich
+          # beim Push. Der Tempolimit-Job braucht rund zehn Minuten und findet
+          # danach regelmäßig einen veränderten Stand vor. Deshalb vor jedem
+          # Versuch neu aufsetzen statt den Lauf scheitern zu lassen.
+          for versuch in 1 2 3 4 5; do
+            if git pull --rebase --autostash origin main && git push; then
+              echo "Gepusht im Versuch $versuch"
+              exit 0
+            fi
+            echo "Push-Versuch $versuch fehlgeschlagen, neuer Anlauf ..."
+            sleep $((versuch * 10))
+          done
+          echo "Push nach fünf Versuchen fehlgeschlagen" >&2
+          exit 1

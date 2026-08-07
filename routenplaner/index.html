@@ -107,7 +107,7 @@
     margin-bottom: 0.5rem;
   }
 
-  select, input[type="number"], input[type="datetime-local"] {
+  select, input[type="text"], input[type="number"], input[type="datetime-local"] {
     font: inherit;
     color: var(--text);
     background: var(--surface-sunken);
@@ -215,6 +215,46 @@
     white-space: nowrap;
   }
   .btn-plain:hover { background: var(--accent-soft); }
+
+  /* Start/Ziel mit Vorschlagsliste ----------------------------------- */
+  .places { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: start; }
+  .place { position: relative; }
+  .place input { width: 100%; }
+  .swap {
+    font: inherit; border: none; background: var(--surface-sunken); color: var(--muted);
+    border-radius: var(--r-control); padding: 0.7rem 0.6rem; cursor: pointer; line-height: 1;
+  }
+  .swap:hover { background: var(--accent-soft); color: var(--accent); }
+
+  .suggest {
+    position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px);
+    background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+    overflow: hidden; display: none;
+  }
+  .suggest.open { display: block; }
+  .suggest button {
+    display: block; width: 100%; text-align: left; font: inherit; border: none;
+    background: none; color: var(--text); padding: 0.6rem 0.75rem; cursor: pointer;
+  }
+  .suggest button:hover, .suggest button.active { background: var(--accent-soft); }
+  .suggest .s-main { font-size: 0.9375rem; }
+  .suggest .s-sub { font-size: 0.75rem; color: var(--muted); }
+
+  .places-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center; }
+  .places-actions select { flex: 1; min-width: 0; }
+  .btn-primary {
+    font: inherit; font-weight: 600; border: none; background: var(--accent); color: #fff;
+    border-radius: var(--r-control); padding: 0.7rem 1.1rem; cursor: pointer; white-space: nowrap;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; }
+  .search-state { font-size: 0.8125rem; color: var(--muted); margin-top: 0.5rem; min-height: 1.2em; }
+  .search-state.err { color: var(--danger); }
+
+  @media (max-width: 560px) {
+    .places { grid-template-columns: 1fr; }
+    .swap { justify-self: end; padding: 0.4rem 0.7rem; }
+  }
 
   /* Erklärungen: standardmäßig eingeklappt ---------------------------- */
   details.explain { margin-top: 1.4rem; border-top: 1px solid var(--hairline); padding-top: 1rem; }
@@ -398,8 +438,25 @@
     <div class="card">
       <div class="controls">
         <div class="ctl">
-          <label for="corridor-select">Strecke</label>
-          <select id="corridor-select"></select>
+          <span class="ctl-label">Strecke</span>
+          <div class="places">
+            <div class="place">
+              <input type="text" id="from-input" placeholder="Von – Stadt, optional Straße"
+                     autocomplete="off" spellcheck="false" />
+              <div class="suggest" id="from-suggest"></div>
+            </div>
+            <button type="button" id="swap-btn" class="swap" title="Start und Ziel tauschen" aria-label="Start und Ziel tauschen">⇅</button>
+            <div class="place">
+              <input type="text" id="to-input" placeholder="Nach – Stadt, optional Straße"
+                     autocomplete="off" spellcheck="false" />
+              <div class="suggest" id="to-suggest"></div>
+            </div>
+          </div>
+          <div class="places-actions">
+            <button type="button" id="search-btn" class="btn-primary">Routen suchen</button>
+            <select id="corridor-select" title="Gespeicherte Strecken"></select>
+          </div>
+          <div class="search-state" id="search-state"></div>
         </div>
 
         <div class="ctl">
@@ -728,8 +785,10 @@
   }
 
   function roadworksAffectingSegment(route, corridorId, segmentIndex) {
-    if (!roadworksData) return [];
-    return roadworksData.items.filter((item) =>
+    // Vorberechnete Meldungen der gespeicherten Strecken plus die live geholten
+    // der freien Suche.
+    const alle = [...(roadworksData?.items || []), ...freeRoadworks];
+    return alle.filter((item) =>
       item.affects.some(
         (a) =>
           a.corridorId === corridorId && a.routeId === route.id && a.segmentIndex === segmentIndex
@@ -1040,6 +1099,7 @@
   // Nur die Punkte zwischen Start und Ziel, gekürzt um den Klammerzusatz
   // ("Kreuz Biebelried (A3/A7)" -> "Kreuz Biebelried").
   function viaLabel(corridorId, routeId) {
+    if (corridorId === "__frei__") return "";
     const pts = waypointsFor(corridorId, routeId);
     if (pts.length < 3) return "direkt";
     return pts
@@ -1059,10 +1119,13 @@
   const MAPS_MAX_WAYPOINTS = 8;
 
   function googleMapsUrl(corridorId, routeId) {
-    const corridor = routesData.corridors.find((c) => c.id === corridorId);
+    const corridor = allCorridors().find((c) => c.id === corridorId);
     const route = corridor?.routes?.find((r) => r.id === routeId);
     const segs = route?.segments || [];
-    const ends = waypointsFor(corridorId, routeId);
+    let ends = waypointsFor(corridorId, routeId);
+    if (corridorId === "__frei__" && segs.length) {
+      ends = [segs[0].start, segs[segs.length - 1].end];
+    }
     if (segs.length < 2 || ends.length < 2) return null;
 
     const fmt = (lat, lon) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
@@ -1205,6 +1268,16 @@
           : `abgerufen ${fmtDate(trafficData.updatedAt)}`,
       ],
       [
+        "Autobahnkreuze (freie Suche)",
+        junctionsData ? `OpenStreetMap – ${junctionsData.kreuze.length} Kreuze und Dreiecke` : "nicht geladen",
+        junctionsData ? `abgerufen ${fmtDate(junctionsData.updatedAt)}` : "",
+      ],
+      [
+        "Tempolimit-Raster (freie Suche)",
+        speedGridData ? `OpenStreetMap – bundesweit, ${Object.keys(speedGridData.refs).length} Autobahnen` : "nicht geladen",
+        speedGridData ? `abgerufen ${fmtDate(speedGridData.updatedAt)}` : "",
+      ],
+      [
         "Stundenverteilung über den Tag",
         "Modellannahme im Code, keine Messung",
         "typisierte Ganglinie mit Zuschlag für Freitagnachmittag und Sonntagabend",
@@ -1221,7 +1294,7 @@
 
   function render() {
     const corridorId = document.getElementById("corridor-select").value;
-    const corridor = routesData.corridors.find((c) => c.id === corridorId);
+    const corridor = allCorridors().find((c) => c.id === corridorId);
     const userSpeed = Number(document.getElementById("speed-input").value) || DEFAULT_SPEED;
     const date = departure();
     const useTraffic = document.getElementById("traffic-toggle").checked;
@@ -1276,13 +1349,13 @@
 
   function populateCorridorSelect() {
     const select = document.getElementById("corridor-select");
-    select.innerHTML = routesData.corridors
-      .map((c) => `<option value="${c.id}">${c.name}</option>`)
+    const vorher = select.value;
+    select.innerHTML = allCorridors()
+      .map((c) => `<option value="${c.id}">${c.id === "__frei__" ? "Suchergebnis: " : ""}${c.name}</option>`)
       .join("");
     const saved = localStorage.getItem(CORRIDOR_STORAGE_KEY);
-    if (saved && routesData.corridors.some((c) => c.id === saved)) {
-      select.value = saved;
-    }
+    if (vorher && allCorridors().some((c) => c.id === vorher)) select.value = vorher;
+    else if (saved && allCorridors().some((c) => c.id === saved)) select.value = saved;
     select.addEventListener("change", () => {
       localStorage.setItem(CORRIDOR_STORAGE_KEY, select.value);
       // Routen-IDs wiederholen sich über Korridore hinweg ("a3" gibt es mehrfach) –
@@ -1322,6 +1395,576 @@
     });
   }
 
+  // ===========================================================================
+  // Freie Streckensuche
+  // ===========================================================================
+
+  const OSRM = "https://router.project-osrm.org/route/v1/driving";
+  const PHOTON = "https://photon.komoot.io/api/";
+  const AUTOBAHN_API = "https://verkehr.autobahn.de/o/autobahn";
+  // Chunklänge wie in den Skripten: OSRM-Steps sind auf der Autobahn bis zu 150 km
+  // lang und als Auswertungseinheit unbrauchbar.
+  const CHUNK_M = 1000;
+  const DEFAULT_MAXSPEED_FALLBACK = 130;
+
+  let junctionsData = null;
+  let speedGridData = null;
+  let speedGrid = null;     // "ref|la|lo" -> Limit (0 = unbegrenzt)
+  let freeCorridor = null;  // Ergebnis der letzten freien Suche
+  let freeRoadworks = [];
+
+  function allCorridors() {
+    const preset = routesData?.corridors || [];
+    return freeCorridor ? [freeCorridor, ...preset] : preset;
+  }
+
+  // --- Tempolimit aus dem bundesweiten Raster ------------------------------
+  function buildSpeedGrid() {
+    speedGrid = new Map();
+    if (!speedGridData) return;
+    for (const [ref, flat] of Object.entries(speedGridData.refs || {})) {
+      let la = 0;
+      let lo = 0;
+      for (let i = 0; i < flat.length; i += 3) {
+        la += flat[i];
+        lo += flat[i + 1];
+        speedGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]);
+      }
+    }
+  }
+
+  // 0 im Raster bedeutet unbegrenzt; hier als "none" zurückgegeben, damit die
+  // Segmente dieselbe Form haben wie die vom Skript erzeugten.
+  function speedFromGrid(ref, lat, lon) {
+    if (!speedGrid) return null;
+    const g = speedGridData.grid;
+    const la = Math.round(lat * g);
+    const lo = Math.round(lon * g);
+    let hit = speedGrid.get(`${ref}|${la}|${lo}`);
+    if (hit === undefined) {
+      // Nachbarzellen absuchen: die Route liegt selten exakt im Zellmittelpunkt.
+      let bestD = 99;
+      for (let d1 = -1; d1 <= 1; d1++) {
+        for (let d2 = -1; d2 <= 1; d2++) {
+          const v = speedGrid.get(`${ref}|${la + d1}|${lo + d2}`);
+          if (v === undefined) continue;
+          const d = Math.abs(d1) + Math.abs(d2);
+          if (d < bestD) {
+            bestD = d;
+            hit = v;
+          }
+        }
+      }
+    }
+    if (hit === undefined) return null;
+    return hit === 0 ? "none" : hit;
+  }
+
+  // --- Geometrie -----------------------------------------------------------
+  function normRef(ref) {
+    const m = String(ref || "").toUpperCase().match(/^A\s?(\d+)$/);
+    return m ? `A${m[1]}` : null;
+  }
+
+  function cumulative(coords) {
+    const cum = [0];
+    for (let i = 1; i < coords.length; i++) {
+      cum.push(cum[i - 1] + distanceKm(coords[i - 1][1], coords[i - 1][0], coords[i][1], coords[i][0]) * 1000);
+    }
+    return cum;
+  }
+
+  function pointAt(coords, cum, target) {
+    if (target <= 0) return { lat: coords[0][1], lon: coords[0][0] };
+    const last = cum.length - 1;
+    if (target >= cum[last]) return { lat: coords[last][1], lon: coords[last][0] };
+    let lo = 1;
+    let hi = last;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (cum[mid] < target) lo = mid + 1;
+      else hi = mid;
+    }
+    const a = coords[lo - 1];
+    const b = coords[lo];
+    const t = cum[lo] > cum[lo - 1] ? (target - cum[lo - 1]) / (cum[lo] - cum[lo - 1]) : 0;
+    return { lat: a[1] + (b[1] - a[1]) * t, lon: a[0] + (b[0] - a[0]) * t };
+  }
+
+  // --- OSRM ---------------------------------------------------------------
+  async function osrmRoute(points, { alternatives = false } = {}) {
+    const coords = points.map((p) => `${p.lon},${p.lat}`).join(";");
+    const url = `${OSRM}/${coords}?overview=full&geometries=geojson&steps=true` +
+      (alternatives ? "&alternatives=3" : "");
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Router antwortet ${res.status}`);
+    const data = await res.json();
+    if (data.code !== "Ok" || !data.routes?.length) throw new Error("Keine Route gefunden");
+    return data.routes;
+  }
+
+  // OSRM-Route in dieselbe Segmentform bringen, die die Skripte erzeugen.
+  function segmentsFromOsrm(route) {
+    const steps = route.legs.flatMap((l) => l.steps);
+    const ivs = [];
+    let acc = 0;
+    for (const st of steps) {
+      ivs.push({
+        from: acc,
+        to: acc + st.distance,
+        ref: normRef(st.ref),
+        name: st.name || null,
+        avg: st.duration > 0 ? st.distance / 1000 / (st.duration / 3600) : null,
+      });
+      acc += st.distance;
+    }
+    const coords = route.geometry.coordinates;
+    const cum = cumulative(coords);
+    const total = cum[cum.length - 1];
+    const segments = [];
+    for (let k = 0; k * CHUNK_M < total; k++) {
+      const from = k * CHUNK_M;
+      const to = Math.min(from + CHUNK_M, total);
+      if (to <= from) continue;
+      const start = pointAt(coords, cum, from);
+      const end = pointAt(coords, cum, to);
+      const mid = pointAt(coords, cum, (from + to) / 2);
+      const iv = ivs.find((x) => x.from <= (from + to) / 2 && (from + to) / 2 <= x.to) || ivs[ivs.length - 1];
+      const ref = iv?.ref || null;
+      const maxspeedTag = ref ? speedFromGrid(ref, mid.lat, mid.lon) : null;
+      let fallbackSpeedKmh = null;
+      if (maxspeedTag === null) {
+        fallbackSpeedKmh = ref ? DEFAULT_MAXSPEED_FALLBACK : Math.round(iv?.avg || 50);
+      }
+      segments.push({
+        ref,
+        name: iv?.name || null,
+        distanceMeters: Math.round(to - from),
+        maxspeedTag,
+        fallbackSpeedKmh,
+        start,
+        end,
+      });
+    }
+    return segments;
+  }
+
+  // Dubletten erkennen: die Autobahn-Folge allein genügt nicht, weil vier über
+  // verschiedene Kreuze erzwungene Routen dieselbe Trasse mit minimal anderer
+  // Stadtein- und -ausfahrt ergeben können. Verglichen wird deshalb die
+  // tatsächliche räumliche Überlappung – dieselbe Idee wie das
+  // "limited sharing"-Kriterium klassischer Alternativrouten-Verfahren.
+  const OVERLAP_GRID = 20; // 0,05° ~ 5 km
+  function routeCells(segments) {
+    const cells = new Set();
+    for (const s of segments) {
+      cells.add(`${Math.round(s.start.lat * OVERLAP_GRID)}|${Math.round(s.start.lon * OVERLAP_GRID)}`);
+    }
+    return cells;
+  }
+  // Anteil der kürzeren Route, der auch auf der längeren liegt.
+  function overlapRatio(a, b) {
+    let shared = 0;
+    for (const c of a) if (b.has(c)) shared++;
+    return shared / Math.min(a.size, b.size);
+  }
+
+  function routeLabel(segments) {
+    const km = {};
+    for (const s of segments) {
+      if (!s.ref) continue;
+      km[s.ref] = (km[s.ref] || 0) + s.distanceMeters;
+    }
+    const top = Object.entries(km)
+      .filter(([, m]) => m > 25000)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([r]) => r);
+    // Reihenfolge entlang der Fahrt, nicht nach Länge
+    const order = [];
+    for (const s of segments) {
+      if (s.ref && top.includes(s.ref) && !order.includes(s.ref)) order.push(s.ref);
+    }
+    return order.length ? `über ${order.join(" – ")}` : "Direkte Route";
+  }
+
+  // --- Kandidaten über Autobahnkreuze --------------------------------------
+  // Kreuze, die grob zwischen Start und Ziel liegen: Umweg über das Kreuz darf
+  // die Luftlinie um höchstens 35 % überschreiten. Aus dieser Menge werden
+  // wenige, weit auseinanderliegende ausgewählt – jedes zusätzliche Kreuz kostet
+  // eine Routing-Anfrage, und nah beieinander liegende ergeben dieselbe Route.
+  function candidateJunctions(from, to, max) {
+    if (!junctionsData?.kreuze) return [];
+    const direct = distanceKm(from.lat, from.lon, to.lat, to.lon);
+    const scored = [];
+    for (const k of junctionsData.kreuze) {
+      const detour =
+        distanceKm(from.lat, from.lon, k.lat, k.lon) + distanceKm(k.lat, k.lon, to.lat, to.lon);
+      if (detour > direct * 1.35) continue;
+      scored.push({ ...k, detour });
+    }
+    scored.sort((a, b) => a.detour - b.detour);
+    const minGapKm = Math.max(50, direct / 8);
+    const picked = [];
+    for (const k of scored) {
+      if (picked.length >= max) break;
+      if (picked.every((p) => distanceKm(p.lat, p.lon, k.lat, k.lon) >= minGapKm)) picked.push(k);
+    }
+    return picked;
+  }
+
+  // --- Baustellen live ------------------------------------------------------
+  function parseSpeedLimitTxt(desc) {
+    const m = (desc || []).join(" ").match(/Max\.\s*(\d+)\s*km\/h/i);
+    return m ? parseInt(m[1], 10) : null;
+  }
+  function parseLengthTxt(desc) {
+    const m = (desc || []).join(" ").match(/Länge:\s*([\d.,]+)\s*km/i);
+    if (!m) return null;
+    const n = parseFloat(m[1].replace(",", "."));
+    return Number.isFinite(n) ? n : null;
+  }
+  const WD_TXT = { sonntag: 0, montag: 1, dienstag: 2, mittwoch: 3, donnerstag: 4, freitag: 5, samstag: 6 };
+  function parseWindowsTxt(lines) {
+    const text = (lines || []).join("\n");
+    const windows = [];
+    const dayRe = /(\d{2})\.(\d{2})\.(\d{2})\s+von\s+(\d{2}):(\d{2})\s+bis\s+(\d{2}):(\d{2})\s+Uhr/g;
+    let m;
+    while ((m = dayRe.exec(text)) !== null) {
+      windows.push({
+        art: "datum", datum: `20${m[3]}-${m[2]}-${m[1]}`,
+        vonMin: +m[4] * 60 + +m[5], bisMin: +m[6] * 60 + +m[7],
+      });
+    }
+    const recRe = /Jeden\s+([A-Za-zÄÖÜäöü,\s und]+?)\s+zwischen\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+und\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+von\s+(\d{2}):(\d{2})\s+bis\s+(\d{2}):(\d{2})/g;
+    while ((m = recRe.exec(text)) !== null) {
+      const tage = Object.entries(WD_TXT).filter(([n]) => m[1].toLowerCase().includes(n)).map(([, i]) => i);
+      if (!tage.length) continue;
+      windows.push({
+        art: "wochentage", tage,
+        abDatum: `20${m[4]}-${m[3]}-${m[2]}`, bisDatum: `20${m[7]}-${m[6]}-${m[5]}`,
+        vonMin: +m[8] * 60 + +m[9], bisMin: +m[10] * 60 + +m[11],
+      });
+    }
+    const ausnahmen = [];
+    const idx = (lines || []).findIndex((l) => /gilt nicht an folgenden Tagen/i.test(l));
+    if (idx >= 0) {
+      for (const l of lines.slice(idx + 1)) {
+        const e = l.trim().match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+        if (!e) break;
+        ausnahmen.push(`20${e[3]}-${e[2]}-${e[1]}`);
+      }
+    }
+    return { windows, ausnahmen };
+  }
+  function inHorizonTxt(desc) {
+    const text = (desc || []).join(" ");
+    const parse = (re) => {
+      const m = text.match(re);
+      if (!m) return null;
+      return new Date(Date.UTC(2000 + +m[3], +m[2] - 1, +m[1]));
+    };
+    const begin = parse(/Beginn:\s*(\d{2})\.(\d{2})\.(\d{2})/);
+    const end = parse(/Ende:\s*(\d{2})\.(\d{2})\.(\d{2})/);
+    const now = new Date();
+    if (begin && begin > new Date(now.getTime() + 14 * 86400_000)) return false;
+    if (end && end < now) return false;
+    return true;
+  }
+
+  // Abstand Punkt -> Strecke, äquirektangulär genähert (kurze Distanzen).
+  function pointToSegM(p, a, b) {
+    const R = 6371000;
+    const rad = (d) => (d * Math.PI) / 180;
+    const latRef = rad(a.lat);
+    const x = (lon) => rad(lon) * Math.cos(latRef) * R;
+    const y = (lat) => rad(lat) * R;
+    const px = x(p.lon), py = y(p.lat);
+    const ax = x(a.lon), ay = y(a.lat);
+    const bx = x(b.lon), by = y(b.lat);
+    const dx = bx - ax, dy = by - ay;
+    const len = dx * dx + dy * dy;
+    let t = len === 0 ? 0 : ((px - ax) * dx + (py - ay) * dy) / len;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  }
+  function sameDirection2(pts, a, b) {
+    if (pts.length < 2) return true;
+    const rad = (d) => (d * Math.PI) / 180;
+    const v = (p, q) => [(rad(q.lon) - rad(p.lon)) * Math.cos(rad(p.lat)), rad(q.lat) - rad(p.lat)];
+    const vi = v(pts[0], pts[pts.length - 1]);
+    const vs = v(a, b);
+    const mi = Math.hypot(...vi), ms = Math.hypot(...vs);
+    if (!mi || !ms) return true;
+    return (vi[0] * vs[0] + vi[1] * vs[1]) / (mi * ms) > 0;
+  }
+
+  async function fetchRoadworksForRefs(refs) {
+    const items = [];
+    // Nacheinander statt parallel: der Dienst ist öffentlich und kostenlos.
+    for (const ref of refs) {
+      for (const kind of ["roadworks", "warning"]) {
+        try {
+          const res = await fetch(`${AUTOBAHN_API}/${ref}/services/${kind}`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const list = data[kind === "roadworks" ? "roadworks" : "warning"] || [];
+          for (const it of list) {
+            if (it.future || !inHorizonTxt(it.description)) continue;
+            const geom = it.geometry?.coordinates;
+            const pts = geom
+              ? geom.map(([lon, lat]) => ({ lat, lon }))
+              : it.coordinate
+              ? [{ lat: +it.coordinate.lat, lon: +it.coordinate.long }]
+              : [];
+            if (!pts.length) continue;
+            items.push({
+              id: `${ref}-${kind}-${it.identifier || it.title}`,
+              ref, type: kind === "roadworks" ? "roadworks" : "warning",
+              title: it.title || null, subtitle: it.subtitle || null,
+              description: it.description || [],
+              isBlocked: it.isBlocked === "true" || it.isBlocked === true,
+              speedLimitKmh: parseSpeedLimitTxt(it.description),
+              lengthKm: parseLengthTxt(it.description),
+              ...parseWindowsTxt(it.description),
+              pts,
+            });
+          }
+        } catch {
+          // Ein ausgefallener Abruf darf die Suche nicht scheitern lassen.
+        }
+      }
+    }
+    return items;
+  }
+
+  function attachRoadworks(items, corridor) {
+    const out = [];
+    for (const item of items) {
+      const affects = [];
+      for (const route of corridor.routes) {
+        route.segments.forEach((seg, i) => {
+          if (seg.ref !== item.ref) return;
+          let best = Infinity;
+          for (const p of item.pts) {
+            const d = pointToSegM(p, seg.start, seg.end);
+            if (d < best) best = d;
+          }
+          if (best > 1500) return;
+          if (!sameDirection2(item.pts, seg.start, seg.end)) return;
+          affects.push({ corridorId: corridor.id, routeId: route.id, segmentIndex: i });
+        });
+      }
+      if (affects.length) {
+        const { pts, ...rest } = item;
+        out.push({ ...rest, affects });
+      }
+    }
+    return out;
+  }
+
+  // --- Ortssuche ------------------------------------------------------------
+  // Bewusst ohne Hausnummern: die Ebenen city/street/locality/district liefern
+  // Ortsmitten und Straßen. Wer nur eine Stadt eingibt, bekommt deren Zentrum.
+  async function geocode(query) {
+    const url = `${PHOTON}?q=${encodeURIComponent(query)}&limit=6&lang=de` +
+      `&layer=city&layer=street&layer=locality&layer=district` +
+      `&bbox=5.8,47.2,15.1,55.1`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Ortssuche nicht erreichbar");
+    const data = await res.json();
+    return (data.features || []).map((f) => {
+      const p = f.properties;
+      const teile = [p.name, p.city && p.city !== p.name ? p.city : null, p.state];
+      return {
+        lat: f.geometry.coordinates[1],
+        lon: f.geometry.coordinates[0],
+        label: p.name || query,
+        detail: teile.filter(Boolean).slice(1).join(" · ") || p.country || "",
+        typ: p.type,
+      };
+    });
+  }
+
+  const chosen = { from: null, to: null };
+
+  function setupPlaceInput(which) {
+    const input = document.getElementById(`${which}-input`);
+    const box = document.getElementById(`${which}-suggest`);
+    let timer = null;
+
+    const close = () => box.classList.remove("open");
+
+    input.addEventListener("input", () => {
+      chosen[which] = null;
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length < 3) return close();
+      // Entprellt, damit nicht bei jedem Tastendruck eine Anfrage rausgeht.
+      timer = setTimeout(async () => {
+        try {
+          const hits = await geocode(q);
+          if (!hits.length) return close();
+          box.innerHTML = hits
+            .map((h, i) => `<button type="button" data-i="${i}">
+                <span class="s-main">${h.label}</span>
+                <span class="s-sub">${h.detail}</span></button>`)
+            .join("");
+          box.querySelectorAll("button").forEach((b) => {
+            b.addEventListener("click", () => {
+              const h = hits[+b.dataset.i];
+              chosen[which] = h;
+              input.value = h.detail ? `${h.label}, ${h.detail.split(" · ")[0]}` : h.label;
+              close();
+            });
+          });
+          box.classList.add("open");
+        } catch {
+          close();
+        }
+      }, 300);
+    });
+
+    input.addEventListener("blur", () => setTimeout(close, 150));
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const first = box.querySelector("button");
+        if (box.classList.contains("open") && first) first.click();
+        else document.getElementById("search-btn").click();
+      }
+    });
+  }
+
+  // Wer nicht aus der Liste wählt, bekommt trotzdem den besten Treffer.
+  async function resolvePlace(which) {
+    if (chosen[which]) return chosen[which];
+    const q = document.getElementById(`${which}-input`).value.trim();
+    if (!q) return null;
+    const hits = await geocode(q);
+    return hits[0] || null;
+  }
+
+  function setupSearch() {
+    setupPlaceInput("from");
+    setupPlaceInput("to");
+    document.getElementById("swap-btn").addEventListener("click", () => {
+      const a = document.getElementById("from-input");
+      const b = document.getElementById("to-input");
+      [a.value, b.value] = [b.value, a.value];
+      [chosen.from, chosen.to] = [chosen.to, chosen.from];
+    });
+    document.getElementById("search-btn").addEventListener("click", async () => {
+      const state = document.getElementById("search-state");
+      const from = await resolvePlace("from");
+      const to = await resolvePlace("to");
+      if (!from || !to) {
+        state.textContent = "Bitte Start und Ziel angeben.";
+        state.classList.add("err");
+        return;
+      }
+      state.classList.remove("err");
+      searchRoutes(from, to);
+    });
+  }
+
+  // --- Ablauf ---------------------------------------------------------------
+  async function searchRoutes(from, to) {
+    const state = document.getElementById("search-state");
+    const btn = document.getElementById("search-btn");
+    const say = (t, err) => {
+      state.textContent = t;
+      state.classList.toggle("err", Boolean(err));
+    };
+    btn.disabled = true;
+    try {
+      say("Suche Routen …");
+      const candidates = [];
+      const cellSets = [];
+
+      const add = (osrm, label) => {
+        const segments = segmentsFromOsrm(osrm);
+        if (!segments.some((s) => s.ref)) return false;
+        const cells = routeCells(segments);
+        // Über 70 % Deckung heißt: praktisch dieselbe Strecke. Die kürzere behalten.
+        for (let i = 0; i < cellSets.length; i++) {
+          if (overlapRatio(cells, cellSets[i]) > 0.7) {
+            if (osrm.distance < candidates[i].distanceMeters) {
+              candidates[i] = {
+                id: candidates[i].id,
+                label: label || routeLabel(segments),
+                distanceMeters: Math.round(osrm.distance),
+                durationOsrmSeconds: Math.round(osrm.duration),
+                segments,
+              };
+              cellSets[i] = cells;
+            }
+            return false;
+          }
+        }
+        cellSets.push(cells);
+        candidates.push({
+          id: `r${candidates.length}`,
+          label: label || routeLabel(segments),
+          distanceMeters: Math.round(osrm.distance),
+          durationOsrmSeconds: Math.round(osrm.duration),
+          segments,
+        });
+        return true;
+      };
+
+      // 1. Was der Router von sich aus vorschlägt
+      for (const r of await osrmRoute([from, to], { alternatives: true })) add(r);
+
+      // 2. Zusätzliche Varianten über Autobahnkreuze erzwingen. Nötig, weil der
+      //    Router nach seiner eigenen Zeitschätzung aussiebt und die bei rund
+      //    110 km/h gedeckelt ist – ein unbegrenzter Abschnitt bringt dort nichts.
+      const junctions = candidateJunctions(from, to, 6);
+      for (let i = 0; i < junctions.length; i++) {
+        say(`Prüfe Varianten … ${i + 1}/${junctions.length}`);
+        try {
+          const [r] = await osrmRoute([from, junctions[i], to]);
+          // Erzwungene Umwege verwerfen, die deutlich länger sind als die beste
+          // bisherige Route – sie sind selbst mit freier Bahn nicht einzuholen.
+          const best = Math.min(...candidates.map((c) => c.distanceMeters));
+          if (r.distance <= best * 1.25) add(r);
+        } catch {
+          // einzelne Anfrage übersprungen
+        }
+        await new Promise((res) => setTimeout(res, 350));
+      }
+
+      if (!candidates.length) throw new Error("Keine Route gefunden");
+      candidates.sort((a, b) => a.distanceMeters - b.distanceMeters);
+
+      freeCorridor = {
+        id: "__frei__",
+        name: `${from.label} → ${to.label}`,
+        von: from.label,
+        nach: to.label,
+        routes: candidates.slice(0, 6),
+      };
+
+      // 3. Baustellen für die tatsächlich berührten Autobahnen
+      const refs = [...new Set(freeCorridor.routes.flatMap((r) => r.segments.map((s) => s.ref)).filter(Boolean))];
+      say(`Baustellen auf ${refs.length} Autobahnen …`);
+      const raw = await fetchRoadworksForRefs(refs);
+      freeRoadworks = attachRoadworks(raw, freeCorridor);
+
+      populateCorridorSelect();
+      document.getElementById("corridor-select").value = "__frei__";
+      selectedRouteId = null;
+      render();
+      say(`${freeCorridor.routes.length} Varianten · ${freeRoadworks.length} Meldungen`);
+    } catch (err) {
+      say(err.message || "Suche fehlgeschlagen", true);
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   // Auf die volle Viertelstunde gerundeter Startwert für das Abfahrtsfeld.
   function setDepartureToNow() {
     const d = new Date();
@@ -1351,24 +1994,32 @@
 
   async function load() {
     try {
-      const [routesRes, roadworksRes, trafficRes, configRes] = await Promise.all([
-        fetch("data/routes.json", { cache: "no-store" }),
-        fetch("data/roadworks.json", { cache: "no-store" }),
-        fetch("data/traffic.json", { cache: "no-store" }),
-        // Nur für Wegpunkt-Namen und den Maps-Export – die Berechnung braucht sie nicht.
-        fetch("config/corridors.json", { cache: "no-store" }),
-      ]);
+      const [routesRes, roadworksRes, trafficRes, configRes, gridRes, junctionsRes] =
+        await Promise.all([
+          fetch("data/routes.json", { cache: "no-store" }),
+          fetch("data/roadworks.json", { cache: "no-store" }),
+          fetch("data/traffic.json", { cache: "no-store" }),
+          // Nur für Wegpunkt-Namen und den Maps-Export – die Berechnung braucht sie nicht.
+          fetch("config/corridors.json", { cache: "no-store" }),
+          // Bundesweite Grundlagen für frei gewählte Strecken.
+          fetch("data/speedgrid.json"),
+          fetch("data/junctions.json"),
+        ]);
       if (!routesRes.ok) throw new Error("HTTP " + routesRes.status + " (routes.json)");
       routesData = await routesRes.json();
       roadworksData = roadworksRes.ok ? await roadworksRes.json() : { items: [] };
       trafficData = trafficRes.ok ? await trafficRes.json() : { stationen: [] };
       configData = configRes.ok ? await configRes.json() : null;
+      speedGridData = gridRes.ok ? await gridRes.json() : null;
+      junctionsData = junctionsRes.ok ? await junctionsRes.json() : null;
       buildTrafficIndex();
+      buildSpeedGrid();
 
       populateCorridorSelect();
       setupSpeedInput();
       setupToleranceSelect();
       setupDepartureInput();
+      setupSearch();
       setupTrafficToggle();
 
       renderDataState();
