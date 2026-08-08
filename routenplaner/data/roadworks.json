@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-08T21:01:01.986Z",
+  "updatedAt": "2026-08-08T22:01:11.838Z",
   "items": [
     {
       "id": "A9-roadworks-2026-033999--vi-bs.2026-08-01_16-00-00-000.devi-zus.2026-07-08_20-00-00-000.de23",
@@ -8815,11 +8815,11 @@
         "Beginn: 08.08.26 um 22:23 Uhr",
         "",
         "Angespannte Verkehrslage, seit 08.08.2026, 20:23",
-        "A3: Nürnberg -> Würzburg, zwischen 1.9 km hinter AS Wiesentheid und 2.5 km vor Haidt",
+        "A3: Nürnberg -> Würzburg, zwischen 0.9 km hinter AS Wiesentheid und 2.5 km vor Haidt",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 42 Minuten (zunehmend)"
+        "- Reisezeitverlust: 35 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -8827,15 +8827,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.774161820153296,
-        "lon": 10.319556129316531
+        "lat": 49.77452029903945,
+        "lon": 10.334422828510098
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a3",
+          "segmentIndex": 247,
+          "distanceMeters": 595
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
           "segmentIndex": 248,
-          "distanceMeters": 666
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-koeln",
@@ -8876,8 +8882,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
+          "segmentIndex": 247,
+          "distanceMeters": 595
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
           "segmentIndex": 248,
-          "distanceMeters": 666
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -8918,8 +8930,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
+          "segmentIndex": 247,
+          "distanceMeters": 595
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
           "segmentIndex": 248,
-          "distanceMeters": 666
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -8960,8 +8978,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
+          "segmentIndex": 247,
+          "distanceMeters": 595
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
           "segmentIndex": 248,
-          "distanceMeters": 666
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -10464,7 +10488,7 @@
       "subtitle": " München -> Stuttgart",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "08.08.26 20:00 bis zum 09.08.26 05:00 Uhr.",
+        "09.08.26 von 00:00 bis 05:00 Uhr",
         "09.08.26 20:00 bis zum 10.08.26 05:00 Uhr.",
         "",
         "A8: München -> Stuttgart, zwischen 0.3 km hinter AS Stuttgart-Plieningen und 0.3 km vor AS Stuttgart-Degerloch",
@@ -10476,7 +10500,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.81,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-09",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 48.69316557604865,
@@ -29274,7 +29305,7 @@
       "subtitle": " Koblenz -> Mönchengladbach",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "08.08.26 21:00 bis zum 09.08.26 06:00 Uhr.",
+        "09.08.26 von 00:00 bis 06:00 Uhr",
         "",
         "A61: Koblenz -> Mönchengladbach, zwischen 0.8 km hinter Höchen und Mühlenberg",
         "",
@@ -29285,7 +29316,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 7.02,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-09",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.521746974805545,
@@ -29464,7 +29502,7 @@
       "subtitle": " Mönchengladbach -> Koblenz",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "08.08.26 21:00 bis zum 09.08.26 06:00 Uhr.",
+        "09.08.26 von 00:00 bis 06:00 Uhr",
         "",
         "A61: Mönchengladbach -> Koblenz, zwischen Mühlenberg und 0.8 km vor Höchen",
         "",
@@ -29475,7 +29513,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 7.02,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-09",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.571933144364635,
@@ -29643,66 +29688,6 @@
           "routeId": "a61",
           "segmentIndex": 79,
           "distanceMeters": 1243
-        }
-      ]
-    },
-    {
-      "id": "A61-roadworks-2026-036968--vi-bs.2026-07-31_00-00-00-000.devi-zus.2026-07-24_00-00-00-000_001.de3",
-      "ref": "A61",
-      "type": "roadworks",
-      "title": "A61 | Mühlenberg - Sinzig",
-      "subtitle": " Mönchengladbach -> Koblenz",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 31.07.26 um 00:00 Uhr",
-        "Ende: 09.08.26 um 00:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 09.08.26)",
-        "",
-        "A61: Mönchengladbach -> Koblenz, zwischen 0.1 km hinter Mühlenberg und 4.5 km vor AD Sinzig",
-        "",
-        "Länge: 1.55 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 7.25 m",
-        "",
-        "A61 von Sinzig (AD) nach Mühlenberg (Parkplatz) Brückenwartung"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": 80,
-      "lengthKm": 1.55,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.571377916681186,
-        "lon": 7.137251808571456
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 69,
-          "distanceMeters": 844
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 70,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 71,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 72,
-          "distanceMeters": 9
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 73,
-          "distanceMeters": 602
         }
       ]
     },
@@ -36898,6 +36883,78 @@
       ]
     },
     {
+      "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de7",
+      "ref": "A45",
+      "type": "roadworks",
+      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
+      "subtitle": " Hagen -> Dortmund",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 25.06.26 um 20:00 Uhr",
+        "Ende: 28.08.26 um 20:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 04.11.26)",
+        "",
+        "A45: Hagen -> Dortmund, zwischen 0.9 km hinter AK Westhofener Kreuz und 1.4 km vor AS Dortmund-Süd",
+        "",
+        "Länge: 1.27 km | Max. 60 km/h | Maximale Durchfahrtsbreite: 6.25 m",
+        "",
+        "A45 - Instandsetzung BW Wannebach - AlD 4446"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": 60,
+      "lengthKm": 1.27,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 51.43693258818502,
+        "lon": 7.522120090109826
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 606,
+          "distanceMeters": 1202
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 607,
+          "distanceMeters": 206
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 608,
+          "distanceMeters": 4
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 609,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 610,
+          "distanceMeters": 519
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 621,
+          "distanceMeters": 1185
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 622,
+          "distanceMeters": 926
+        }
+      ]
+    },
+    {
       "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de11",
       "ref": "A45",
       "type": "roadworks",
@@ -37078,74 +37135,50 @@
       ]
     },
     {
-      "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de7",
+      "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de5",
       "ref": "A45",
       "type": "roadworks",
-      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
-      "subtitle": " Hagen -> Dortmund",
+      "title": "A45 | Dortmund-Süd - Westhofener Kreuz",
+      "subtitle": " Dortmund -> Hagen",
       "description": [
         "Zeitraum dieser Bauphase:",
         "Beginn: 25.06.26 um 20:00 Uhr",
         "Ende: 28.08.26 um 20:00 Uhr",
         "(Ende der Gesamtmaßnahme: 04.11.26)",
         "",
-        "A45: Hagen -> Dortmund, zwischen 0.9 km hinter AK Westhofener Kreuz und 1.4 km vor AS Dortmund-Süd",
+        "A45: Dortmund -> Hagen, zwischen 1.4 km hinter AS Dortmund-Süd und 0.9 km vor AK Westhofener Kreuz",
         "",
-        "Länge: 1.27 km | Max. 60 km/h | Maximale Durchfahrtsbreite: 6.25 m",
+        "Länge: 1.27 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
         "",
         "A45 - Instandsetzung BW Wannebach - AlD 4446"
       ],
       "isBlocked": false,
-      "speedLimitKmh": 60,
+      "speedLimitKmh": 80,
       "lengthKm": 1.27,
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 51.43693258818502,
-        "lon": 7.522120090109826
+        "lat": 51.441654792914704,
+        "lon": 7.505595886886552
       },
       "affects": [
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
-          "segmentIndex": 606,
-          "distanceMeters": 1202
+          "segmentIndex": 614,
+          "distanceMeters": 7
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
-          "segmentIndex": 607,
-          "distanceMeters": 206
+          "segmentIndex": 615,
+          "distanceMeters": 143
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
-          "segmentIndex": 608,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 609,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 610,
-          "distanceMeters": 519
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 621,
-          "distanceMeters": 1185
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 622,
-          "distanceMeters": 926
+          "segmentIndex": 616,
+          "distanceMeters": 1139
         }
       ]
     },
@@ -37333,54 +37366,6 @@
           "routeId": "a45-a31",
           "segmentIndex": 617,
           "distanceMeters": 769
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de5",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Dortmund-Süd - Westhofener Kreuz",
-      "subtitle": " Dortmund -> Hagen",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 25.06.26 um 20:00 Uhr",
-        "Ende: 28.08.26 um 20:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 04.11.26)",
-        "",
-        "A45: Dortmund -> Hagen, zwischen 1.4 km hinter AS Dortmund-Süd und 0.9 km vor AK Westhofener Kreuz",
-        "",
-        "Länge: 1.27 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Instandsetzung BW Wannebach - AlD 4446"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": 80,
-      "lengthKm": 1.27,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.441654792914704,
-        "lon": 7.505595886886552
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 614,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 615,
-          "distanceMeters": 143
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 616,
-          "distanceMeters": 1139
         }
       ]
     },
