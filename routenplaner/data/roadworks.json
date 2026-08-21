@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T21:53:48.989Z",
+  "updatedAt": "2026-08-21T22:54:59.883Z",
   "items": [
     {
       "id": "A9-roadworks-2026-040407--vi-bs.2026-08-10_05-00-00-000.devi-zus.2026-08-09_05-00-00-000.de3",
@@ -2814,7 +2814,7 @@
       "subtitle": " Würzburg -> Frankfurt",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "24.08.26 20:00 bis zum 25.08.26 05:00 Uhr.",
         "25.08.26 20:00 bis zum 26.08.26 05:00 Uhr.",
         "26.08.26 20:00 bis zum 27.08.26 05:00 Uhr.",
@@ -2829,7 +2829,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 4.38,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.05923785388579,
@@ -3486,7 +3493,7 @@
       "subtitle": " Frankfurt -> Würzburg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "24.08.26 20:00 bis zum 25.08.26 05:00 Uhr.",
         "25.08.26 20:00 bis zum 26.08.26 05:00 Uhr.",
         "26.08.26 20:00 bis zum 27.08.26 05:00 Uhr.",
@@ -3501,7 +3508,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 4.38,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.06749445892561,
@@ -5712,7 +5726,7 @@
       "subtitle": " Frankfurt -> Köln",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A3: Frankfurt -> Köln, zwischen 0.7 km hinter Welchehahn und 1.3 km vor Landsberg an der Warthe",
         "",
@@ -5723,7 +5737,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 1.8,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.50315253268479,
@@ -6663,7 +6684,7 @@
       "subtitle": " Köln -> Frankfurt",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 03:00 Uhr.",
+        "22.08.26 von 00:00 bis 03:00 Uhr",
         "",
         "A3: Köln -> Frankfurt, zwischen 1.4 km hinter Sessenhausen und 1.4 km vor AS Ransbach-Baumbach / Mogendorf",
         "",
@@ -6674,7 +6695,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 4.69,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 180
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.52161301381482,
@@ -6986,6 +7014,120 @@
           "routeId": "a8-a7",
           "segmentIndex": 85,
           "distanceMeters": 1308
+        }
+      ]
+    },
+    {
+      "id": "A3-roadworks-2025-062048--vi-bs.2026-08-22_00-00-00-000.devi-zus.2026-08-22_00-00-00-000.de1",
+      "ref": "A3",
+      "type": "roadworks",
+      "title": "A3 | Neuwied - Fernthal",
+      "subtitle": " Frankfurt -> Köln",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 22.08.26 um 00:00 Uhr",
+        "Ende: 02.09.26 um 00:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 22.09.26)",
+        "",
+        "A3: Frankfurt -> Köln, zwischen 3.7 km hinter AS Neuwied und 3.7 km vor Fernthal",
+        "",
+        "Länge: 0.45 km | Maximale Durchfahrtsbreite: 11.25 m",
+        "",
+        "A3 Raststätte Epgert Arbeiten an Parkplätzen"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": 0.45,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.58071451465074,
+        "lon": 7.482320821649597
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 523,
+          "distanceMeters": 1267
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 524,
+          "distanceMeters": 281
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 525,
+          "distanceMeters": 16
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 526,
+          "distanceMeters": 265
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 527,
+          "distanceMeters": 1227
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 546,
+          "distanceMeters": 575
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 547,
+          "distanceMeters": 4
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 548,
+          "distanceMeters": 12
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 549,
+          "distanceMeters": 941
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 523,
+          "distanceMeters": 1267
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 524,
+          "distanceMeters": 281
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 525,
+          "distanceMeters": 16
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 526,
+          "distanceMeters": 265
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 527,
+          "distanceMeters": 1227
         }
       ]
     },
@@ -7765,7 +7907,7 @@
       "subtitle": " Frankfurt -> Köln",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 00:00 bis zum 22.08.26 18:00 Uhr.",
+        "22.08.26 von 00:00 bis 18:00 Uhr",
         "",
         "A3: Frankfurt -> Köln, zwischen 2.2 km hinter AS Siebengebirge und 8.7 km vor AK Bonn/Siegburg",
         "",
@@ -7776,7 +7918,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 0.25,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 1080
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.701902430239045,
@@ -9247,7 +9396,7 @@
       "subtitle": " Köln -> Oberhausen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A3: Köln -> Oberhausen, zwischen 1.1 km hinter AK Ratingen-Ost und 2.1 km vor Hösel",
         "",
@@ -9258,7 +9407,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 0.2,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.307601461211654,
@@ -10914,17 +11070,18 @@
       "id": "A3-warning-INRIX--vi-avl.2026-08-21_19-53-00-000_003.de0",
       "ref": "A3",
       "type": "warning",
-      "title": "A3 | Hainbach - Hanau",
+      "title": "A3 | Obertshausen - Hanau",
       "subtitle": " Frankfurt -> Würzburg",
       "description": [
         "Beginn: 21.08.26 um 21:53 Uhr",
         "",
         "Angespannte Verkehrslage, seit 21.08.2026, 19:53",
-        "A3: Frankfurt -> Würzburg, zwischen 4.2 km hinter Hainbach und 1.5 km vor AS Hanau",
+        "A3: Frankfurt -> Würzburg, zwischen AS Obertshausen und 1.4 km vor AS Hanau",
         "",
         "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Reisezeitverlust: 10 Minuten (abnehmend)"
+        "- Im Stillstand",
+        "- Durchschnittsgeschwindigkeit: 15 km/h",
+        "- Reisezeitverlust: 9 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -10932,21 +11089,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 50.06763615807625,
-        "lon": 8.822953833248302
+        "lat": 50.067044563801836,
+        "lon": 8.827559455358859
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 201,
-          "distanceMeters": 661
+          "distanceMeters": 993
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 202,
-          "distanceMeters": 3
+          "distanceMeters": 1
         },
         {
           "corridorId": "koeln-muenchen",
@@ -10976,19 +11133,19 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 207,
-          "distanceMeters": 787
+          "distanceMeters": 721
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 201,
-          "distanceMeters": 661
+          "distanceMeters": 993
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 202,
-          "distanceMeters": 3
+          "distanceMeters": 1
         },
         {
           "corridorId": "koeln-muenchen",
@@ -11018,7 +11175,58 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 207,
-          "distanceMeters": 787
+          "distanceMeters": 721
+        }
+      ]
+    },
+    {
+      "id": "A3-warning-INRIX--vi-zus.2026-08-21_22-27-20-000.de0",
+      "ref": "A3",
+      "type": "warning",
+      "title": "A3 | Köln-Ost - Köln-Heumar",
+      "subtitle": " Köln -> Frankfurt",
+      "description": [
+        "Beginn: 22.08.26 um 00:27 Uhr",
+        "",
+        "Zusammengesetzte Verkehrsinformation, seit 21.08.2026, 22:27",
+        "A3: Köln -> Frankfurt, zwischen 0.6 km hinter AK Köln-Ost und 0.7 km vor AD Köln-Heumar",
+        "",
+        "Ereignismeldung:",
+        "- Personen auf der Fahrbahn"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.94757931938726,
+        "lon": 7.03845011432881
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 11,
+          "distanceMeters": 198
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 12,
+          "distanceMeters": 1168
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 11,
+          "distanceMeters": 198
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 12,
+          "distanceMeters": 1168
         }
       ]
     },
@@ -11342,7 +11550,7 @@
       "subtitle": " Stuttgart -> Karlsruhe",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:00 bis zum 22.08.26 03:00 Uhr.",
+        "22.08.26 von 00:00 bis 03:00 Uhr",
         "",
         "A8: Stuttgart -> Karlsruhe, zwischen 11.0 km hinter AS Pforzheim-West und 0.5 km vor Steinig",
         "",
@@ -11353,7 +11561,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 0.4,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 180
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 48.93836004968459,
@@ -12042,7 +12257,7 @@
       "subtitle": " München -> Stuttgart",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "22.08.26 20:00 bis zum 23.08.26 05:00 Uhr.",
         "",
         "A8: München -> Stuttgart, zwischen 0.3 km hinter AS Stuttgart-Plieningen und 0.3 km vor AS Stuttgart-Degerloch",
@@ -12054,7 +12269,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.81,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 48.69316557604865,
@@ -12119,7 +12341,7 @@
       "subtitle": " München -> Stuttgart",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 22:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "22.08.26 22:00 bis zum 23.08.26 05:00 Uhr.",
         "",
         "A8: München -> Stuttgart, zwischen 0.3 km hinter AS Stuttgart-Plieningen und 0.3 km vor AS Stuttgart-Degerloch",
@@ -12131,7 +12353,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.81,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 48.69316557604865,
@@ -13369,76 +13598,6 @@
           "routeId": "a61",
           "segmentIndex": 163,
           "distanceMeters": 1413
-        }
-      ]
-    },
-    {
-      "id": "A8-warning-INRIX--vi-avl.2026-08-21_19-34-00-000_006.de0",
-      "ref": "A8",
-      "type": "warning",
-      "title": "A8 | Lämmerbuckeltunnel - Mühlhausen",
-      "subtitle": " München -> Stuttgart",
-      "description": [
-        "Beginn: 21.08.26 um 21:34 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 21.08.2026, 19:34",
-        "A8: München -> Stuttgart, zwischen 1.5 km hinter Lämmerbuckeltunnel und 0.3 km vor AS Mühlhausen",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Reisezeitverlust: 14 Minuten (abnehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.56085086420677,
-        "lon": 9.66684423228705
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 156,
-          "distanceMeters": 1150
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 157,
-          "distanceMeters": 158
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 158,
-          "distanceMeters": 10
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 159,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 160,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 161,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 162,
-          "distanceMeters": 735
         }
       ]
     },
@@ -15315,7 +15474,7 @@
       "subtitle": " Ulm -> Würzburg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:30 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "22.08.26 19:30 bis zum 23.08.26 06:00 Uhr.",
         "23.08.26 19:45 bis zum 24.08.26 06:00 Uhr.",
         "",
@@ -15328,7 +15487,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 4,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 49.656330185083895,
@@ -24950,7 +25116,7 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 18:30 bis zum 22.08.26 05:30 Uhr.",
+        "22.08.26 von 00:00 bis 05:30 Uhr",
         "02.09.26 18:30 bis zum 03.09.26 05:30 Uhr.",
         "03.09.26 18:30 bis zum 04.09.26 05:30 Uhr.",
         "04.09.26 18:30 bis zum 05.09.26 05:30 Uhr.",
@@ -24967,7 +25133,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 4.65,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 330
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.51815028527879,
@@ -25771,7 +25944,7 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 18:30 bis zum 22.08.26 05:30 Uhr.",
+        "22.08.26 von 00:00 bis 05:30 Uhr",
         "22.08.26 18:30 bis zum 23.08.26 05:30 Uhr.",
         "03.09.26 18:30 bis zum 04.09.26 05:30 Uhr.",
         "04.09.26 18:30 bis zum 05.09.26 05:30 Uhr.",
@@ -25788,7 +25961,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 1.55,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 330
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.5730274893612,
@@ -27585,6 +27765,106 @@
           "routeId": "a8-a7",
           "segmentIndex": 127,
           "distanceMeters": 1208
+        }
+      ]
+    },
+    {
+      "id": "A7-warning-INRIX--vi-avl.2026-08-21_22-21-00-000_001.de0",
+      "ref": "A7",
+      "type": "warning",
+      "title": "A7 | Wörnitz - Kreuzfeld",
+      "subtitle": " Ulm -> Würzburg",
+      "description": [
+        "Beginn: 22.08.26 um 00:21 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 21.08.2026, 22:21",
+        "A7: Ulm -> Würzburg, zwischen 9.2 km hinter AS Wörnitz und 1.2 km vor Kreuzfeld",
+        "",
+        "Ereignismeldung:",
+        "- Im Stillstand",
+        "- Reisezeitverlust: 11 Minuten (zunehmend)"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 49.335776005057774,
+        "lon": 10.218544687086858
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 235,
+          "distanceMeters": 1029
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 236,
+          "distanceMeters": 31
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 237,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 238,
+          "distanceMeters": 12
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 239,
+          "distanceMeters": 467
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 240,
+          "distanceMeters": 1461
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 235,
+          "distanceMeters": 1029
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 236,
+          "distanceMeters": 31
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 237,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 238,
+          "distanceMeters": 12
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 239,
+          "distanceMeters": 467
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 240,
+          "distanceMeters": 1461
         }
       ]
     },
@@ -30038,7 +30318,7 @@
       "subtitle": " Koblenz -> Mönchengladbach",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 21:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "22.08.26 21:00 bis zum 23.08.26 06:00 Uhr.",
         "",
         "A61: Koblenz -> Mönchengladbach, zwischen 0.8 km hinter Höchen und Mühlenberg",
@@ -30050,7 +30330,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 7.02,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.521746974805545,
@@ -30229,7 +30516,7 @@
       "subtitle": " Mönchengladbach -> Koblenz",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 21:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "22.08.26 21:00 bis zum 23.08.26 06:00 Uhr.",
         "",
         "A61: Mönchengladbach -> Koblenz, zwischen Mühlenberg und 0.8 km vor Höchen",
@@ -30241,7 +30528,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 7.02,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.571933144364635,
@@ -30420,7 +30714,7 @@
       "subtitle": " Mönchengladbach -> Koblenz",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A61: Mönchengladbach -> Koblenz, zwischen 4.6 km hinter AS Rheinbach und 2.2 km vor Goldene Meile",
         "",
@@ -30431,7 +30725,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.3,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.593876903259954,
@@ -31408,7 +31709,7 @@
       "subtitle": " Dortmund -> Münster",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "",
         "A1: Dortmund -> Münster, zwischen 1.5 km hinter AS Hamm-Bockum/Werne und 0.1 km vor Hasenkämpe",
         "",
@@ -31419,7 +31720,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 4.4,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.708747702623235,
@@ -31634,7 +31942,7 @@
       "subtitle": " Dortmund -> Münster",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 21:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A1: Dortmund -> Münster, zwischen 2.5 km hinter Hohe Heide und 0.9 km vor Davert",
         "",
@@ -31645,7 +31953,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.4,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.83057507008036,
@@ -31692,7 +32007,7 @@
       "subtitle": " Dortmund -> Münster",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 21:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A1: Dortmund -> Münster, zwischen 3.7 km hinter Weißes Venn und 1.0 km vor AS Münster-Hiltrup",
         "",
@@ -31703,7 +32018,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.6,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.8729342254505,
@@ -31750,7 +32072,7 @@
       "subtitle": " Münster -> Bremen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "24.08.26 19:00 bis zum 25.08.26 05:00 Uhr.",
         "25.08.26 19:00 bis zum 26.08.26 05:00 Uhr.",
         "26.08.26 19:00 bis zum 27.08.26 05:00 Uhr.",
@@ -31767,7 +32089,14 @@
       "isBlocked": false,
       "speedLimitKmh": 60,
       "lengthKm": 41.11,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.98916832226796,
@@ -31796,7 +32125,7 @@
       "subtitle": " Münster -> Bremen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "24.08.26 19:00 bis zum 25.08.26 05:00 Uhr.",
         "25.08.26 19:00 bis zum 26.08.26 05:00 Uhr.",
         "26.08.26 19:00 bis zum 27.08.26 05:00 Uhr.",
@@ -31813,7 +32142,14 @@
       "isBlocked": false,
       "speedLimitKmh": 60,
       "lengthKm": 41.11,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.98916832226796,
@@ -36503,7 +36839,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "",
         "A45: Gießen -> Hagen, zwischen 0.8 km hinter Hohenrain und 0.4 km vor AS Herborn-West",
         "",
@@ -36514,7 +36850,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.47,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.65561553849744,
@@ -36573,7 +36916,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "22.08.26 20:00 bis zum 23.08.26 05:00 Uhr.",
         "",
         "A45: Gießen -> Hagen, zwischen 0.8 km hinter Hohenrain und 0.8 km vor Am Rehberg",
@@ -36585,7 +36928,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 1.97,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.65561553849744,
@@ -36638,7 +36988,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "22.08.26 20:00 bis zum 23.08.26 06:00 Uhr.",
         "24.08.26 20:00 bis zum 25.08.26 06:00 Uhr.",
         "25.08.26 20:00 bis zum 26.08.26 06:00 Uhr.",
@@ -36655,7 +37005,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.47,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.65561553849744,
@@ -36714,7 +37071,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "",
         "A45: Gießen -> Hagen, zwischen 0.8 km hinter Hohenrain und 0.4 km vor AS Herborn-West",
         "",
@@ -36725,7 +37082,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 3.47,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.65561553849744,
@@ -36784,7 +37148,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "22.08.26 20:00 bis zum 23.08.26 05:00 Uhr.",
         "",
         "A45: Gießen -> Hagen, zwischen 0.3 km hinter AS Herborn-Süd und 0.8 km vor Am Rehberg",
@@ -36796,7 +37160,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.99,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.662285946357294,
@@ -38164,7 +38535,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A45: Gießen -> Hagen, zwischen 2.1 km hinter Rehweg und 4.8 km vor Brunsbecke",
         "",
@@ -38175,7 +38546,14 @@
       "isBlocked": false,
       "speedLimitKmh": 60,
       "lengthKm": 1.5,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.28316285189261,
@@ -40082,7 +40460,7 @@
       "subtitle": " Duisburg -> Dinslaken",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 20:00 bis zum 22.08.26 05:00 Uhr.",
+        "22.08.26 von 00:00 bis 05:00 Uhr",
         "",
         "A59: Duisburg -> Dinslaken, zwischen 0.6 km hinter AS Duisburg-Ruhrort und 0.8 km vor AK Duisburg-Nord",
         "",
@@ -40093,7 +40471,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.2,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 51.475087009291244,
@@ -40701,7 +41086,7 @@
       "subtitle": " Magdeburg -> Braunschweig",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "21.08.26 19:00 bis zum 22.08.26 06:00 Uhr.",
+        "22.08.26 von 00:00 bis 06:00 Uhr",
         "22.08.26 von 19:00 bis 24:00 Uhr",
         "",
         "A2: Magdeburg -> Braunschweig, zwischen 0.1 km hinter AS Marienborn/Helmstedt-Ost und 0.6 km vor AS Königslutter",
@@ -40714,6 +41099,12 @@
       "speedLimitKmh": null,
       "lengthKm": 18.14,
       "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-08-22",
+          "vonMin": 0,
+          "bisMin": 360
+        },
         {
           "art": "datum",
           "datum": "2026-08-22",
