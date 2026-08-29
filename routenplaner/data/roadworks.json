@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-29T19:02:23.953Z",
+  "updatedAt": "2026-08-29T19:32:27.822Z",
   "items": [
     {
       "id": "A9-roadworks-2026-040117--vi-bs.2026-08-10_19-00-00-000.devi-zus.2026-08-10_19-00-00-000_009.de17",
@@ -10582,7 +10582,7 @@
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 24 Minuten (zunehmend)"
+        "- Reisezeitverlust: 30 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -10920,11 +10920,11 @@
         "Beginn: 29.08.26 um 20:13 Uhr",
         "",
         "Angespannte Verkehrslage, seit 29.08.2026, 18:13",
-        "A3: Würzburg -> Nürnberg, zwischen 2.3 km hinter Dreifrankenstein-Nord und 7.1 km vor Steigerwald",
+        "A3: Würzburg -> Nürnberg, zwischen 1.4 km hinter Dreifrankenstein-Nord und 7.1 km vor Steigerwald",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 14 Minuten (abnehmend)"
+        "- Reisezeitverlust: 48 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -10932,15 +10932,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.75160450930556,
-        "lon": 10.615758460311183
+        "lat": 49.75671219958889,
+        "lon": 10.605946621468565
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
+          "segmentIndex": 360,
+          "distanceMeters": 972
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
           "segmentIndex": 361,
-          "distanceMeters": 888
+          "distanceMeters": 3
         },
         {
           "corridorId": "koeln-muenchen",
@@ -13840,6 +13846,65 @@
           "routeId": "a61",
           "segmentIndex": 163,
           "distanceMeters": 1413
+        }
+      ]
+    },
+    {
+      "id": "A8-warning-INRIX--vi-avl.2026-08-29_16-39-00-000_009.de0",
+      "ref": "A8",
+      "type": "warning",
+      "title": "A8 | Urweltfunde - Gruibingen",
+      "subtitle": " Stuttgart -> München",
+      "description": [
+        "Beginn: 29.08.26 um 18:39 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 29.08.2026, 16:39",
+        "A8: Stuttgart -> München, zwischen 0.2 km hinter Urweltfunde und 6.1 km vor Gruibingen",
+        "",
+        "Ereignismeldung:",
+        "- Im Stillstand",
+        "- Durchschnittsgeschwindigkeit: 10 km/h",
+        "- Reisezeitverlust: 7 Minuten (zunehmend)"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 48.632075079542595,
+        "lon": 9.540910740003163
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 418,
+          "distanceMeters": 541
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 419,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 420,
+          "distanceMeters": 13
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 421,
+          "distanceMeters": 124
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 422,
+          "distanceMeters": 1116
         }
       ]
     },
