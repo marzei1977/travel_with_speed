@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-03T00:04:42.217Z",
+  "updatedAt": "2026-09-03T00:42:51.684Z",
   "items": [
     {
       "id": "A9-roadworks-2026-041081--vi-bs.2026-09-02_19-00-00-000.devi-zus.2026-09-02_19-00-00-000.de6",
@@ -17737,7 +17737,7 @@
       ]
     },
     {
-      "id": "A8-warning-INRIX--vi-fbm.2026-09-02_18-13-24-000_001.de0",
+      "id": "A8-warning-INRIX--vi-zus.2026-09-02_18-13-24-000.de0",
       "ref": "A8",
       "type": "warning",
       "title": "A8 | Zusmarshausen - Vallried",
@@ -17745,10 +17745,12 @@
       "description": [
         "Beginn: 02.09.26 um 20:13 Uhr",
         "",
-        "Fahrbahnmanagement, seit 02.09.2026, 18:13",
+        "Zusammengesetzte Verkehrsinformation, seit 02.09.2026, 18:13",
         "A8: München -> Stuttgart, zwischen 0.1 km hinter AS Zusmarshausen und 1.5 km vor Vallried",
         "",
-        "Ereignismeldung:"
+        "Ereignismeldung:",
+        "- Fahrstreifen gesperrt",
+        "- Instandsetzungsarbeiten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -51143,17 +51145,17 @@
       "id": "A2-warning-INRIX--vi-avl.2026-09-02_22-30-00-000_003.de0",
       "ref": "A2",
       "type": "warning",
-      "title": "A2 | Bornstedt - Irxleben",
+      "title": "A2 | Börde - Magdeburg",
       "subtitle": " Braunschweig -> Magdeburg",
       "description": [
         "Beginn: 03.09.26 um 00:30 Uhr",
         "",
         "Angespannte Verkehrslage, seit 02.09.2026, 22:30",
-        "A2: Braunschweig -> Magdeburg, zwischen 6.0 km hinter AS Bornstedt und 0.4 km vor AS Irxleben",
+        "A2: Braunschweig -> Magdeburg, zwischen 2.0 km hinter Börde und 2.8 km vor AK Magdeburg",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 13 Minuten (abnehmend)"
+        "- Reisezeitverlust: 21 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -51161,15 +51163,27 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 52.184825708701304,
-        "lon": 11.450095035661581
+        "lat": 52.17687250882303,
+        "lon": 11.478030396313695
       },
       "affects": [
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 533,
-          "distanceMeters": 824
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 534,
+          "distanceMeters": 67
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 535,
+          "distanceMeters": 1053
         }
       ]
     },
