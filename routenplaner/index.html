@@ -1508,15 +1508,16 @@
     const steps = route.legs.flatMap((l) => l.steps);
     const ivs = [];
     let acc = 0;
+    let accT = 0;
     for (const st of steps) {
       ivs.push({
-        from: acc,
-        to: acc + st.distance,
+        from: acc, to: acc + st.distance,
+        tFrom: accT, tTo: accT + st.duration,
         ref: normRef(st.ref),
         name: st.name || null,
-        avg: st.duration > 0 ? st.distance / 1000 / (st.duration / 3600) : null,
       });
       acc += st.distance;
+      accT += st.duration;
     }
     const coords = route.geometry.coordinates;
     const cum = cumulative(coords);
@@ -1534,7 +1535,23 @@
       const maxspeedTag = ref ? speedFromGrid(ref, mid.lat, mid.lon) : null;
       let fallbackSpeedKmh = null;
       if (maxspeedTag === null) {
-        fallbackSpeedKmh = ref ? DEFAULT_MAXSPEED_FALLBACK : Math.round(iv?.avg || 50);
+        if (ref) {
+          fallbackSpeedKmh = DEFAULT_MAXSPEED_FALLBACK;
+        } else {
+          // Die von OSRM veranschlagte Zeit für genau diesen Kilometer, nicht das
+          // Mitteltempo des umgebenden Steps: eine kurze Rampe mit Abbiegezuschlag
+          // ergibt sonst 10 km/h für einen ganzen Kilometer.
+          let sek = 0;
+          for (const x of ivs) {
+            const a = Math.max(from, x.from);
+            const b = Math.min(to, x.to);
+            if (b <= a) continue;
+            const len = x.to - x.from;
+            sek += len > 0 ? ((x.tTo - x.tFrom) * (b - a)) / len : 0;
+          }
+          const kmh = sek > 0 ? (to - from) / 1000 / (sek / 3600) : 0;
+          fallbackSpeedKmh = Math.round(Math.min(130, Math.max(25, kmh || 50)));
+        }
       }
       segments.push({
         ref,

@@ -207,19 +207,43 @@ function pointAtDistance(coords, cum, targetM) {
 function buildStepIntervals(steps) {
   const intervals = [];
   let cum = 0;
+  let cumT = 0;
   for (const step of steps) {
     const from = cum;
     const to = cum + step.distance;
     intervals.push({
       from,
       to,
+      tFrom: cumT,
+      tTo: cumT + step.duration,
       ref: normalizeRef(step.ref),
       name: step.name || null,
-      avgSpeedKmh: step.duration > 0 ? (step.distance / 1000) / (step.duration / 3600) : null,
     });
     cum = to;
+    cumT += step.duration;
   }
   return intervals;
+}
+
+// Von OSRM veranschlagte Fahrzeit für einen beliebigen Streckenabschnitt, indem
+// innerhalb der Steps linear interpoliert wird.
+//
+// Warum nicht einfach das Mitteltempo des Steps nehmen: Steps sind unterschiedlich
+// lang. Eine 150 m lange Rampe, für die OSRM inklusive Abbiegezuschlag 54 s
+// ansetzt, ergibt 10 km/h – für diese 150 m plausibel. Überträgt man den Wert
+// aber auf den ganzen Kilometer, in dem die Rampe liegt, wird aus 40 Sekunden
+// eine Viertelstunde. Auf der A3-Route summierte sich das auf rund 19 Minuten.
+function osrmSecondsBetween(intervals, fromM, toM) {
+  let sec = 0;
+  for (const iv of intervals) {
+    const a = Math.max(fromM, iv.from);
+    const b = Math.min(toM, iv.to);
+    if (b <= a) continue;
+    const laenge = iv.to - iv.from;
+    const dauer = iv.tTo - iv.tFrom;
+    sec += laenge > 0 ? (dauer * (b - a)) / laenge : 0;
+  }
+  return sec;
 }
 
 function stepIntervalAt(intervals, distM) {
@@ -271,9 +295,16 @@ async function buildRoute(routeConfig, waypoints) {
     // sonst würde z.B. eine Ortsdurchfahrt fälschlich mit Autobahn-Tempo gerechnet.
     let fallbackSpeedKmh = null;
     if (maxspeedTag === null) {
-      fallbackSpeedKmh = ref
-        ? DEFAULT_MAXSPEED_FALLBACK
-        : Math.round(stepInfo?.avgSpeedKmh || 50);
+      if (ref) {
+        fallbackSpeedKmh = DEFAULT_MAXSPEED_FALLBACK;
+      } else {
+        const sek = osrmSecondsBetween(stepIntervals, from, to);
+        const kmh = sek > 0 ? ((to - from) / 1000) / (sek / 3600) : 0;
+        // Untergrenze: unter 25 km/h kommt man auch im Ortsverkehr auf einem
+        // ganzen Kilometer praktisch nie; solche Werte stammen aus
+        // Abbiegezuschlägen und nicht aus der Strecke selbst.
+        fallbackSpeedKmh = Math.round(Math.min(130, Math.max(25, kmh || 50)));
+      }
     }
 
     segments.push({
