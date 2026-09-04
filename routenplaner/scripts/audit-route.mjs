@@ -17,6 +17,8 @@ const TOLERANZ = Number(tolArg);
 const ABFAHRT = new Date(abfahrtArg);
 const csvIdx = rest.indexOf("--csv");
 const CSV = csvIdx >= 0 ? rest[csvIdx + 1] : null;
+const htmlIdx = rest.indexOf("--html");
+const HTML = htmlIdx >= 0 ? rest[htmlIdx + 1] : null;
 
 const lade = async (p) => JSON.parse(await readFile(new URL(p, import.meta.url), "utf8"));
 const routes = await lade("../data/routes.json");
@@ -106,6 +108,7 @@ console.log(`${korridor.name}   Wunsch ${WUNSCH} km/h, Toleranz +${TOLERANZ}, Ab
 console.log("Verkehr eingerechnet: ja\n");
 
 const csvZeilen = ["route;km;autobahn;osm_limit;baustelle_limit;basis;verkehrsgebremst;effektiv;uhrzeit"];
+const htmlRouten = [];
 
 for(const route of korridor.routes){
   if(!route.segments?.length) continue;
@@ -142,6 +145,9 @@ for(const route of korridor.routes){
       zeit.toTimeString().slice(0,5)].join(";"));
   });
 
+  htmlRouten.push({ label: route.label, zeit: fmt(t),
+    km: (route.segments.reduce((a,x)=>a+x.distanceMeters,0)/1000).toFixed(0), zeilen });
+
   // Gleichartige Kilometer zu Blöcken zusammenfassen
   const bloecke=[];
   for(const z of zeilen){
@@ -162,3 +168,48 @@ for(const route of korridor.routes){
 }
 
 if(CSV){ await writeFile(CSV, csvZeilen.join("\n")+"\n","utf8"); console.log(`CSV geschrieben: ${CSV} (${csvZeilen.length-1} Zeilen)`); }
+
+if (HTML) {
+  const farbe = (v) => v >= 170 ? "#1d8a3f" : v >= 140 ? "#4a9c2d" : v >= 115 ? "#b8860b" : v >= 90 ? "#c2410c" : "#a01b1b";
+  const teile = htmlRouten.map((r) => `
+  <h2>${r.label}</h2>
+  <p class="sum">${r.zeit} · ${r.km} km</p>
+  <table>
+    <thead><tr><th>km</th><th>Autobahn</th><th>OSM-Limit</th><th>Baustelle</th>
+      <th>Basis</th><th>nach Verkehr</th><th>gerechnet</th><th>Uhrzeit</th></tr></thead>
+    <tbody>${r.zeilen.map((z) => `<tr>
+      <td class="n">${z.i + 1}</td>
+      <td>${z.ref || '<span class="ort">Ort</span>'}</td>
+      <td>${z.osm === "none" ? "unbegrenzt" : (z.osm ?? `~${z.fb} gesch.`)}</td>
+      <td class="n">${z.bwLimit ? z.bwLimit + (z.anteil < 1 ? ` (${Math.round(z.anteil * 100)}%)` : "") : "–"}</td>
+      <td class="n">${Math.round(z.basis)}</td>
+      <td class="n">${Math.round(z.nachVerkehr)}</td>
+      <td class="n hl" style="color:${farbe(z.effektiv)}">${Math.round(z.effektiv)}</td>
+      <td class="n t">${z.zeit.toTimeString().slice(0, 5)}</td></tr>`).join("")}</tbody>
+  </table>`).join("");
+
+  await writeFile(HTML, `<!doctype html><html lang="de"><head><meta charset="utf-8">
+<title>Kilometerliste ${korridor.name}</title><style>
+ body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;padding:2rem;background:#f5f5f7;color:#1d1d1f}
+ h1{font-size:1.6rem;letter-spacing:-.02em;margin:0 0 .3rem}
+ .meta{color:#86868b;margin:0 0 2rem}
+ h2{font-size:1.05rem;margin:2.5rem 0 .2rem}
+ .sum{color:#86868b;margin:0 0 .8rem}
+ table{border-collapse:collapse;width:100%;max-width:900px;background:#fff;border-radius:10px;overflow:hidden;
+   box-shadow:0 1px 3px rgba(0,0,0,.08);font-variant-numeric:tabular-nums}
+ th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:#86868b;text-align:left;
+   padding:.6rem .7rem;border-bottom:1px solid #e5e5e7}
+ td{padding:.35rem .7rem;border-bottom:1px solid #f0f0f2}
+ tr:hover td{background:#f5f8ff}
+ .n{text-align:right}.t{color:#86868b}.hl{font-weight:650}
+ .ort{color:#86868b}
+ @media(prefers-color-scheme:dark){body{background:#000;color:#f5f5f7}table{background:#1c1c1e}
+   th{border-color:#2c2c2e}td{border-color:#242426}tr:hover td{background:#26262a}}
+</style></head><body>
+<h1>${korridor.name}</h1>
+<p class="meta">Wunschtempo ${WUNSCH} km/h · Toleranz +${TOLERANZ} · Abfahrt ${ABFAHRT.toLocaleString("de-DE")} · Verkehr eingerechnet<br>
+Basis = Limit plus Toleranz · nach Verkehr = zusätzlich gebremst durch Verkehrsdichte und LKW-Anteil ·
+gerechnet = Endwert, bei Baustellen als Mischtempo über den betroffenen Anteil</p>
+${teile}</body></html>`, "utf8");
+  console.log(`HTML geschrieben: ${HTML}`);
+}
