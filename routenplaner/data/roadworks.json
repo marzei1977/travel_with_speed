@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-04T21:34:03.028Z",
+  "updatedAt": "2026-09-04T22:03:13.053Z",
   "items": [
     {
       "id": "A9-roadworks-2026-040127--vi-bs.2026-09-03_19-30-00-000.devi-zus.2026-09-03_19-30-00-000.de19",
@@ -2053,14 +2053,14 @@
       ]
     },
     {
-      "id": "A9-roadworks-2026-045125--vi-bs.2026-09-04_19-00-00-000.devi-zus.2026-09-04_19-00-00-000.de1",
+      "id": "A9-roadworks-2026-045125--vi-bs.2026-09-05_00-00-00-000.devi-zus.2026-09-04_19-00-00-000.de3",
       "ref": "A9",
       "type": "roadworks",
       "title": "A9 von München-Frankfurter Ring (AS) Markierungsarbeiten",
       "subtitle": " Nürnberg -> München",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 von 19:00 bis 24:00 Uhr",
+        "05.09.26 von 00:00 bis 05:00 Uhr",
         "",
         "Von A9: Nürnberg -> München, zwischen 1.0 km hinter AS München-Freimann und AS München-Frankfurter Ring nach Abfahrt von der A9: AS München-Frankfurter Ring (aus Richtung München-Freimann)",
         "",
@@ -2074,34 +2074,34 @@
       "windows": [
         {
           "art": "datum",
-          "datum": "2026-09-04",
-          "vonMin": 1140,
-          "bisMin": 1440
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 300
         }
       ],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.190014647594026,
-        "lon": 11.613638477211687
+        "lat": 48.190031078285614,
+        "lon": 11.613648287047754
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 577,
-          "distanceMeters": 1454
+          "distanceMeters": 1452
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 578,
-          "distanceMeters": 454
+          "distanceMeters": 452
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 579,
-          "distanceMeters": 8
+          "distanceMeters": 9
         },
         {
           "corridorId": "koeln-muenchen",
@@ -2113,7 +2113,7 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 581,
-          "distanceMeters": 1069
+          "distanceMeters": 1070
         }
       ]
     },
@@ -4285,7 +4285,7 @@
       "subtitle": " Köln -> Frankfurt",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 21:00 bis zum 05.09.26 07:30 Uhr.",
+        "05.09.26 von 00:00 bis 07:30 Uhr",
         "05.09.26 21:00 bis zum 06.09.26 07:30 Uhr.",
         "",
         "A3: Köln -> Frankfurt, zwischen 0.9 km hinter AD Mönchhof-Dreieck und 2.1 km vor AS Kelsterbach",
@@ -4297,7 +4297,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 1.34,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 450
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.03032668522537,
@@ -6370,7 +6377,7 @@
       "subtitle": " Frankfurt -> Köln",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 20:00 bis zum 05.09.26 05:00 Uhr.",
+        "05.09.26 von 00:00 bis 05:00 Uhr",
         "",
         "A3: Frankfurt -> Köln, zwischen 0.4 km hinter Epgert und 0.2 km vor Pfaffenbach",
         "",
@@ -6381,7 +6388,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 5.68,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.581103396333596,
@@ -6567,144 +6581,6 @@
           "routeId": "a3-a1-a31",
           "segmentIndex": 533,
           "distanceMeters": 1468
-        }
-      ]
-    },
-    {
-      "id": "A3-roadworks-2024-024354--vi-bs.2026-06-15_00-00-00-000.devi-zus.2025-04-28_00-00-00-000.f_001.de7",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 | Neustadt (Wied) - Hambitz",
-      "subtitle": " Frankfurt -> Köln",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 15.06.26 um 00:00 Uhr",
-        "Ende: 05.09.26 um 00:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 30.11.26)",
-        "",
-        "A3: Frankfurt -> Köln, zwischen 1.6 km hinter AS Neustadt (Wied) und 3.3 km vor Hambitz",
-        "",
-        "Länge: 1.7 km | Max. 100 km/h | Maximale Durchfahrtsbreite: 10 m",
-        "",
-        "A3 Leitungsarbeiten"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": 100,
-      "lengthKm": 1.7,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.615427858116874,
-        "lon": 7.420651863364279
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 529,
-          "distanceMeters": 1427
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 530,
-          "distanceMeters": 475
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 531,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 532,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 533,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 534,
-          "distanceMeters": 824
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 552,
-          "distanceMeters": 754
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 553,
-          "distanceMeters": 26
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 554,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 555,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 556,
-          "distanceMeters": 526
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 557,
-          "distanceMeters": 1483
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 529,
-          "distanceMeters": 1427
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 530,
-          "distanceMeters": 475
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 531,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 532,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 533,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 534,
-          "distanceMeters": 824
         }
       ]
     },
@@ -10108,189 +9984,6 @@
       ]
     },
     {
-      "id": "A3-warning-INRIX--vi-zus.2026-09-04_20-32-43-000.de0",
-      "ref": "A3",
-      "type": "warning",
-      "title": "A3 | Idstein - Niedernhausen",
-      "subtitle": " Köln -> Frankfurt",
-      "description": [
-        "Beginn: 04.09.26 um 22:32 Uhr",
-        "",
-        "Zusammengesetzte Verkehrsinformation, seit 04.09.2026, 20:32",
-        "A3: Köln -> Frankfurt, zwischen 0.3 km hinter AS Idstein und 0.4 km vor AS Niedernhausen",
-        "",
-        "Ereignismeldung:",
-        "- Reisezeitverlust: 1 Minuten"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.21010806006712,
-        "lon": 8.251125114611717
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 143,
-          "distanceMeters": 927
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 144,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 145,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 146,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 147,
-          "distanceMeters": 9
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 148,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 149,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 150,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 151,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 152,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 153,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 154,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 155,
-          "distanceMeters": 742
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 143,
-          "distanceMeters": 927
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 144,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 145,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 146,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 147,
-          "distanceMeters": 9
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 148,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 149,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 150,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 151,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 152,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 153,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 154,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 155,
-          "distanceMeters": 742
-        }
-      ]
-    },
-    {
       "id": "A4-roadworks-2024-002408--vi-bs.2025-05-19_00-00-00-000.devi-zus.2025-03-13_00-00-00-000.f.de7",
       "ref": "A4",
       "type": "roadworks",
@@ -12799,11 +12492,11 @@
         "Beginn: 04.09.26 um 19:47 Uhr",
         "",
         "Angespannte Verkehrslage, seit 04.09.2026, 17:47",
-        "A8: Karlsruhe -> Stuttgart, zwischen 1.9 km hinter Pforzheim und 3.9 km vor AS Heimsheim",
+        "A8: Karlsruhe -> Stuttgart, zwischen 3.4 km hinter Pforzheim und 5.3 km vor AS Heimsheim",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 12 Minuten (zunehmend)"
+        "- Reisezeitverlust: 10 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -12811,33 +12504,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.89229578262755,
-        "lon": 8.785900949789827
+        "lat": 48.87942919034983,
+        "lon": 8.788235545225842
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
-          "segmentIndex": 349,
-          "distanceMeters": 1138
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 350,
-          "distanceMeters": 147
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
           "segmentIndex": 351,
-          "distanceMeters": 0
+          "distanceMeters": 590
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 352,
-          "distanceMeters": 0
+          "distanceMeters": 1
         },
         {
           "corridorId": "koeln-muenchen",
@@ -12861,25 +12542,13 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 356,
-          "distanceMeters": 6
+          "distanceMeters": 11
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 357,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 358,
-          "distanceMeters": 250
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 359,
-          "distanceMeters": 1236
+          "distanceMeters": 717
         }
       ]
     },
@@ -13101,7 +12770,7 @@
       "subtitle": " Würzburg -> Ulm",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 18:00 bis zum 05.09.26 06:00 Uhr.",
+        "05.09.26 von 00:00 bis 06:00 Uhr",
         "05.09.26 18:00 bis zum 06.09.26 06:00 Uhr.",
         "06.09.26 18:00 bis zum 07.09.26 06:00 Uhr.",
         "",
@@ -13114,7 +12783,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 1.3,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 48.6334035369447,
@@ -24453,7 +24129,7 @@
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
         "Jeden Tag zwischen dem 03.09.26 und dem 12.09.26 von 00:00 bis 05:30 Uhr.",
         "Jeden Tag zwischen dem 03.09.26 und dem 12.09.26 von 18:30 bis 00:00 Uhr.",
-        "04.09.26 18:30 bis zum 05.09.26 05:30 Uhr.",
+        "05.09.26 von 00:00 bis 05:30 Uhr",
         "05.09.26 18:30 bis zum 06.09.26 05:30 Uhr.",
         "06.09.26 18:30 bis zum 07.09.26 05:30 Uhr.",
         "07.09.26 18:30 bis zum 08.09.26 05:30 Uhr.",
@@ -24480,6 +24156,12 @@
           "datum": "2026-09-12",
           "vonMin": 1110,
           "bisMin": 0
+        },
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 330
         }
       ],
       "ausnahmen": [],
@@ -25842,7 +25524,7 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 18:30 bis zum 05.09.26 05:30 Uhr.",
+        "05.09.26 von 00:00 bis 05:30 Uhr",
         "05.09.26 18:30 bis zum 06.09.26 05:30 Uhr.",
         "06.09.26 18:30 bis zum 07.09.26 05:30 Uhr.",
         "Jeden Montag, Dienstag, Mittwoch, Donnerstag und Freitag zwischen dem 07.09.26 und dem 12.09.26 von 18:30 bis 00:00 Uhr.",
@@ -25859,6 +25541,12 @@
       "speedLimitKmh": 80,
       "lengthKm": 1.55,
       "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 330
+        },
         {
           "art": "datum",
           "datum": "2026-09-12",
@@ -26546,7 +26234,7 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 18:00 bis zum 05.09.26 06:00 Uhr.",
+        "05.09.26 von 00:00 bis 06:00 Uhr",
         "",
         "A7: Kassel -> Hannover, zwischen 6.9 km hinter AS Bockenem und 3.1 km vor AD Salzgitter",
         "",
@@ -26557,7 +26245,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 0.4,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 360
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 52.05716894825187,
@@ -27373,150 +27068,6 @@
           "routeId": "a9-a71-a7",
           "segmentIndex": 714,
           "distanceMeters": 600
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2026-038525--vi-bs.2026-08-17_00-00-00-000.de0",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Berkhof - Südhorn",
-      "subtitle": " Hannover -> Hamburg",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 30.08.26 um 00:00 Uhr",
-        "Ende: 05.09.26 um 00:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 05.09.26)",
-        "",
-        "A7: Hannover -> Hamburg, zwischen 2.0 km hinter AS Berkhof und 0.9 km vor Südhorn",
-        "",
-        "Länge: 0.77 km | Maximale Durchfahrtsbreite: 6.75 m",
-        "",
-        "Erneuerung Betonschutzwand"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": 0.77,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 52.62639137168203,
-        "lon": 9.725147074963562
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 693,
-          "distanceMeters": 1264
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 694,
-          "distanceMeters": 264
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 695,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 696,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 697,
-          "distanceMeters": 961
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 702,
-          "distanceMeters": 507
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 703,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 704,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 705,
-          "distanceMeters": 719
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 761,
-          "distanceMeters": 1253
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 762,
-          "distanceMeters": 253
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 763,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 764,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 765,
-          "distanceMeters": 973
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 687,
-          "distanceMeters": 942
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 688,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 689,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 690,
-          "distanceMeters": 284
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 691,
-          "distanceMeters": 1284
         }
       ]
     },
@@ -29589,7 +29140,7 @@
       "subtitle": " Speyer -> Hockenheim",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 20:30 bis zum 05.09.26 04:00 Uhr.",
+        "05.09.26 von 00:00 bis 04:00 Uhr",
         "05.09.26 20:30 bis zum 06.09.26 04:00 Uhr.",
         "",
         "A61: Speyer -> Hockenheim, zwischen 0.3 km hinter Rheinbrücke Speyer und 1.5 km vor AD Hockenheim",
@@ -29601,7 +29152,14 @@
       "isBlocked": false,
       "speedLimitKmh": 80,
       "lengthKm": 5.03,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 240
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 49.3397946482335,
@@ -35834,7 +35392,7 @@
       "subtitle": " Gießen -> Hagen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "04.09.26 19:00 bis zum 05.09.26 05:00 Uhr.",
+        "05.09.26 von 00:00 bis 05:00 Uhr",
         "",
         "A45: Gießen -> Hagen, zwischen 2.8 km hinter AK Wetzlarer Kreuz und 1.2 km vor Lemperberg",
         "",
@@ -35845,7 +35403,14 @@
       "isBlocked": false,
       "speedLimitKmh": null,
       "lengthKm": 1.8,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-09-05",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 50.60527720837112,
@@ -39146,7 +38711,6 @@
       "subtitle": " Braunschweig -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "Jeden Montag, Dienstag, Mittwoch, Donnerstag und Freitag zwischen dem 24.08.26 und dem 05.09.26 von 19:00 bis 00:00 Uhr.",
         "Jeden Montag, Dienstag, Mittwoch, Donnerstag, Freitag und Samstag zwischen dem 25.08.26 und dem 05.09.26 von 00:00 bis 05:00 Uhr.",
         "Die Baustelle gilt nicht an folgenden Tagen:",
         "",
@@ -39163,28 +38727,8 @@
         {
           "art": "datum",
           "datum": "2026-09-05",
-          "vonMin": 1140,
-          "bisMin": 0
-        },
-        {
-          "art": "datum",
-          "datum": "2026-09-05",
           "vonMin": 0,
           "bisMin": 300
-        },
-        {
-          "art": "wochentage",
-          "tage": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "abDatum": "2026-08-24",
-          "bisDatum": "2026-09-05",
-          "vonMin": 1140,
-          "bisMin": 0
         },
         {
           "art": "wochentage",
@@ -39320,7 +38864,6 @@
       "subtitle": " Braunschweig -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "Jeden Montag, Dienstag, Mittwoch, Donnerstag und Freitag zwischen dem 24.08.26 und dem 05.09.26 von 19:00 bis 00:00 Uhr.",
         "Jeden Montag, Dienstag, Mittwoch, Donnerstag, Freitag und Samstag zwischen dem 25.08.26 und dem 05.09.26 von 00:00 bis 05:00 Uhr.",
         "Die Baustelle gilt nicht an folgenden Tagen:",
         "",
@@ -39337,28 +38880,8 @@
         {
           "art": "datum",
           "datum": "2026-09-05",
-          "vonMin": 1140,
-          "bisMin": 0
-        },
-        {
-          "art": "datum",
-          "datum": "2026-09-05",
           "vonMin": 0,
           "bisMin": 300
-        },
-        {
-          "art": "wochentage",
-          "tage": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "abDatum": "2026-08-24",
-          "bisDatum": "2026-09-05",
-          "vonMin": 1140,
-          "bisMin": 0
         },
         {
           "art": "wochentage",
