@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fahrt auswerten – Autobahn-Routenplaner</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f5f7; --surface: #ffffff; --surface-sunken: #f0f0f3;
+    --text: #1d1d1f; --muted: #86868b; --hairline: rgba(0,0,0,.08);
+    --accent: #0071e3; --accent-soft: rgba(0,113,227,.1);
+    --danger: #c4271b;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 30px -12px rgba(0,0,0,.18);
+    --r-card: 20px; --r-control: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000; --surface: #1c1c1e; --surface-sunken: #2c2c2e;
+      --text: #f5f5f7; --muted: #98989d; --hairline: rgba(255,255,255,.12);
+      --accent: #0a84ff; --accent-soft: rgba(10,132,255,.18); --danger: #ff453a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -12px rgba(0,0,0,.7);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3rem 1.25rem 5rem; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  .back { color: var(--muted); text-decoration: none; font-size: .875rem; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: clamp(2rem,6vw,2.75rem); line-height: 1.05; letter-spacing: -.03em; margin: .6rem 0 .5rem; }
+  header p { color: var(--muted); margin: 0 0 2.5rem; max-width: 36em; }
+
+  .card { background: var(--surface); border-radius: var(--r-card); box-shadow: var(--shadow);
+          padding: 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: .8125rem; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
+                color: var(--muted); margin: 0 0 1.1rem; }
+
+  /* Ablagefeld */
+  .drop {
+    border: 2px dashed var(--hairline); border-radius: var(--r-card);
+    padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; transition: .18s;
+    background: var(--surface);
+  }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .drop strong { display: block; font-size: 1.0625rem; margin-bottom: .3rem; }
+  .drop span { color: var(--muted); font-size: .875rem; }
+  .drop input { display: none; }
+  .status { font-size: .875rem; color: var(--muted); margin-top: 1rem; min-height: 1.3em; text-align: center; }
+  .status.err { color: var(--danger); }
+
+  #map { height: 460px; border-radius: 14px; overflow: hidden; }
+  .legend { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; margin-top: 1rem; font-size: .8125rem; }
+  .legend span { display: inline-flex; align-items: center; gap: .4rem; color: var(--muted); }
+  .legend i { width: 16px; height: 4px; border-radius: 2px; }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 1.6rem; }
+  .stat .k { font-size: 1.4rem; font-weight: 650; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: .75rem; color: var(--muted); }
+
+  .ergebnis { background: var(--accent-soft); border-radius: var(--r-control); padding: 1rem 1.2rem; margin-top: 1.2rem; }
+  .ergebnis h3 { margin: 0 0 .5rem; font-size: .9375rem; }
+  .ergebnis p { margin: .25rem 0; font-size: .875rem; }
+  .ergebnis b { font-variant-numeric: tabular-nums; }
+
+  .table-scroll { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .875rem; font-variant-numeric: tabular-nums; }
+  th { position: sticky; top: 0; background: var(--surface); font-size: .6875rem; text-transform: uppercase;
+       letter-spacing: .04em; color: var(--muted); text-align: left; padding: .5rem .6rem;
+       border-bottom: 1px solid var(--hairline); }
+  td { padding: .3rem .6rem; border-bottom: 1px solid var(--hairline); }
+  td.n { text-align: right; } .t { color: var(--muted); }
+  .hidden { display: none; }
+
+  .fahrt {
+    display: flex; align-items: center; gap: .8rem; padding: .7rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .fahrt:last-child { border-bottom: none; }
+  .fahrt input[type=checkbox] { width: 18px; height: 18px; flex: none; accent-color: var(--accent); }
+  .fahrt .name { flex: 1; min-width: 0; }
+  .fahrt .name b { display: block; font-weight: 600; }
+  .fahrt .name span { font-size: .78rem; color: var(--muted); }
+  .fahrt.aktiv { background: var(--accent-soft); border-radius: 10px; padding-left: .6rem; padding-right: .6rem; }
+  .mini {
+    font: inherit; font-size: .78rem; border: none; background: var(--surface-sunken);
+    color: var(--accent); border-radius: 8px; padding: .35rem .6rem; cursor: pointer; white-space: nowrap;
+  }
+  .mini:hover { background: var(--accent-soft); }
+  .mini.weg { color: var(--danger); }
+  .speichern { margin-top: 1.2rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .speichern input {
+    font: inherit; flex: 1; min-width: 180px; background: var(--surface-sunken); border: none;
+    border-radius: var(--r-control); padding: .6rem .8rem; color: var(--text);
+  }
+  .btn-primary {
+    font: inherit; font-weight: 600; border: none; background: var(--accent); color: #fff;
+    border-radius: var(--r-control); padding: .6rem 1.1rem; cursor: pointer; white-space: nowrap;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .vergleich { margin-top: 1rem; }
+  .vergleich table { font-size: .82rem; }
+  footer { color: var(--muted); font-size: .8125rem; margin-top: 2.5rem; text-align: center; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="back" href="../">← Routenplaner</a>
+      <h1>Fahrt auswerten</h1>
+      <p>Aufzeichnung hochladen und sehen, wie schnell du tatsächlich gefahren bist –
+         Kilometer für Kilometer, farbig auf der Karte.</p>
+    </header>
+
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept=".gpx,application/gpx+xml,text/xml" />
+      <strong>GPX-Datei hierher ziehen</strong>
+      <span>oder klicken zum Auswählen · die Datei bleibt auf deinem Gerät</span>
+    </label>
+    <div class="status" id="status"></div>
+
+    <div class="card hidden" id="karte-gespeichert">
+      <h2 class="card-title">Gespeicherte Fahrten</h2>
+      <div id="liste"></div>
+      <div class="vergleich" id="vergleich"></div>
+    </div>
+
+    <div class="card hidden" id="karte-karte">
+      <h2 class="card-title">Streckenverlauf <span id="karte-titel" class="t"></span></h2>
+      <div id="map"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="card hidden" id="karte-zahlen">
+      <h2 class="card-title">Überblick</h2>
+      <div class="stats" id="stats"></div>
+      <div class="ergebnis" id="ergebnis"></div>
+      <div class="speichern" id="speichern"></div>
+    </div>
+
+    <div class="card hidden" id="karte-tabelle">
+      <h2 class="card-title">Kilometer für Kilometer</h2>
+      <div class="table-scroll">
+        <table id="tabelle"></table>
+      </div>
+    </div>
+
+    <footer>
+      Tempolimits aus OpenStreetMap · <a href="../">zurück zum Routenplaner</a>
+    </footer>
+  </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // Farbskala nach gefahrenem Tempo. Oberhalb von 180 wird gelb gezeichnet, damit
+  // Spitzen sich vom Grün abheben und nicht mit "schnell, aber üblich" verschwimmen.
+  const SKALA = [
+    { ab: 180, farbe: "#ffd60a", text: "über 180" },
+    { ab: 150, farbe: "#14532d", text: "150–180" },
+    { ab: 120, farbe: "#2e9e4f", text: "120–150" },
+    { ab: 100, farbe: "#8bc34a", text: "100–120" },
+    { ab: 80,  farbe: "#f0902b", text: "80–100" },
+    { ab: 50,  farbe: "#e8622a", text: "50–80" },
+    { ab: 0,   farbe: "#c0281b", text: "unter 50" },
+  ];
+  const farbeFuer = (v) => (SKALA.find((s) => v >= s.ab) || SKALA[SKALA.length - 1]).farbe;
+
+  // Wie im Auswerteskript: Pausen trennen die Fahrt, GPS-Ausreißer werden entfernt.
+  const PAUSE_S = 180;
+  const MAX_KMH = 260;
+
+  const rad = (d) => (d * Math.PI) / 180;
+  function distM(a, b) {
+    const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+    const s = Math.sin(dLat / 2) ** 2 +
+      Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * 6371000 * Math.asin(Math.sqrt(s));
+  }
+  const fmtH = (h) => `${Math.floor(h)} h ${String(Math.round((h % 1) * 60)).padStart(2, "0")} min`;
+
+  let gitter = null, gitterAufl = 200;
+  async function ladeRaster() {
+    try {
+      const res = await fetch("../data/speedgrid.json");
+      if (!res.ok) return;
+      const g = await res.json();
+      gitterAufl = g.grid;
+      gitter = new Map();
+      for (const [ref, flat] of Object.entries(g.refs)) {
+        let la = 0, lo = 0;
+        for (let i = 0; i < flat.length; i += 3) {
+          la += flat[i]; lo += flat[i + 1];
+          const key = `${la}|${lo}`;
+          if (!gitter.has(key)) gitter.set(key, []);
+          gitter.get(key).push({ ref, ms: flat[i + 2], lat: la / gitterAufl, lon: lo / gitterAufl });
+        }
+      }
+    } catch { /* ohne Raster geht die Auswertung auch, nur ohne Limitvergleich */ }
+  }
+  function limitAn(lat, lon) {
+    if (!gitter) return null;
+    const la = Math.round(lat * gitterAufl), lo = Math.round(lon * gitterAufl);
+    let best = null, bd = Infinity;
+    for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
+      for (const z of gitter.get(`${la + d1}|${lo + d2}`) || []) {
+        const d = distM({ lat, lon }, z);
+        if (d < bd) { bd = d; best = z; }
+      }
+    }
+    return best && bd < 600 ? best : null;
+  }
+
+  function parseGpx(text) {
+    const doc = new DOMParser().parseFromString(text, "application/xml");
+    if (doc.querySelector("parsererror")) throw new Error("Datei ist kein gültiges XML.");
+    const pts = [];
+    for (const p of doc.getElementsByTagName("trkpt")) {
+      const zeit = p.getElementsByTagName("time")[0];
+      if (!zeit) continue;
+      const t = new Date(zeit.textContent);
+      if (Number.isNaN(t.getTime())) continue;
+      pts.push({ lat: +p.getAttribute("lat"), lon: +p.getAttribute("lon"), t });
+    }
+    return pts.sort((a, b) => a.t - b.t);
+  }
+
+  // Vor- und Nachlauf herauslösen: die App lief oft schon vor der Abfahrt oder
+  // wurde am Ziel nicht gestoppt.
+  function fahrtHerausloesen(alle) {
+    const rein = [alle[0]];
+    let ausreisser = 0;
+    for (let i = 1; i < alle.length; i++) {
+      const vor = rein[rein.length - 1];
+      const dS = (alle[i].t - vor.t) / 1000;
+      if (dS <= 0) continue;
+      if (dS <= PAUSE_S && (distM(vor, alle[i]) / dS) * 3.6 > MAX_KMH) { ausreisser++; continue; }
+      rein.push(alle[i]);
+    }
+    const bloecke = [];
+    let von = 0, km = 0;
+    for (let i = 1; i < rein.length; i++) {
+      const dS = (rein[i].t - rein[i - 1].t) / 1000;
+      if (dS > PAUSE_S) { bloecke.push({ von, bis: i - 1, km }); von = i; km = 0; }
+      else km += distM(rein[i - 1], rein[i]) / 1000;
+    }
+    bloecke.push({ von, bis: rein.length - 1, km });
+    bloecke.sort((a, b) => b.km - a.km);
+    const h = bloecke[0];
+    return { punkte: rein.slice(h.von, h.bis + 1), ausreisser, verworfen: alle.length - (h.bis - h.von + 1) };
+  }
+
+  // Kilometerweise bündeln – inklusive der Geometrie, damit die Karte dem Verlauf folgt.
+  function proKilometer(punkte) {
+    const out = [];
+    let km = 0, restM = 0, restS = 0, spur = [punkte[0]];
+    for (let i = 1; i < punkte.length; i++) {
+      let dM = distM(punkte[i - 1], punkte[i]);
+      let dS = (punkte[i].t - punkte[i - 1].t) / 1000;
+      if (dS <= 0) continue;
+      spur.push(punkte[i]);
+      while (restM + dM >= 1000) {
+        const anteil = (1000 - restM) / dM;
+        restS += dS * anteil;
+        const tr = limitAn(punkte[i].lat, punkte[i].lon);
+        out.push({ km: ++km, kmh: 3600 / restS, ref: tr?.ref ?? null,
+                   ms: tr ? tr.ms : null, t: punkte[i].t, spur });
+        dM -= 1000 - restM; dS -= dS * anteil;
+        restM = 0; restS = 0;
+        spur = [punkte[i]];
+      }
+      restM += dM; restS += dS;
+    }
+    return out;
+  }
+
+  let karte = null, ebene = null;
+  function zeichne(kms) {
+    if (!karte) {
+      karte = L.map("map");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende',
+      }).addTo(karte);
+      ebene = L.layerGroup().addTo(karte);
+    }
+    ebene.clearLayers();
+    const alle = [];
+    for (const k of kms) {
+      const pfad = k.spur.map((p) => [p.lat, p.lon]);
+      if (pfad.length < 2) continue;
+      alle.push(...pfad);
+      const limit = !k.ref ? "" : k.ms === 0 ? " · unbegrenzt" : ` · Limit ${k.ms}`;
+      L.polyline(pfad, { color: farbeFuer(k.kmh), weight: 5, opacity: .9 })
+        .bindTooltip(`km ${k.km} · ${k.kmh.toFixed(0)} km/h${limit}`, { sticky: true })
+        .addTo(ebene);
+    }
+    // Erst die Größe neu messen, dann den Ausschnitt setzen. Wird andersherum
+    // gerechnet, während die Karte noch ausgeblendet ist, hat der Container die
+    // Größe null und der Ausschnitt schrumpft auf einen Punkt zusammen.
+    karte.invalidateSize();
+    if (alle.length) karte.fitBounds(L.latLngBounds(alle), { padding: [24, 24] });
+    document.getElementById("legend").innerHTML = SKALA.slice().reverse()
+      .map((s) => `<span><i style="background:${s.farbe}"></i>${s.text} km/h</span>`).join("");
+  }
+
+  function zeigeZahlen(kms, punkte) {
+    const dauerH = (punkte[punkte.length - 1].t - punkte[0].t) / 3600000;
+    let gesM = 0;
+    for (let i = 1; i < punkte.length; i++) gesM += distM(punkte[i - 1], punkte[i]);
+    const schnellste = kms.reduce((a, b) => (b.kmh > a.kmh ? b : a), kms[0]);
+    const werte = [
+      [`${(gesM / 1000).toFixed(0)} km`, "Strecke"],
+      [fmtH(dauerH), "Fahrzeit"],
+      [`${(gesM / 1000 / dauerH).toFixed(0)} km/h`, "im Schnitt"],
+      [`${schnellste.kmh.toFixed(0)} km/h`, `schnellster km (${schnellste.km})`],
+    ];
+    document.getElementById("stats").innerHTML = werte
+      .map(([k, l]) => `<div class="stat"><div class="k">${k}</div><div class="l">${l}</div></div>`).join("");
+
+    const aufAB = kms.filter((k) => k.ref);
+    const frei = aufAB.filter((k) => k.ms === 0);
+    const begr = aufAB.filter((k) => k.ms > 0);
+    let html = "<h3>Für den Routenplaner</h3>";
+    if (frei.length >= 10) {
+      const s = frei.reduce((a, k) => a + k.kmh, 0) / frei.length;
+      html += `<p>Auf <b>${frei.length} km</b> unbegrenzter Autobahn im Mittel <b>${s.toFixed(0)} km/h</b>
+               → Wunschtempo <b>${Math.round(s / 5) * 5}</b></p>`;
+    } else {
+      html += `<p>Nur ${frei.length} km unbegrenzte Autobahn – zu wenig für einen belastbaren Wert.</p>`;
+    }
+    if (begr.length >= 10) {
+      const d = begr.reduce((a, k) => a + (k.kmh - k.ms), 0) / begr.length;
+      html += `<p>Auf <b>${begr.length} km</b> mit Limit im Mittel <b>${d >= 0 ? "+" : ""}${d.toFixed(0)} km/h</b>
+               → Tempo über Limits <b>${Math.max(0, Math.round(d / 5) * 5)}</b></p>`;
+    } else {
+      html += `<p>Nur ${begr.length} km mit ausgeschildertem Limit – zu wenig für einen belastbaren Wert.</p>`;
+    }
+    if (aufAB.length < kms.length * 0.5)
+      html += `<p class="t">${kms.length - aufAB.length} km ohne Zuordnung – Ausland, Bundesstraße oder Stadt.</p>`;
+    document.getElementById("ergebnis").innerHTML = html;
+
+    zeigeTabelle(kms);
+  }
+
+  function zeigeTabelle(kms) {
+    document.getElementById("tabelle").innerHTML =
+      `<thead><tr><th>km</th><th>Autobahn</th><th>Limit</th><th class="n">gefahren</th>
+       <th class="n">Abstand</th><th class="n">Uhrzeit</th></tr></thead><tbody>` +
+      kms.map((k) => `<tr>
+        <td class="n">${k.km}</td>
+        <td>${k.ref ?? '<span class="t">–</span>'}</td>
+        <td>${!k.ref ? "" : k.ms === 0 ? "unbegrenzt" : k.ms}</td>
+        <td class="n" style="color:${farbeFuer(k.kmh)};font-weight:650">${k.kmh.toFixed(0)}</td>
+        <td class="n">${k.ref && k.ms > 0 ? (k.kmh - k.ms >= 0 ? "+" : "") + (k.kmh - k.ms).toFixed(0) : ""}</td>
+        <td class="n t">${k.t.toTimeString().slice(0, 5)}</td></tr>`).join("") + "</tbody>";
+  }
+
+  // ===========================================================================
+  // Gespeicherte Fahrten
+  // ===========================================================================
+  //
+  // Abgelegt wird bewusst nicht die GPX-Datei, sondern die ausgewertete Fassung:
+  // je Kilometer Tempo, Autobahn, Limit, Uhrzeit und eine auf wenige Punkte
+  // ausgedünnte Geometrie. Eine Aufzeichnung von 1,3 MB schrumpft damit auf etwa
+  // 60 KB, und der Browserspeicher fasst rund fünf Megabyte.
+
+  const SPEICHER = "routenplaner:fahrten";
+  let fahrten = [];
+  let aktiveFahrt = null;
+
+  function ladeFahrten() {
+    try { fahrten = JSON.parse(localStorage.getItem(SPEICHER) || "[]"); }
+    catch { fahrten = []; }
+  }
+  function sichere() {
+    try {
+      localStorage.setItem(SPEICHER, JSON.stringify(fahrten));
+      return true;
+    } catch {
+      sage("Speicher voll – bitte eine ältere Fahrt löschen.", true);
+      return false;
+    }
+  }
+
+  // Geometrie ausdünnen: für die Kartendarstellung genügen wenige Punkte je
+  // Kilometer, die Rohdaten liefern bis zu neunzig.
+  function duenneAus(spur, max = 6) {
+    if (spur.length <= max) return spur.map((p) => [ +p.lat.toFixed(5), +p.lon.toFixed(5) ]);
+    const out = [];
+    for (let i = 0; i < max; i++) {
+      const p = spur[Math.round((i * (spur.length - 1)) / (max - 1))];
+      out.push([ +p.lat.toFixed(5), +p.lon.toFixed(5) ]);
+    }
+    return out;
+  }
+
+  function alsDatensatz(name, kms, punkte) {
+    let gesM = 0;
+    for (let i = 1; i < punkte.length; i++) gesM += distM(punkte[i - 1], punkte[i]);
+    return {
+      id: String(Date.now()),
+      name,
+      start: punkte[0].t.toISOString(),
+      km: Math.round(gesM / 1000),
+      dauerH: (punkte[punkte.length - 1].t - punkte[0].t) / 3600000,
+      kms: kms.map((k) => ({
+        km: k.km, v: Math.round(k.kmh), ref: k.ref, ms: k.ms,
+        t: k.t.toISOString(), g: duenneAus(k.spur),
+      })),
+    };
+  }
+
+  // Datensatz zurück in die Form bringen, die Karte und Tabelle erwarten.
+  function alsKms(f) {
+    return f.kms.map((k) => ({
+      km: k.km, kmh: k.v, ref: k.ref, ms: k.ms,
+      t: new Date(k.t), spur: k.g.map(([lat, lon]) => ({ lat, lon })),
+    }));
+  }
+
+  function zeigeGespeicherte() {
+    const box = document.getElementById("liste");
+    if (!fahrten.length) {
+      document.getElementById("karte-gespeichert").classList.add("hidden");
+      return;
+    }
+    document.getElementById("karte-gespeichert").classList.remove("hidden");
+    box.innerHTML = fahrten.map((f) => `
+      <div class="fahrt ${aktiveFahrt === f.id ? "aktiv" : ""}">
+        <input type="checkbox" data-vgl="${f.id}" ${f.vergleich ? "checked" : ""} title="zum Vergleich" />
+        <div class="name">
+          <b>${f.name}</b>
+          <span>${new Date(f.start).toLocaleString("de-DE")} · ${f.km} km · ${fmtH(f.dauerH)} · Ø ${(f.km / f.dauerH).toFixed(0)} km/h</span>
+        </div>
+        <button class="mini" data-zeig="${f.id}">Karte</button>
+        <button class="mini weg" data-weg="${f.id}">Löschen</button>
+      </div>`).join("");
+
+    box.querySelectorAll("[data-zeig]").forEach((b) => b.addEventListener("click", () => {
+      const f = fahrten.find((x) => x.id === b.dataset.zeig);
+      if (!f) return;
+      aktiveFahrt = f.id;
+      for (const id of ["karte-karte", "karte-tabelle"]) document.getElementById(id).classList.remove("hidden");
+      const kms = alsKms(f);
+      zeichne(kms);
+      document.getElementById("karte-titel").textContent = `– ${f.name}`;
+      zeigeTabelle(kms);
+      zeigeGespeicherte();
+      document.getElementById("karte-karte").scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+    box.querySelectorAll("[data-weg]").forEach((b) => b.addEventListener("click", () => {
+      const f = fahrten.find((x) => x.id === b.dataset.weg);
+      if (!f || !confirm(`"${f.name}" löschen?`)) return;
+      fahrten = fahrten.filter((x) => x.id !== b.dataset.weg);
+      if (aktiveFahrt === b.dataset.weg) aktiveFahrt = null;
+      sichere(); zeigeGespeicherte(); zeigeVergleich();
+    }));
+    box.querySelectorAll("[data-vgl]").forEach((b) => b.addEventListener("change", () => {
+      const f = fahrten.find((x) => x.id === b.dataset.vgl);
+      if (f) { f.vergleich = b.checked; sichere(); zeigeVergleich(); }
+    }));
+  }
+
+  // Fahrten über die Position zuordnen, nicht über den Kilometerzähler: zwei
+  // Aufzeichnungen derselben Strecke starten selten am exakt gleichen Punkt.
+  function naechsterKm(f, punkt) {
+    let best = null, bd = Infinity;
+    for (const k of f.kms) {
+      const p = k.g[Math.floor(k.g.length / 2)];
+      const d = distM(punkt, { lat: p[0], lon: p[1] });
+      if (d < bd) { bd = d; best = k; }
+    }
+    return bd < 3000 ? best : null;
+  }
+
+  function zeigeVergleich() {
+    const box = document.getElementById("vergleich");
+    const gewaehlt = fahrten.filter((f) => f.vergleich);
+    if (gewaehlt.length < 2) {
+      box.innerHTML = gewaehlt.length === 1
+        ? '<p class="t" style="font-size:.82rem">Eine zweite Fahrt ankreuzen, um zu vergleichen.</p>' : "";
+      return;
+    }
+    const basis = gewaehlt[0];
+    const andere = gewaehlt.slice(1);
+    const zeilen = [];
+    for (const k of basis.kms) {
+      const mitte = k.g[Math.floor(k.g.length / 2)];
+      const punkt = { lat: mitte[0], lon: mitte[1] };
+      const werte = andere.map((f) => naechsterKm(f, punkt));
+      zeilen.push({ k, werte });
+    }
+    const auswertbar = zeilen.filter((z) => z.werte.every(Boolean));
+
+    // Größte Unterschiede zuerst – dort lohnt das Hinsehen.
+    const sortiert = [...auswertbar]
+      .map((z) => ({ ...z, spanne: Math.max(z.k.v, ...z.werte.map((w) => w.v)) - Math.min(z.k.v, ...z.werte.map((w) => w.v)) }))
+      .sort((a, b) => b.spanne - a.spanne);
+
+    const kopf = `<tr><th>km</th><th>Autobahn</th><th class="n">${basis.name}</th>` +
+      andere.map((f) => `<th class="n">${f.name}</th>`).join("") + `<th class="n">Spanne</th></tr>`;
+    const zeile = (z) => `<tr>
+      <td class="n">${z.k.km}</td>
+      <td>${z.k.ref ?? '<span class="t">–</span>'}</td>
+      <td class="n" style="color:${farbeFuer(z.k.v)};font-weight:650">${z.k.v}</td>
+      ${z.werte.map((w) => `<td class="n" style="color:${farbeFuer(w.v)};font-weight:650">${w.v}</td>`).join("")}
+      <td class="n">${z.spanne ?? ""}</td></tr>`;
+
+    const summe = (f) => {
+      const h = f.kms.reduce((a, k) => a + 1 / k.v, 0);
+      return { km: f.kms.length, h, v: f.kms.length / h };
+    };
+    const uebersicht = gewaehlt.map((f) => {
+      const s = summe(f);
+      const frei = f.kms.filter((k) => k.ref && k.ms === 0);
+      const fs = frei.length ? frei.reduce((a, k) => a + k.v, 0) / frei.length : null;
+      return `<tr><td>${f.name}</td><td class="n">${s.km}</td><td class="n">${fmtH(s.h)}</td>
+        <td class="n">${s.v.toFixed(0)}</td><td class="n">${fs ? fs.toFixed(0) : "–"}</td></tr>`;
+    }).join("");
+
+    box.innerHTML = `
+      <h3 style="font-size:.9375rem;margin:1.2rem 0 .5rem">Vergleich</h3>
+      <div class="table-scroll" style="max-height:none;margin-bottom:1rem">
+        <table><thead><tr><th>Fahrt</th><th class="n">km</th><th class="n">reine Fahrzeit</th>
+          <th class="n">Ø</th><th class="n">Ø unbegrenzt</th></tr></thead><tbody>${uebersicht}</tbody></table>
+      </div>
+      <p class="t" style="font-size:.82rem">${auswertbar.length} von ${basis.kms.length} Kilometern liegen auf beiden Fahrten.
+        Größte Unterschiede zuerst:</p>
+      <div class="table-scroll"><table><thead>${kopf}</thead><tbody>
+        ${sortiert.slice(0, 40).map(zeile).join("")}
+      </tbody></table></div>`;
+  }
+
+  const status = document.getElementById("status");
+  const sage = (t, err) => { status.textContent = t; status.classList.toggle("err", !!err); };
+
+  async function verarbeite(datei) {
+    try {
+      sage("Lese Datei …");
+      const text = await datei.text();
+      const alle = parseGpx(text);
+      if (alle.length < 20) throw new Error(`Nur ${alle.length} Punkte mit Zeitstempel gefunden – zu wenig.`);
+      const { punkte, ausreisser, verworfen } = fahrtHerausloesen(alle);
+      if (punkte.length < 20) throw new Error("Keine zusammenhängende Fahrt in der Aufzeichnung gefunden.");
+      await ladeRaster();
+      const kms = proKilometer(punkte);
+      if (!kms.length) throw new Error("Strecke zu kurz für eine Auswertung.");
+      for (const id of ["karte-karte", "karte-zahlen", "karte-tabelle"])
+        document.getElementById(id).classList.remove("hidden");
+      zeichne(kms);
+      zeigeZahlen(kms, punkte);
+      document.getElementById("karte-titel").textContent = "";
+      const vorschlag = `${new Date(punkte[0].t).toLocaleDateString("de-DE")} – ${kms.length} km`;
+      document.getElementById("speichern").innerHTML =
+        `<input type="text" id="fahrt-name" value="${vorschlag}" />
+         <button class="btn-primary" id="fahrt-speichern">Fahrt speichern</button>`;
+      document.getElementById("fahrt-speichern").addEventListener("click", () => {
+        const name = document.getElementById("fahrt-name").value.trim() || vorschlag;
+        fahrten.push(alsDatensatz(name, kms, punkte));
+        if (sichere()) {
+          zeigeGespeicherte(); zeigeVergleich();
+          sage(`"${name}" gespeichert – ${fahrten.length} Fahrt(en) vorhanden.`);
+        }
+      });
+      sage(`${alle.length} Punkte gelesen, ${kms.length} km ausgewertet` +
+        (verworfen ? ` · ${verworfen} Punkte vor/nach der Fahrt verworfen` : "") +
+        (ausreisser ? ` · ${ausreisser} GPS-Ausreißer entfernt` : ""));
+    } catch (e) {
+      sage(e.message || "Datei konnte nicht gelesen werden.", true);
+      console.error(e);
+    }
+  }
+
+  const drop = document.getElementById("drop");
+  document.getElementById("file").addEventListener("change", (e) => {
+    if (e.target.files[0]) verarbeite(e.target.files[0]);
+  });
+  ["dragenter", "dragover"].forEach((ev) =>
+    drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) =>
+    drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+  ladeFahrten();
+  zeigeGespeicherte();
+  zeigeVergleich();
+
+  drop.addEventListener("drop", (e) => {
+    const f = e.dataTransfer?.files?.[0];
+    if (f) verarbeite(f);
+  });
+</script>
+</body>
+</html>
