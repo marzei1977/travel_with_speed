@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T04:03:23.689Z",
+  "updatedAt": "2026-09-05T04:35:03.720Z",
   "items": [
     {
       "id": "A9-roadworks-2026-040127--vi-bs.2026-09-03_19-30-00-000.devi-zus.2026-09-03_19-30-00-000.de19",
@@ -10270,21 +10270,19 @@
       ]
     },
     {
-      "id": "A3-warning-INRIX--vi-avl.2026-09-05_03-26-00-000.de0",
+      "id": "A3-warning-INRIX--vi-avl.2026-09-05_03-26-00-000_002.de0",
       "ref": "A3",
       "type": "warning",
-      "title": "A3 | Strietwald-Süd - Einhausung Ost",
+      "title": "A3 | Strietwald-Süd - Aschaffenburg-Ost",
       "subtitle": " Frankfurt -> Würzburg",
       "description": [
         "Beginn: 05.09.26 um 05:26 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 03:26",
-        "A3: Frankfurt -> Würzburg, zwischen 1.6 km hinter Strietwald-Süd und 0.6 km vor Einhausung Ost",
+        "A3: Frankfurt -> Würzburg, zwischen 0.2 km hinter Strietwald-Süd und 1.5 km vor AS Aschaffenburg-Ost",
         "",
         "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 40 km/h",
-        "- Reisezeitverlust: 5 Minuten (zunehmend)"
+        "- Durchschnittsgeschwindigkeit: 40 km/h"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -10292,27 +10290,33 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.995110890147465,
-        "lon": 9.121194554189168
+        "lat": 49.991279063362555,
+        "lon": 9.101835773220934
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
+          "segmentIndex": 224,
+          "distanceMeters": 977
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
           "segmentIndex": 225,
-          "distanceMeters": 1429
+          "distanceMeters": 3
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 226,
-          "distanceMeters": 431
+          "distanceMeters": 2
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 227,
-          "distanceMeters": 20
+          "distanceMeters": 13
         },
         {
           "corridorId": "koeln-muenchen",
@@ -10330,55 +10334,37 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 230,
-          "distanceMeters": 7
+          "distanceMeters": 492
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 231,
-          "distanceMeters": 4
+          "distanceMeters": 1485
         },
         {
           "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 232,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 233,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 234,
-          "distanceMeters": 379
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 235,
-          "distanceMeters": 1364
+          "routeId": "a8-a7",
+          "segmentIndex": 224,
+          "distanceMeters": 977
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 225,
-          "distanceMeters": 1429
+          "distanceMeters": 3
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 226,
-          "distanceMeters": 431
+          "distanceMeters": 2
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 227,
-          "distanceMeters": 20
+          "distanceMeters": 13
         },
         {
           "corridorId": "koeln-muenchen",
@@ -10396,37 +10382,13 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 230,
-          "distanceMeters": 7
+          "distanceMeters": 492
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 231,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 232,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 233,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 234,
-          "distanceMeters": 379
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 235,
-          "distanceMeters": 1364
+          "distanceMeters": 1485
         }
       ]
     },
@@ -12930,95 +12892,6 @@
       ]
     },
     {
-      "id": "A8-warning-INRIX--vi-avl.2026-09-04_17-47-00-000_007.de0",
-      "ref": "A8",
-      "type": "warning",
-      "title": "A8 | Pforzheim - Heimsheim",
-      "subtitle": " Karlsruhe -> Stuttgart",
-      "description": [
-        "Beginn: 04.09.26 um 19:47 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 04.09.2026, 17:47",
-        "A8: Karlsruhe -> Stuttgart, zwischen 3.3 km hinter Pforzheim und 4.1 km vor AS Heimsheim",
-        "",
-        "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 40 km/h",
-        "- Reisezeitverlust: 4 Minuten (zunehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.88044371946104,
-        "lon": 8.788132902620033
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 350,
-          "distanceMeters": 1474
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 351,
-          "distanceMeters": 477
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 352,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 353,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 354,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 355,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 356,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 357,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 358,
-          "distanceMeters": 516
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 359,
-          "distanceMeters": 1494
-        }
-      ]
-    },
-    {
       "id": "A8-warning-INRIX--vi-avl.2026-09-05_03-39-00-000_002.de0",
       "ref": "A8",
       "type": "warning",
@@ -13028,12 +12901,11 @@
         "Beginn: 05.09.26 um 05:39 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 03:39",
-        "A8: München -> Stuttgart, zwischen 2.6 km hinter AS Wendlingen und 0.2 km vor Denkendorf",
+        "A8: München -> Stuttgart, zwischen 1.2 km hinter AS Wendlingen und 0.2 km vor Denkendorf",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Durchschnittsgeschwindigkeit: 15 km/h",
-        "- Reisezeitverlust: 7 Minuten (zunehmend)"
+        "- Reisezeitverlust: 16 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13041,21 +12913,27 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.6837045525815,
-        "lon": 9.326814490511824
+        "lat": 48.677016764792256,
+        "lon": 9.3421253778869
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
+          "segmentIndex": 187,
+          "distanceMeters": 893
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
           "segmentIndex": 188,
-          "distanceMeters": 1241
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
           "segmentIndex": 189,
-          "distanceMeters": 241
+          "distanceMeters": 1
         },
         {
           "corridorId": "muenchen-koeln",
@@ -37680,6 +37558,54 @@
       ]
     },
     {
+      "id": "A45-roadworks-2023-004457--vi-bs.2026-08-18_19-00-00-000.devi-zus.2023-06-01_05-00-00-000_006.f.de19",
+      "ref": "A45",
+      "type": "roadworks",
+      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
+      "subtitle": " Hagen -> Dortmund",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 18.08.26 um 19:00 Uhr",
+        "Ende: 07.09.26 um 19:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 15.01.27)",
+        "",
+        "A45: Hagen -> Dortmund, zwischen 2.3 km hinter AK Westhofener Kreuz und 0.7 km vor AS Dortmund-Süd",
+        "",
+        "Länge: 0.56 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 8.45 m",
+        "",
+        "A45 - Verstärkung BW Rombergholz und BW Schorveskopf - AlD 4457"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": 80,
+      "lengthKm": 0.56,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 51.44225256112189,
+        "lon": 7.502869597417364
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 608,
+          "distanceMeters": 682
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 609,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 610,
+          "distanceMeters": 3
+        }
+      ]
+    },
+    {
       "id": "A45-roadworks-2023-004446--vi-bs.2026-06-25_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de15",
       "ref": "A45",
       "type": "roadworks",
@@ -37932,20 +37858,20 @@
       ]
     },
     {
-      "id": "A45-roadworks-2023-004457--vi-bs.2026-08-18_19-00-00-000.devi-zus.2023-06-01_05-00-00-000_006.f.de19",
+      "id": "A45-roadworks-2023-004457--vi-bs.2026-08-18_19-00-00-000.devi-zus.2023-06-01_05-00-00-000_006.f.de21",
       "ref": "A45",
       "type": "roadworks",
-      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
-      "subtitle": " Hagen -> Dortmund",
+      "title": "A45 | Dortmund-Süd - Westhofener Kreuz",
+      "subtitle": " Dortmund -> Hagen",
       "description": [
         "Zeitraum dieser Bauphase:",
         "Beginn: 18.08.26 um 19:00 Uhr",
         "Ende: 07.09.26 um 19:00 Uhr",
         "(Ende der Gesamtmaßnahme: 15.01.27)",
         "",
-        "A45: Hagen -> Dortmund, zwischen 2.3 km hinter AK Westhofener Kreuz und 0.7 km vor AS Dortmund-Süd",
+        "A45: Dortmund -> Hagen, zwischen 0.7 km hinter AS Dortmund-Süd und 2.3 km vor AK Westhofener Kreuz",
         "",
-        "Länge: 0.56 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 8.45 m",
+        "Länge: 0.56 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
         "",
         "A45 - Verstärkung BW Rombergholz und BW Schorveskopf - AlD 4457"
       ],
@@ -37955,27 +37881,15 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 51.44225256112189,
-        "lon": 7.502869597417364
+        "lat": 51.44304097885254,
+        "lon": 7.49485391332787
       },
       "affects": [
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
-          "segmentIndex": 608,
-          "distanceMeters": 682
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 609,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 610,
-          "distanceMeters": 3
+          "segmentIndex": 614,
+          "distanceMeters": 608
         }
       ]
     },
@@ -38156,42 +38070,6 @@
           "routeId": "a45-a31",
           "segmentIndex": 610,
           "distanceMeters": 501
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2023-004457--vi-bs.2026-08-18_19-00-00-000.devi-zus.2023-06-01_05-00-00-000_006.f.de21",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Dortmund-Süd - Westhofener Kreuz",
-      "subtitle": " Dortmund -> Hagen",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 18.08.26 um 19:00 Uhr",
-        "Ende: 07.09.26 um 19:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 15.01.27)",
-        "",
-        "A45: Dortmund -> Hagen, zwischen 0.7 km hinter AS Dortmund-Süd und 2.3 km vor AK Westhofener Kreuz",
-        "",
-        "Länge: 0.56 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Verstärkung BW Rombergholz und BW Schorveskopf - AlD 4457"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": 80,
-      "lengthKm": 0.56,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.44304097885254,
-        "lon": 7.49485391332787
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 614,
-          "distanceMeters": 608
         }
       ]
     },
