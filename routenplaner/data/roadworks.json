@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T10:03:12.869Z",
+  "updatedAt": "2026-09-05T10:33:14.454Z",
   "items": [
     {
       "id": "A9-roadworks-2026-040127--vi-bs.2026-09-03_19-30-00-000.devi-zus.2026-09-03_19-30-00-000.de19",
@@ -2410,20 +2410,20 @@
       ]
     },
     {
-      "id": "A9-warning-INRIX--vi-avl.2026-09-05_09-40-00-000_011.de0",
+      "id": "A9-warning-INRIX--vi-avl.2026-09-05_09-50-00-000_008.de0",
       "ref": "A9",
       "type": "warning",
-      "title": "A9 | Rohrbach (West) - Holledau",
+      "title": "A9 | Garching-Nord - München-Nord",
       "subtitle": " Nürnberg -> München",
       "description": [
-        "Beginn: 05.09.26 um 11:40 Uhr",
+        "Beginn: 05.09.26 um 11:50 Uhr",
         "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:40",
-        "A9: Nürnberg -> München, zwischen 0.2 km hinter Rohrbach (West) und 2.2 km vor AD Holledau",
+        "Angespannte Verkehrslage, seit 05.09.2026, 09:50",
+        "A9: Nürnberg -> München, zwischen 0.5 km hinter AS Garching-Nord und 1.4 km vor AK München-Nord",
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 35 km/h",
+        "- Durchschnittsgeschwindigkeit: 40 km/h",
         "- Reisezeitverlust: 3 Minuten (zunehmend)"
       ],
       "isBlocked": false,
@@ -2432,21 +2432,98 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.61160462708174,
-        "lon": 11.541556175959911
+        "lat": 48.259742941472275,
+        "lon": 11.647118932851674
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
+          "segmentIndex": 569,
+          "distanceMeters": 1300
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 570,
+          "distanceMeters": 303
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 571,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 572,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 573,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 574,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 575,
+          "distanceMeters": 547
+        }
+      ]
+    },
+    {
+      "id": "A9-warning-INRIX--vi-avl.2026-09-05_09-40-00-000_011.de0",
+      "ref": "A9",
+      "type": "warning",
+      "title": "A9 | Langenbruck - Holledau",
+      "subtitle": " Nürnberg -> München",
+      "description": [
+        "Beginn: 05.09.26 um 11:40 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 05.09.2026, 09:40",
+        "A9: Nürnberg -> München, zwischen 3.2 km hinter AS Langenbruck und 2.8 km vor AD Holledau",
+        "",
+        "Ereignismeldung:",
+        "- Stockender Verkehr",
+        "- Durchschnittsgeschwindigkeit: 45 km/h",
+        "- Reisezeitverlust: 3 Minuten (abnehmend)"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 48.61858986534448,
+        "lon": 11.530137448334276
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 526,
+          "distanceMeters": 877
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
           "segmentIndex": 527,
-          "distanceMeters": 1034
+          "distanceMeters": 6
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 528,
-          "distanceMeters": 39
+          "distanceMeters": 0
         },
         {
           "corridorId": "koeln-muenchen",
@@ -2470,18 +2547,12 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 532,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 533,
-          "distanceMeters": 976
+          "distanceMeters": 573
         }
       ]
     },
     {
-      "id": "A9-warning-INRIX--vi-avl.2026-09-05_08-16-00-000_012.de0",
+      "id": "A9-warning-INRIX--vi-avl.2026-09-05_08-16-00-000_013.de0",
       "ref": "A9",
       "type": "warning",
       "title": "A9 | Neuburg a.d.Donau - Ingolstadt-Ost",
@@ -2490,11 +2561,11 @@
         "Beginn: 05.09.26 um 10:16 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 08:16",
-        "A9: München -> Nürnberg, zwischen 1.1 km hinter AS Neuburg a.d.Donau und 0.1 km vor AS Ingolstadt-Ost",
+        "A9: München -> Nürnberg, zwischen 1.9 km hinter AS Neuburg a.d.Donau und 0.1 km vor AS Ingolstadt-Ost",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 15 Minuten"
+        "- Reisezeitverlust: 14 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -2502,27 +2573,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.72190721907092,
-        "lon": 11.479040329736247
+        "lat": 48.7276706713587,
+        "lon": 11.474761394946066
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a3",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a3",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-koeln",
@@ -2569,20 +2634,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -2629,20 +2688,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -2689,20 +2742,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -2749,20 +2796,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -2809,20 +2850,14 @@
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
-          "segmentIndex": 72,
-          "distanceMeters": 1451
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
           "segmentIndex": 73,
-          "distanceMeters": 451
+          "distanceMeters": 1164
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 74,
-          "distanceMeters": 15
+          "distanceMeters": 165
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -10398,7 +10433,7 @@
       ]
     },
     {
-      "id": "A3-warning-INRIX--vi-avl.2026-09-05_09-14-00-000_010.de0",
+      "id": "A3-warning-INRIX--vi-avl.2026-09-05_09-14-00-000_014.de0",
       "ref": "A3",
       "type": "warning",
       "title": "A3 | Helmstadt - Würzburg-Heidingsfeld",
@@ -10407,11 +10442,12 @@
         "Beginn: 05.09.26 um 11:14 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 09:14",
-        "A3: Frankfurt -> Würzburg, zwischen 3.4 km hinter AS Helmstadt und 3.2 km vor AS Würzburg-Heidingsfeld",
+        "A3: Frankfurt -> Würzburg, zwischen 3.7 km hinter AS Helmstadt und 3.2 km vor AS Würzburg-Heidingsfeld",
         "",
         "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Reisezeitverlust: 33 Minuten (zunehmend)"
+        "- Stockender Verkehr",
+        "- Durchschnittsgeschwindigkeit: 30 km/h",
+        "- Reisezeitverlust: 7 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -10419,21 +10455,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.74713424216684,
-        "lon": 9.807710935502394
+        "lat": 49.74702570074876,
+        "lon": 9.812619789733143
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 291,
-          "distanceMeters": 774
+          "distanceMeters": 1115
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a3",
           "segmentIndex": 292,
-          "distanceMeters": 11
+          "distanceMeters": 133
         },
         {
           "corridorId": "koeln-muenchen",
@@ -10487,13 +10523,13 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 291,
-          "distanceMeters": 774
+          "distanceMeters": 1115
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 292,
-          "distanceMeters": 11
+          "distanceMeters": 133
         },
         {
           "corridorId": "koeln-muenchen",
@@ -10542,82 +10578,6 @@
           "routeId": "a8-a7",
           "segmentIndex": 300,
           "distanceMeters": 1459
-        }
-      ]
-    },
-    {
-      "id": "A3-warning-INRIX--vi-avl.2026-09-05_09-25-00-000_004.de0",
-      "ref": "A3",
-      "type": "warning",
-      "title": "A3 | Duisburg-Wedau - Oberhausen-Lirich",
-      "subtitle": " Köln -> Oberhausen",
-      "description": [
-        "Beginn: 05.09.26 um 11:25 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:25",
-        "A3: Köln -> Oberhausen, zwischen 0.5 km hinter AS Duisburg-Wedau und 3.7 km vor AS Oberhausen-Lirich",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Reisezeitverlust: 19 Minuten (zunehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.41377221033856,
-        "lon": 6.798971335527433
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 653,
-          "distanceMeters": 862
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 654,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 655,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 656,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 657,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 658,
-          "distanceMeters": 10
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 659,
-          "distanceMeters": 25
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 660,
-          "distanceMeters": 1011
         }
       ]
     },
@@ -13453,7 +13413,7 @@
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 19 Minuten (zunehmend)"
+        "- Reisezeitverlust: 42 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13519,11 +13479,11 @@
         "Beginn: 05.09.26 um 08:30 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 06:30",
-        "A8: Karlsruhe -> Stuttgart, zwischen AS Pforzheim-Süd und 3.9 km vor AS Heimsheim",
+        "A8: Karlsruhe -> Stuttgart, zwischen AS Pforzheim-Süd und 5.8 km vor AS Heimsheim",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 24 Minuten (zunehmend)"
+        "- Reisezeitverlust: 17 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13569,43 +13529,31 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 356,
-          "distanceMeters": 6
+          "distanceMeters": 224
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 357,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 358,
-          "distanceMeters": 250
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 359,
-          "distanceMeters": 1236
+          "distanceMeters": 1207
         }
       ]
     },
     {
-      "id": "A8-warning-INRIX--vi-avl.2026-09-05_09-30-00-000_008.de0",
+      "id": "A8-warning-INRIX--vi-avl.2026-09-05_10-08-00-000_008.de0",
       "ref": "A8",
       "type": "warning",
-      "title": "A8 | Heimsheim - Pforzheim",
+      "title": "A8 | Heimsheim - Pforzheim-Nord",
       "subtitle": " Stuttgart -> Karlsruhe",
       "description": [
-        "Beginn: 05.09.26 um 11:30 Uhr",
+        "Beginn: 05.09.26 um 12:08 Uhr",
         "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:30",
-        "A8: Stuttgart -> Karlsruhe, zwischen 5.0 km hinter AS Heimsheim und 1.2 km vor Pforzheim",
+        "Angespannte Verkehrslage, seit 05.09.2026, 10:08",
+        "A8: Stuttgart -> Karlsruhe, zwischen 4.9 km hinter AS Heimsheim und 3.9 km vor AS Pforzheim-Nord",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 23 Minuten (zunehmend)"
+        "- Reisezeitverlust: 23 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13613,15 +13561,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.84682521366052,
-        "lon": 8.808182584635714
+        "lat": 48.846306197202956,
+        "lon": 8.809375966481287
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
+          "segmentIndex": 233,
+          "distanceMeters": 1468
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
           "segmentIndex": 234,
-          "distanceMeters": 576
+          "distanceMeters": 472
         },
         {
           "corridorId": "muenchen-koeln",
@@ -13663,38 +13617,48 @@
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
           "segmentIndex": 241,
-          "distanceMeters": 9
+          "distanceMeters": 7
         },
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
           "segmentIndex": 242,
-          "distanceMeters": 203
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
           "segmentIndex": 243,
-          "distanceMeters": 1202
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 244,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 245,
+          "distanceMeters": 784
         }
       ]
     },
     {
-      "id": "A8-warning-INRIX--vi-avl.2026-09-05_07-33-00-000_006.de0",
+      "id": "A8-warning-INRIX--vi-avl.2026-09-05_09-58-00-000_015.de0",
       "ref": "A8",
       "type": "warning",
-      "title": "A8 | Aichelberg - Mühlhausen",
+      "title": "A8 | Gruibingen - Mühlhausen",
       "subtitle": " Stuttgart -> München",
       "description": [
-        "Beginn: 05.09.26 um 09:33 Uhr",
+        "Beginn: 05.09.26 um 11:58 Uhr",
         "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 07:33",
-        "A8: Stuttgart -> München, zwischen 6.0 km hinter AS Aichelberg und 1.8 km vor AS Mühlhausen",
+        "Angespannte Verkehrslage, seit 05.09.2026, 09:58",
+        "A8: Stuttgart -> München, zwischen Gruibingen und 1.8 km vor AS Mühlhausen",
         "",
         "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Durchschnittsgeschwindigkeit: 20 km/h",
-        "- Reisezeitverlust: 4 Minuten (abnehmend)"
+        "- Reisezeitverlust: 4 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13702,15 +13666,15 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 48.60922794062626,
-        "lon": 9.627862350795615
+        "lat": 48.60834192523237,
+        "lon": 9.629801518423957
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 425,
-          "distanceMeters": 775
+          "distanceMeters": 948
         },
         {
           "corridorId": "koeln-muenchen",
@@ -13745,75 +13709,6 @@
       ]
     },
     {
-      "id": "A8-warning-INRIX--vi-avl.2026-09-05_09-52-00-000_013.de0",
-      "ref": "A8",
-      "type": "warning",
-      "title": "A8 | Gruibingen - Lämmerbuckeltunnel",
-      "subtitle": " Stuttgart -> München",
-      "description": [
-        "Beginn: 05.09.26 um 11:52 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:52",
-        "A8: Stuttgart -> München, zwischen 0.8 km hinter Gruibingen und 3.7 km vor Lämmerbuckeltunnel",
-        "",
-        "Ereignismeldung:",
-        "- Reisezeitverlust: 2 Minuten"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.59050338559278,
-        "lon": 9.650387798728442
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 427,
-          "distanceMeters": 1485
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 428,
-          "distanceMeters": 486
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 429,
-          "distanceMeters": 8
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 430,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 431,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 432,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 433,
-          "distanceMeters": 736
-        }
-      ]
-    },
-    {
       "id": "A8-warning-INRIX--vi-avl.2026-09-05_09-49-00-000_008.de0",
       "ref": "A8",
       "type": "warning",
@@ -13827,8 +13722,8 @@
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 30 km/h",
-        "- Reisezeitverlust: 3 Minuten"
+        "- Durchschnittsgeschwindigkeit: 25 km/h",
+        "- Reisezeitverlust: 4 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -13875,6 +13770,77 @@
           "routeId": "a61",
           "segmentIndex": 151,
           "distanceMeters": 998
+        }
+      ]
+    },
+    {
+      "id": "A8-warning-INRIX--vi-avl.2026-09-05_09-59-00-000_005.de0",
+      "ref": "A8",
+      "type": "warning",
+      "title": "A8 | Ulm/Elchingen - Ulm-Ost",
+      "subtitle": " München -> Stuttgart",
+      "description": [
+        "Beginn: 05.09.26 um 11:59 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 05.09.2026, 09:59",
+        "A8: München -> Stuttgart, zwischen 2.4 km hinter AK Ulm/Elchingen und 1.1 km vor AS Ulm-Ost",
+        "",
+        "Ereignismeldung:",
+        "- Stockender Verkehr",
+        "- Durchschnittsgeschwindigkeit: 30 km/h",
+        "- Reisezeitverlust: 4 Minuten"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 48.46043271310094,
+        "lon": 10.084935613945149
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 118,
+          "distanceMeters": 693
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 119,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 120,
+          "distanceMeters": 7
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 121,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 122,
+          "distanceMeters": 11
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 123,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 124,
+          "distanceMeters": 921
         }
       ]
     },
@@ -29381,21 +29347,20 @@
       ]
     },
     {
-      "id": "A7-warning-INRIX--vi-avl.2026-09-05_08-13-00-000_007.de0",
+      "id": "A7-warning-INRIX--vi-avl.2026-09-05_10-11-00-000_004.de0",
       "ref": "A7",
       "type": "warning",
       "title": "A7 | Springhorst - Up n Bummelskampe",
       "subtitle": " Hannover -> Hamburg",
       "description": [
-        "Beginn: 05.09.26 um 10:13 Uhr",
+        "Beginn: 05.09.26 um 12:11 Uhr",
         "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 08:13",
-        "A7: Hannover -> Hamburg, zwischen 3.0 km hinter Springhorst und 0.6 km vor Up n Bummelskampe",
+        "Angespannte Verkehrslage, seit 05.09.2026, 10:11",
+        "A7: Hannover -> Hamburg, zwischen 2.2 km hinter Springhorst und 1.5 km vor Up n Bummelskampe",
         "",
         "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 30 km/h",
-        "- Reisezeitverlust: 5 Minuten (zunehmend)"
+        "- Im Stillstand",
+        "- Reisezeitverlust: 23 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -29403,21 +29368,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 52.53298768741051,
-        "lon": 9.80787769989288
+        "lat": 52.52621178042407,
+        "lon": 9.813056002176122
       },
       "affects": [
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 681,
-          "distanceMeters": 1390
+          "distanceMeters": 560
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 682,
-          "distanceMeters": 391
+          "distanceMeters": 2
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -29447,31 +29412,31 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 687,
-          "distanceMeters": 1
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 688,
-          "distanceMeters": 113
+          "distanceMeters": 996
         },
         {
           "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
+          "routeId": "a8-a7",
           "segmentIndex": 689,
-          "distanceMeters": 1112
+          "distanceMeters": 802
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 690,
-          "distanceMeters": 634
+          "distanceMeters": 3
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 691,
-          "distanceMeters": 6
+          "distanceMeters": 2
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -29501,25 +29466,19 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 696,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 697,
-          "distanceMeters": 869
+          "distanceMeters": 753
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 749,
-          "distanceMeters": 1378
+          "distanceMeters": 548
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 750,
-          "distanceMeters": 379
+          "distanceMeters": 3
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -29549,31 +29508,31 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 755,
-          "distanceMeters": 4
+          "distanceMeters": 8
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 756,
-          "distanceMeters": 125
+          "distanceMeters": 1007
         },
         {
           "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 757,
-          "distanceMeters": 1123
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 674,
+          "distanceMeters": 1237
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 675,
-          "distanceMeters": 1068
+          "distanceMeters": 238
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 676,
-          "distanceMeters": 69
+          "distanceMeters": 9
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -29597,222 +29556,19 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 680,
-          "distanceMeters": 3
+          "distanceMeters": 11
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 681,
-          "distanceMeters": 8
+          "distanceMeters": 319
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a14-a2",
           "segmentIndex": 682,
-          "distanceMeters": 435
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 683,
-          "distanceMeters": 1432
-        }
-      ]
-    },
-    {
-      "id": "A7-warning-INRIX--vi-avl.2026-09-05_09-39-00-000_008.de0",
-      "ref": "A7",
-      "type": "warning",
-      "title": "A7 | Osterriehe - Berkhof",
-      "subtitle": " Hannover -> Hamburg",
-      "description": [
-        "Beginn: 05.09.26 um 11:39 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:39",
-        "A7: Hannover -> Hamburg, zwischen 0.3 km hinter Osterriehe und 1.0 km vor AS Berkhof",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Durchschnittsgeschwindigkeit: 20 km/h",
-        "- Reisezeitverlust: 8 Minuten"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 52.57942640949588,
-        "lon": 9.771705870466342
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 687,
-          "distanceMeters": 1133
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 688,
-          "distanceMeters": 134
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 689,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 690,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 691,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 692,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 693,
-          "distanceMeters": 771
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 695,
-          "distanceMeters": 1375
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 696,
-          "distanceMeters": 377
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 697,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 698,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 699,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 700,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 701,
-          "distanceMeters": 528
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 755,
-          "distanceMeters": 1121
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 756,
-          "distanceMeters": 123
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 757,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 758,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 759,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 760,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 761,
-          "distanceMeters": 783
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 681,
-          "distanceMeters": 812
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 682,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 683,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 684,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 685,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 686,
-          "distanceMeters": 93
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 687,
-          "distanceMeters": 1093
+          "distanceMeters": 1317
         }
       ]
     },
@@ -29826,12 +29582,12 @@
         "Beginn: 05.09.26 um 11:11 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 09:11",
-        "Von A7: Würzburg -> Ulm, zwischen 1.2 km hinter Kurzmandl und AK Feuchtwangen/Crailsheim nach A7: Würzburg -> Ulm, zwischen AK Feuchtwangen/Crailsheim und 2.9 km vor AS Feuchtwangen-West",
+        "Von A7: Würzburg -> Ulm, zwischen 4.5 km hinter Kurzmandl und AK Feuchtwangen/Crailsheim nach A7: Würzburg -> Ulm, zwischen AK Feuchtwangen/Crailsheim und 3.0 km vor AS Feuchtwangen-West",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
         "- Durchschnittsgeschwindigkeit: 25 km/h",
-        "- Reisezeitverlust: 8 Minuten (abnehmend)"
+        "- Reisezeitverlust: 2 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -29839,45 +29595,27 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.23698765783915,
-        "lon": 10.21329241791232
+        "lat": 49.21040134582889,
+        "lon": 10.22917497656049
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 386,
-          "distanceMeters": 775
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 387,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 388,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
           "segmentIndex": 389,
-          "distanceMeters": 4
+          "distanceMeters": 1076
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 390,
-          "distanceMeters": 0
+          "distanceMeters": 78
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 391,
-          "distanceMeters": 0
+          "distanceMeters": 4
         },
         {
           "corridorId": "koeln-muenchen",
@@ -29889,13 +29627,7 @@
           "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
           "segmentIndex": 393,
-          "distanceMeters": 437
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 394,
-          "distanceMeters": 1436
+          "distanceMeters": 591
         }
       ]
     },
@@ -30453,17 +30185,17 @@
       "id": "A5-warning-INRIX--vi-avl.2026-09-05_09-37-00-000_008.de0",
       "ref": "A5",
       "type": "warning",
-      "title": "A5 | Kronau - Walldorf",
+      "title": "A5 | Bruchsal - Walldorf",
       "subtitle": " Karlsruhe -> Heidelberg",
       "description": [
         "Beginn: 05.09.26 um 11:37 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 09:37",
-        "A5: Karlsruhe -> Heidelberg, zwischen 0.8 km hinter AS Kronau und 1.3 km vor AK Walldorf",
+        "A5: Karlsruhe -> Heidelberg, zwischen 4.2 km hinter Bruchsal und 1.3 km vor AK Walldorf",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 31 Minuten (zunehmend)"
+        "- Reisezeitverlust: 108 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -30471,21 +30203,45 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.233737629168225,
-        "lon": 8.602471431588716
+        "lat": 49.19367348865133,
+        "lon": 8.588376667535938
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
+          "segmentIndex": 297,
+          "distanceMeters": 644
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 298,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 299,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 300,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
           "segmentIndex": 301,
-          "distanceMeters": 1327
+          "distanceMeters": 5
         },
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
           "segmentIndex": 302,
-          "distanceMeters": 328
+          "distanceMeters": 0
         },
         {
           "corridorId": "muenchen-koeln",
@@ -32776,237 +32532,6 @@
       ]
     },
     {
-      "id": "A61-warning-INRIX--vi-avl.2026-09-05_08-55-00-000_010.de0",
-      "ref": "A61",
-      "type": "warning",
-      "title": "A61 | Rheinbrücke Speyer - Hockenheim",
-      "subtitle": " Speyer -> Hockenheim",
-      "description": [
-        "Beginn: 05.09.26 um 10:55 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 08:55",
-        "A61: Speyer -> Hockenheim, zwischen 1.1 km hinter Rheinbrücke Speyer und 2.0 km vor AD Hockenheim",
-        "",
-        "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 40 km/h",
-        "- Reisezeitverlust: 3 Minuten (abnehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.33469923499079,
-        "lon": 8.48392718070897
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 268,
-          "distanceMeters": 1463
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 269,
-          "distanceMeters": 470
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 270,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 271,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 272,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 273,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 274,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 275,
-          "distanceMeters": 915
-        }
-      ]
-    },
-    {
-      "id": "A61-warning-INRIX--vi-avl.2026-09-05_09-44-00-000_013.de0",
-      "ref": "A61",
-      "type": "warning",
-      "title": "A61 | Speyer - Binshof",
-      "subtitle": " Ludwigshafen -> Speyer",
-      "description": [
-        "Beginn: 05.09.26 um 11:44 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:44",
-        "A61: Ludwigshafen -> Speyer, zwischen AS Speyer und 0.1 km vor Binshof",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Durchschnittsgeschwindigkeit: 20 km/h",
-        "- Reisezeitverlust: 5 Minuten (zunehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.3533329891557,
-        "lon": 8.422234457736387
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 343,
-          "distanceMeters": 1377
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 344,
-          "distanceMeters": 378
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 345,
-          "distanceMeters": 111
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 263,
-          "distanceMeters": 1210
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 264,
-          "distanceMeters": 212
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 265,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 266,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 267,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 268,
-          "distanceMeters": 159
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 269,
-          "distanceMeters": 1151
-        }
-      ]
-    },
-    {
-      "id": "A61-warning-INRIX--vi-avl.2026-09-05_09-40-00-000_014.de0",
-      "ref": "A61",
-      "type": "warning",
-      "title": "A61 | Bad Kreuznach - Bingen-Mitte",
-      "subtitle": " Ludwigshafen -> Koblenz",
-      "description": [
-        "Beginn: 05.09.26 um 11:40 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:40",
-        "A61: Ludwigshafen -> Koblenz, zwischen 4.1 km hinter AS Bad Kreuznach und 0.1 km vor AS Bingen-Mitte",
-        "",
-        "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 25 km/h",
-        "- Reisezeitverlust: 3 Minuten (zunehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.92661770114262,
-        "lon": 7.941365627037393
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 427,
-          "distanceMeters": 700
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 428,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 429,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 430,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 431,
-          "distanceMeters": 413
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 432,
-          "distanceMeters": 1413
-        }
-      ]
-    },
-    {
       "id": "A61-warning-INRIX--vi-avl.2026-09-05_09-42-00-000_007.de0",
       "ref": "A61",
       "type": "warning",
@@ -33016,11 +32541,11 @@
         "Beginn: 05.09.26 um 11:42 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 09:42",
-        "A61: Ludwigshafen -> Koblenz, zwischen 1.5 km hinter Trollmühle und 1.5 km vor AS Waldlaubersheim",
+        "A61: Ludwigshafen -> Koblenz, zwischen 0.1 km hinter Trollmühle und 1.5 km vor AS Waldlaubersheim",
         "",
         "Ereignismeldung:",
         "- Im Stillstand",
-        "- Reisezeitverlust: 16 Minuten (zunehmend)"
+        "- Reisezeitverlust: 20 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -33028,15 +32553,27 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.92996442300992,
-        "lon": 7.874510033769813
+        "lat": 49.933056511817945,
+        "lon": 7.892529302828598
       },
       "affects": [
         {
           "corridorId": "muenchen-koeln",
           "routeId": "a61",
+          "segmentIndex": 430,
+          "distanceMeters": 1361
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
+          "segmentIndex": 431,
+          "distanceMeters": 362
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a61",
           "segmentIndex": 432,
-          "distanceMeters": 713
+          "distanceMeters": 17
         },
         {
           "corridorId": "muenchen-koeln",
@@ -33080,11 +32617,11 @@
         "Beginn: 05.09.26 um 10:39 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 08:39",
-        "A61: Mönchengladbach -> Koblenz, zwischen 2.7 km hinter AS Rheinbach und 1.6 km vor Goldene Meile",
+        "A61: Mönchengladbach -> Koblenz, zwischen 3.3 km hinter AS Rheinbach und 1.6 km vor Goldene Meile",
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 25 km/h",
+        "- Durchschnittsgeschwindigkeit: 20 km/h",
         "- Reisezeitverlust: 5 Minuten (abnehmend)"
       ],
       "isBlocked": false,
@@ -33093,27 +32630,27 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 50.602613509985126,
-        "lon": 7.005533298681182
+        "lat": 50.59966589134637,
+        "lon": 7.012136629405971
       },
       "affects": [
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 59,
-          "distanceMeters": 628
+          "distanceMeters": 1197
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 60,
-          "distanceMeters": 0
+          "distanceMeters": 199
         },
         {
           "corridorId": "koeln-muenchen",
           "routeId": "a61",
           "segmentIndex": 61,
-          "distanceMeters": 0
+          "distanceMeters": 6
         },
         {
           "corridorId": "koeln-muenchen",
@@ -34942,6 +34479,77 @@
       ]
     },
     {
+      "id": "A1-warning-INRIX--vi-avl.2026-09-05_10-24-00-000_011.de0",
+      "ref": "A1",
+      "type": "warning",
+      "title": "A1 | Verkehrsmeldung",
+      "subtitle": " Köln -> Euskirchen",
+      "description": [
+        "Beginn: 05.09.26 um 12:24 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 05.09.2026, 10:24",
+        "Von A1: Köln -> Euskirchen, zwischen 2.0 km hinter AS Köln-Bocklemünd und AK Köln-West nach Aachener Straße",
+        "",
+        "Ereignismeldung:",
+        "- Stockender Verkehr",
+        "- Durchschnittsgeschwindigkeit: 30 km/h",
+        "- Reisezeitverlust: 3 Minuten"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.959870080322084,
+        "lon": 6.850579633321045
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 11,
+          "distanceMeters": 1489
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 12,
+          "distanceMeters": 490
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 13,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 14,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 15,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 16,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a61",
+          "segmentIndex": 17,
+          "distanceMeters": 864
+        }
+      ]
+    },
+    {
       "id": "A27-roadworks-2024-038476--vi-bs.2026-07-27_11-00-00-000.devi-zus.2025-06-02_00-00-00-000_005.de1",
       "ref": "A27",
       "type": "roadworks",
@@ -36115,17 +35723,17 @@
       "id": "A31-warning-INRIX--vi-avl.2026-09-05_08-35-00-000_013.de0",
       "ref": "A31",
       "type": "warning",
-      "title": "A31 | Bergeler Feld West - Ems-Vechte",
+      "title": "A31 | Bergeler Feld West - Lingen",
       "subtitle": " Gronau -> Meppen",
       "description": [
         "Beginn: 05.09.26 um 10:35 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 08:35",
-        "A31: Gronau -> Meppen, zwischen 5.5 km hinter Bergeler Feld West und 4.3 km vor Ems-Vechte",
+        "A31: Gronau -> Meppen, zwischen 4.8 km hinter Bergeler Feld West und 0.1 km vor AS Lingen",
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
-        "- Reisezeitverlust: 12 Minuten (zunehmend)"
+        "- Reisezeitverlust: 19 Minuten"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -36133,15 +35741,21 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 52.441353637458825,
-        "lon": 7.255476447782364
+        "lat": 52.43546992082271,
+        "lon": 7.2583925127103015
       },
       "affects": [
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
+          "segmentIndex": 762,
+          "distanceMeters": 831
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
           "segmentIndex": 763,
-          "distanceMeters": 516
+          "distanceMeters": 2
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -36177,43 +35791,43 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 769,
-          "distanceMeters": 0
+          "distanceMeters": 2
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 770,
-          "distanceMeters": 3
+          "distanceMeters": 192
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 771,
-          "distanceMeters": 96
+          "distanceMeters": 1191
         },
         {
           "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 772,
-          "distanceMeters": 1096
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 780,
+          "distanceMeters": 1311
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
           "segmentIndex": 781,
-          "distanceMeters": 997
+          "distanceMeters": 315
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
           "segmentIndex": 782,
-          "distanceMeters": 0
+          "distanceMeters": 1
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
           "segmentIndex": 783,
-          "distanceMeters": 1
+          "distanceMeters": 4
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -36243,19 +35857,13 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
           "segmentIndex": 788,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 789,
           "distanceMeters": 4
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a3-a1-a31",
-          "segmentIndex": 790,
-          "distanceMeters": 614
+          "segmentIndex": 789,
+          "distanceMeters": 709
         }
       ]
     },
@@ -41161,65 +40769,6 @@
       ]
     },
     {
-      "id": "A45-warning-INRIX--vi-avl.2026-09-05_09-54-00-000_012.de0",
-      "ref": "A45",
-      "type": "warning",
-      "title": "A45 | Hagen - Im Busch",
-      "subtitle": " Hagen -> Dortmund",
-      "description": [
-        "Beginn: 05.09.26 um 11:54 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 05.09.2026, 09:54",
-        "A45: Hagen -> Dortmund, zwischen 1.1 km hinter AK Hagen und 1.1 km vor Im Busch",
-        "",
-        "Ereignismeldung:",
-        "- Stockender Verkehr",
-        "- Durchschnittsgeschwindigkeit: 30 km/h",
-        "- Reisezeitverlust: 1 Minuten"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.377254209194255,
-        "lon": 7.524253780758114
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 598,
-          "distanceMeters": 978
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 599,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 600,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 601,
-          "distanceMeters": 22
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 602,
-          "distanceMeters": 767
-        }
-      ]
-    },
-    {
       "id": "A45-warning-INRIX--vi-avl.2026-09-05_08-11-00-000_010.de0",
       "ref": "A45",
       "type": "warning",
@@ -41229,12 +40778,12 @@
         "Beginn: 05.09.26 um 10:11 Uhr",
         "",
         "Angespannte Verkehrslage, seit 05.09.2026, 08:11",
-        "A45: Hagen -> Dortmund, zwischen 1.4 km hinter Lennetalbrücke und 1.4 km vor AK Westhofener Kreuz",
+        "A45: Hagen -> Dortmund, zwischen 1.4 km hinter Lennetalbrücke und 0.8 km vor AK Westhofener Kreuz",
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
         "- Durchschnittsgeschwindigkeit: 25 km/h",
-        "- Reisezeitverlust: 7 Minuten (abnehmend)"
+        "- Reisezeitverlust: 8 Minuten (abnehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -41286,13 +40835,19 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 606,
-          "distanceMeters": 37
+          "distanceMeters": 8
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 607,
-          "distanceMeters": 1029
+          "distanceMeters": 491
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 608,
+          "distanceMeters": 1486
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -41304,13 +40859,13 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 621,
-          "distanceMeters": 57
+          "distanceMeters": 3
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 622,
-          "distanceMeters": 1052
+          "distanceMeters": 512
         }
       ]
     },
