@@ -1,176 +1,214 @@
-// Vergleicht eine tatsächlich gefahrene Strecke mit der Modellrechnung.
+// Wertet eine aufgezeichnete Fahrt aus und vergleicht sie mit den hinterlegten
+// Tempolimits.
 //
-// Eingabe ist eine GPX-Datei, wie sie jede Aufzeichnungs-App exportiert – nötig
-// sind nur Trackpunkte mit Zeitstempel (<trkpt lat lon><time>). Daraus wird das
-// real gefahrene Tempo je Kilometer bestimmt und dem gegenübergestellt, was das
-// Modell für denselben Streckenkilometer angenommen hat.
+// Eingabe ist eine GPX-Datei, wie sie jede Aufzeichnungs-App exportiert (getestet
+// mit Open GPX Tracker für iOS). Nötig sind nur Trackpunkte mit Zeitstempel.
 //
-// Aufruf:
-//   node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx [--csv ausgabe.csv]
+//   node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx [--csv datei] [--html datei]
 //
-// Die passende hinterlegte Route wird automatisch gesucht (größte Überdeckung).
+// Die Auswertung braucht keine hinterlegte Route: die Autobahn und ihr Limit
+// werden für jeden Kilometer aus dem bundesweiten Raster bestimmt. Damit
+// funktioniert sie für jede Fahrt in Deutschland.
+//
+// Am Ende stehen die beiden Zahlen, die in den Planer gehören: das tatsächlich
+// gehaltene Tempo auf unbegrenzten Abschnitten und der mittlere Abstand zum
+// ausgeschilderten Limit.
 
 import { readFile, writeFile } from "node:fs/promises";
 
 const [, , gpxPfad, ...rest] = process.argv;
 if (!gpxPfad) {
-  console.error("Aufruf: node vergleich-fahrt.mjs <datei.gpx> [--csv ausgabe.csv]");
+  console.error("Aufruf: node vergleich-fahrt.mjs <datei.gpx> [--csv datei] [--html datei]");
   process.exit(1);
 }
-const csvIdx = rest.indexOf("--csv");
-const CSV = csvIdx >= 0 ? rest[csvIdx + 1] : null;
+const argOf = (flag) => { const i = rest.indexOf(flag); return i >= 0 ? rest[i + 1] : null; };
+const CSV = argOf("--csv");
+const HTML = argOf("--html");
+
+// Trennt Fahrblöcke: längere Unterbrechung heißt Pause, nicht Fahrt.
+const PAUSE_S = 180;
+// Einzelne Punkte mit unmöglichem Tempo sind GPS-Rauschen. Sie werden entfernt,
+// nicht als Blockgrenze behandelt: ein einziger Ausreißer würde sonst eine
+// zusammenhängende Fahrt zerteilen und die Hälfte der Strecke verwerfen.
+const MAX_KMH = 260;
 
 const rad = (d) => (d * Math.PI) / 180;
-
-// Abstand Punkt -> Streckenabschnitt (nicht zu dessen Startpunkt!). Zum Startpunkt
-// zu messen verschiebt jeden Messwert um einen halben Kilometer: ein Punkt in der
-// Segmentmitte ist von beiden Enden gleich weit entfernt und landet zur Hälfte im
-// Nachbarkilometer. Bei wechselnden Limits ergibt das systematisch zu hohe Werte.
-function abstandZuAbschnitt(p, a, b) {
-  const R = 6371000;
-  const latRef = rad(a.lat);
-  const x = (lon) => rad(lon) * Math.cos(latRef) * R;
-  const y = (lat) => rad(lat) * R;
-  const px = x(p.lon), py = y(p.lat);
-  const ax = x(a.lon), ay = y(a.lat);
-  const bx = x(b.lon), by = y(b.lat);
-  const dx = bx - ax, dy = by - ay;
-  const len = dx * dx + dy * dy;
-  let t = len === 0 ? 0 : ((px - ax) * dx + (py - ay) * dy) / len;
-  t = Math.max(0, Math.min(1, t));
-  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
-}
 function distM(a, b) {
   const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
   const s = Math.sin(dLat / 2) ** 2 +
     Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
   return 2 * 6371000 * Math.asin(Math.sqrt(s));
 }
+const fmtH = (h) => `${Math.floor(h)}h${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
 
 // --- GPX einlesen ------------------------------------------------------------
-// Bewusst ohne XML-Bibliothek: GPX-Trackpunkte haben eine feste, simple Form.
-function parseGpx(xml) {
-  const punkte = [];
+const xml = await readFile(gpxPfad, "utf8");
+const alle = [];
+{
   const re = /<trkpt[^>]*lat="([-\d.]+)"[^>]*lon="([-\d.]+)"[^>]*>([\s\S]*?)<\/trkpt>/g;
   let m;
   while ((m = re.exec(xml)) !== null) {
-    const zeit = /<time>([^<]+)<\/time>/.exec(m[3]);
-    if (!zeit) continue;
-    const t = new Date(zeit[1]);
-    if (Number.isNaN(t.getTime())) continue;
-    punkte.push({ lat: +m[1], lon: +m[2], t });
+    const t = /<time>([^<]+)<\/time>/.exec(m[3]);
+    if (!t) continue;
+    const d = new Date(t[1]);
+    if (!Number.isNaN(d.getTime())) alle.push({ lat: +m[1], lon: +m[2], t: d });
   }
-  // Auch <trkpt .../> ohne Kindelemente kommt vor – die haben aber keine Zeit
-  // und sind für uns nutzlos.
-  return punkte.sort((a, b) => a.t - b.t);
+}
+alle.sort((a, b) => a.t - b.t);
+if (alle.length < 20) { console.error(`Zu wenige Trackpunkte (${alle.length}).`); process.exit(1); }
+
+// Ausreißer entfernen: Punkte, die vom Vorgänger aus nur mit unmöglichem Tempo
+// erreichbar wären. Geprüft wird gegen den letzten behaltenen Punkt, damit ein
+// einzelner Fehlpunkt nicht die ganze folgende Kette verwirft.
+const bereinigt = [alle[0]];
+let ausreisser = 0;
+for (let i = 1; i < alle.length; i++) {
+  const vor = bereinigt[bereinigt.length - 1];
+  const dS = (alle[i].t - vor.t) / 1000;
+  if (dS <= 0) continue;
+  if (dS <= PAUSE_S && (distM(vor, alle[i]) / dS) * 3.6 > MAX_KMH) { ausreisser++; continue; }
+  bereinigt.push(alle[i]);
 }
 
-const xml = await readFile(gpxPfad, "utf8");
-const punkte = parseGpx(xml);
-if (punkte.length < 10) {
-  console.error(`Zu wenige Trackpunkte mit Zeitstempel gefunden (${punkte.length}).`);
-  process.exit(1);
+// --- Fahrt aus der Aufzeichnung herauslösen ----------------------------------
+// Aufzeichnungen enthalten regelmäßig Vor- und Nachlauf: die App lief schon vor
+// der Abfahrt oder wurde am Ziel nicht gestoppt. Statt Zeilen von Hand zu löschen
+// wird an Pausen getrennt und der längste zusammenhängende Fahrblock genommen.
+const bloecke = [];
+{
+  let von = 0, km = 0;
+  for (let i = 1; i < bereinigt.length; i++) {
+    const dS = (bereinigt[i].t - bereinigt[i - 1].t) / 1000;
+    if (dS > PAUSE_S) {
+      bloecke.push({ von, bis: i - 1, km });
+      von = i; km = 0;
+    } else km += distM(bereinigt[i - 1], bereinigt[i]) / 1000;
+  }
+  bloecke.push({ von, bis: bereinigt.length - 1, km });
 }
+bloecke.sort((a, b) => b.km - a.km);
+const haupt = bloecke[0];
+const punkte = bereinigt.slice(haupt.von, haupt.bis + 1);
+const verworfen = alle.length - punkte.length;
 
 const dauerH = (punkte[punkte.length - 1].t - punkte[0].t) / 3600000;
 let gesamtM = 0;
 for (let i = 1; i < punkte.length; i++) gesamtM += distM(punkte[i - 1], punkte[i]);
 
-console.log(`Aufzeichnung: ${punkte.length} Punkte, ${(gesamtM / 1000).toFixed(1)} km, ` +
-  `${Math.floor(dauerH)}h${String(Math.round((dauerH % 1) * 60)).padStart(2, "0")} ` +
-  `(Ø ${(gesamtM / 1000 / dauerH).toFixed(0)} km/h)`);
-console.log(`Start ${punkte[0].t.toLocaleString("de-DE")}\n`);
+console.log(`Aufzeichnung: ${alle.length} Punkte über ${((alle[alle.length-1].t - alle[0].t) / 3600000).toFixed(1)} h`);
+console.log(`Ausgewertete Fahrt: ${punkte.length} Punkte, ${(gesamtM / 1000).toFixed(1)} km, ${fmtH(dauerH)}, Ø ${(gesamtM / 1000 / dauerH).toFixed(0)} km/h`);
+console.log(`  ${punkte[0].t.toLocaleString("de-DE")} bis ${punkte[punkte.length - 1].t.toLocaleString("de-DE")}`);
+if (verworfen) console.log(`  ${verworfen} Punkte verworfen: Pausen vor/nach der Fahrt${ausreisser ? `, davon ${ausreisser} GPS-Ausreißer` : ""}`);
 
-// --- passende hinterlegte Route suchen --------------------------------------
-const routes = JSON.parse(await readFile(new URL("../data/routes.json", import.meta.url), "utf8"));
-function ueberdeckung(segmente) {
-  const zellen = new Set(segmente.map(s => `${Math.round(s.start.lat * 50)}|${Math.round(s.start.lon * 50)}`));
-  let treffer = 0;
-  for (const pkt of punkte) if (zellen.has(`${Math.round(pkt.lat * 50)}|${Math.round(pkt.lon * 50)}`)) treffer++;
-  return treffer / punkte.length;
-}
-let beste = null, besteQuote = 0;
-for (const k of routes.corridors) for (const r of k.routes) {
-  if (!r.segments?.length) continue;
-  const q = ueberdeckung(r.segments);
-  if (q > besteQuote) { besteQuote = q; beste = { k, r }; }
-}
-if (!beste || besteQuote < 0.4) {
-  console.error(`Keine hinterlegte Route passt (beste Überdeckung ${(besteQuote * 100).toFixed(0)} %).`);
-  console.error("Für den Vergleich muss die Fahrt einer der hinterlegten Strecken entsprechen.");
-  process.exit(1);
-}
-console.log(`Passende Route: ${beste.k.name} – ${beste.r.label}  (${(besteQuote * 100).toFixed(0)} % Überdeckung)\n`);
-
-// --- GPS-Punkte auf die Route projizieren ------------------------------------
-// Jeder Punkt bekommt den Streckenkilometer, auf dem er liegt. Nur so lässt sich
-// "gefahrenes Tempo an Streckenkilometer X" bilden. Eine Zuordnung über den
-// gefahrenen Kilometerzähler driftet, weil aufgezeichnete und modellierte Länge
-// nie exakt gleich sind. Die Suche läuft monoton vorwärts in einem Fenster, damit
-// sie an Kreuzen und Stadtschleifen nicht auf einen anderen Streckenteil springt.
-const segs = beste.r.segments;
-const zeitProKm = new Array(segs.length).fill(0);   // Sekunden je Streckenkilometer
-const wegProKm  = new Array(segs.length).fill(0);   // Meter je Streckenkilometer
-let zeiger = 0;
-let letzterIdx = null;
-for (let i = 1; i < punkte.length; i++) {
-  const a = punkte[i - 1], b = punkte[i];
-  const dS = (b.t - a.t) / 1000;
-  const dM = distM(a, b);
-  if (dS <= 0 || dS > 600) continue;               // Lücken in der Aufzeichnung überspringen
-
-  let idx = null, bd = Infinity;
-  for (let j = zeiger; j < Math.min(segs.length, zeiger + 40); j++) {
-    const d = abstandZuAbschnitt(b, segs[j].start, segs[j].end);
-    if (d < bd) { bd = d; idx = j; }
+// --- Tempolimit-Raster -------------------------------------------------------
+const grid = JSON.parse(await readFile(new URL("../data/speedgrid.json", import.meta.url), "utf8"));
+// Zellen nach Ort indizieren, damit zu einem Punkt die Autobahn gefunden wird.
+const zellen = new Map();
+for (const [ref, flat] of Object.entries(grid.refs)) {
+  let la = 0, lo = 0;
+  for (let i = 0; i < flat.length; i += 3) {
+    la += flat[i]; lo += flat[i + 1];
+    const key = `${la}|${lo}`;
+    if (!zellen.has(key)) zellen.set(key, []);
+    zellen.get(key).push({ ref, ms: flat[i + 2], lat: la / grid.grid, lon: lo / grid.grid });
   }
-  if (idx === null || bd > 3000) continue;         // abseits der Route
-  zeiger = Math.max(zeiger, idx - 2);
-  zeitProKm[idx] += dS;
-  wegProKm[idx] += dM;
-  letzterIdx = idx;
+}
+function limitAn(lat, lon) {
+  const la = Math.round(lat * grid.grid), lo = Math.round(lon * grid.grid);
+  let best = null, bd = Infinity;
+  for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
+    for (const z of zellen.get(`${la + d1}|${lo + d2}`) || []) {
+      const d = distM({ lat, lon }, z);
+      if (d < bd) { bd = d; best = z; }
+    }
+  }
+  return best && bd < 600 ? { ref: best.ref, ms: best.ms, abstand: bd } : null;
 }
 
-// --- Gegenüberstellung -------------------------------------------------------
-const zeilen = ["streckenkm;autobahn;osm_limit;modell_kmh;gefahren_kmh;differenz"];
-console.log("   km   Autobahn  OSM-Limit    Modell   gefahren   Differenz");
-const auffaellig = [];
-const zeigen = [];
-segs.forEach((seg, i) => {
-  if (wegProKm[i] < 300 || zeitProKm[i] <= 0) return;      // kein belastbarer Messwert
-  const ist = (wegProKm[i] / 1000) / (zeitProKm[i] / 3600);
-  const limit = seg.maxspeedTag === "none" ? "unbegrenzt" : (seg.maxspeedTag ?? `~${seg.fallbackSpeedKmh}`);
-  // Verglichen wird gegen die reine Limitseite: zeigt, ob die Limits stimmen.
-  const modell = seg.maxspeedTag === "none" ? null
-    : (typeof seg.maxspeedTag === "number" ? seg.maxspeedTag : seg.fallbackSpeedKmh);
-  const diff = modell ? ist - modell : null;
-  zeilen.push([i + 1, seg.ref || "Ort", limit, modell ?? "", ist.toFixed(0), diff?.toFixed(0) ?? ""].join(";"));
-  zeigen.push({ km: i + 1, ref: seg.ref, limit, modell, ist, diff });
-  if (modell && diff > 25) auffaellig.push({ km: i + 1, ref: seg.ref, limit, modell, ist, diff });
-});
-for (const z of zeigen.filter((_, i) => i % 25 === 0)) {
-  console.log(`  ${String(z.km).padStart(4)}   ${(z.ref || "Ort").padEnd(8)} ${String(z.limit).padEnd(12)} ` +
-    `${(z.modell ? String(z.modell) : "frei").padStart(6)}   ${z.ist.toFixed(0).padStart(6)}   ` +
-    `${z.modell ? (z.diff >= 0 ? "+" : "") + z.diff.toFixed(0) : ""}`);
+// --- Kilometerweise auswerten ------------------------------------------------
+const kmZeilen = [];
+{
+  let km = 0, restM = 0, restS = 0, mitte = null;
+  for (let i = 1; i < punkte.length; i++) {
+    let dM = distM(punkte[i - 1], punkte[i]);
+    let dS = (punkte[i].t - punkte[i - 1].t) / 1000;
+    if (dS <= 0) continue;
+    while (restM + dM >= 1000) {
+      const anteil = (1000 - restM) / dM;
+      restS += dS * anteil;
+      const treffer = limitAn(punkte[i].lat, punkte[i].lon);
+      kmZeilen.push({
+        km: ++km, kmh: 3600 / restS,
+        ref: treffer?.ref ?? null,
+        ms: treffer ? treffer.ms : null,
+        lat: punkte[i].lat, lon: punkte[i].lon, t: punkte[i].t,
+      });
+      dM -= 1000 - restM; dS -= dS * anteil;
+      restM = 0; restS = 0;
+    }
+    restM += dM; restS += dS;
+  }
 }
-console.log(`\nAusgewertete Streckenkilometer: ${zeigen.length} von ${segs.length}`);
-const frei = zeigen.filter(z => !z.modell);
+
+const aufAutobahn = kmZeilen.filter((z) => z.ref);
+const frei = aufAutobahn.filter((z) => z.ms === 0);
+const begrenzt = aufAutobahn.filter((z) => z.ms > 0);
+
+console.log(`\nDavon auf erfasster Autobahn: ${aufAutobahn.length} km (${((aufAutobahn.length / kmZeilen.length) * 100).toFixed(0)} %)`);
+if (aufAutobahn.length < kmZeilen.length)
+  console.log(`  ${kmZeilen.length - aufAutobahn.length} km ohne Zuordnung – Ausland, Bundesstraße oder Stadt`);
+
+console.log("\n   km   Autobahn  Limit        gefahren   Abstand");
+for (const z of kmZeilen.filter((_, i) => i % Math.max(1, Math.ceil(kmZeilen.length / 30)) === 0)) {
+  const lim = !z.ref ? "–" : z.ms === 0 ? "unbegrenzt" : String(z.ms);
+  const diff = z.ref && z.ms > 0 ? (z.kmh - z.ms >= 0 ? "+" : "") + (z.kmh - z.ms).toFixed(0) : "";
+  console.log(`  ${String(z.km).padStart(4)}   ${(z.ref || "–").padEnd(8)} ${lim.padEnd(12)} ${z.kmh.toFixed(0).padStart(6)}   ${diff}`);
+}
+
+console.log("\n── Auswertung ──");
 if (frei.length) {
-  const schnitt = frei.reduce((a, z) => a + z.ist, 0) / frei.length;
-  console.log(`Auf unbegrenzten Abschnitten tatsächlich gefahren: Ø ${schnitt.toFixed(0)} km/h ` +
-    `(Median ${frei.map(z => z.ist).sort((a, b) => a - b)[Math.floor(frei.length / 2)].toFixed(0)})`);
-  console.log(`  -> dieser Wert gehört als "Wunschtempo" in den Planer.`);
-}
-const begrenzt = zeigen.filter(z => z.modell && z.ref);
+  const s = frei.map((z) => z.kmh).sort((a, b) => a - b);
+  const schnitt = s.reduce((a, b) => a + b, 0) / s.length;
+  console.log(`Unbegrenzte Abschnitte: ${frei.length} km, Ø ${schnitt.toFixed(0)} km/h, Median ${s[Math.floor(s.length / 2)].toFixed(0)}, oberes Viertel ab ${s[Math.floor(s.length * 0.75)].toFixed(0)}`);
+  console.log(`  -> "Wunschtempo" im Planer: ${Math.round(schnitt / 5) * 5} km/h`);
+} else console.log("Keine unbegrenzten Abschnitte in dieser Fahrt.");
 if (begrenzt.length) {
-  const ueber = begrenzt.reduce((a, z) => a + z.diff, 0) / begrenzt.length;
-  console.log(`Auf begrenzten Autobahnabschnitten im Mittel ${ueber >= 0 ? "+" : ""}${ueber.toFixed(0)} km/h gegenüber dem Limit`);
-  console.log(`  -> dieser Wert gehört als "Tempo über Limits" in den Planer.`);
-}
-if (auffaellig.length) {
-  console.log(`\nDeutlich über dem Limit (>25 km/h): ${auffaellig.length} Kilometer`);
-  for (const a of auffaellig.slice(0, 8))
-    console.log(`  km ${String(a.km).padStart(4)}  ${a.ref}  Limit ${a.limit}, gefahren ${a.ist.toFixed(0)}`);
-}
+  const d = begrenzt.map((z) => z.kmh - z.ms).sort((a, b) => a - b);
+  const schnitt = d.reduce((a, b) => a + b, 0) / d.length;
+  console.log(`Begrenzte Abschnitte: ${begrenzt.length} km, im Mittel ${schnitt >= 0 ? "+" : ""}${schnitt.toFixed(0)} km/h zum Limit, Median ${d[Math.floor(d.length / 2)] >= 0 ? "+" : ""}${d[Math.floor(d.length / 2)].toFixed(0)}`);
+  console.log(`  -> "Tempo über Limits" im Planer: ${Math.max(0, Math.round(schnitt / 5) * 5)} km/h`);
+} else console.log("Keine begrenzten Autobahnabschnitte in dieser Fahrt.");
 
-if (CSV) { await writeFile(CSV, zeilen.join("\n") + "\n", "utf8"); console.log(`\nCSV geschrieben: ${CSV} (${zeilen.length - 1} Kilometer)`); }
+// --- Dateien -----------------------------------------------------------------
+if (CSV) {
+  const zeilen = ["km;autobahn;limit;gefahren_kmh;abstand_zum_limit;uhrzeit;lat;lon"];
+  for (const z of kmZeilen)
+    zeilen.push([z.km, z.ref ?? "", z.ref ? (z.ms === 0 ? "frei" : z.ms) : "", z.kmh.toFixed(0),
+      z.ref && z.ms > 0 ? (z.kmh - z.ms).toFixed(0) : "", z.t.toISOString().slice(11, 16),
+      z.lat.toFixed(5), z.lon.toFixed(5)].join(";"));
+  await writeFile(CSV, zeilen.join("\n") + "\n", "utf8");
+  console.log(`\nCSV geschrieben: ${CSV} (${kmZeilen.length} Kilometer)`);
+}
+if (HTML) {
+  const farbe = (v) => v >= 170 ? "#1d8a3f" : v >= 140 ? "#4a9c2d" : v >= 115 ? "#b8860b" : v >= 80 ? "#c2410c" : "#a01b1b";
+  await writeFile(HTML, `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Gefahrene Strecke</title><style>
+ body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;padding:2rem;background:#f5f5f7;color:#1d1d1f}
+ h1{font-size:1.6rem;letter-spacing:-.02em;margin:0 0 .3rem}.meta{color:#86868b;margin:0 0 2rem}
+ table{border-collapse:collapse;width:100%;max-width:760px;background:#fff;border-radius:10px;overflow:hidden;
+   box-shadow:0 1px 3px rgba(0,0,0,.08);font-variant-numeric:tabular-nums}
+ th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:#86868b;text-align:left;padding:.6rem .7rem;border-bottom:1px solid #e5e5e7}
+ td{padding:.35rem .7rem;border-bottom:1px solid #f0f0f2}.n{text-align:right}.t{color:#86868b}.hl{font-weight:650}
+ tr:hover td{background:#f5f8ff}
+ @media(prefers-color-scheme:dark){body{background:#000;color:#f5f5f7}table{background:#1c1c1e}th{border-color:#2c2c2e}td{border-color:#242426}tr:hover td{background:#26262a}}
+</style></head><body><h1>Gefahrene Strecke</h1>
+<p class="meta">${(gesamtM/1000).toFixed(1)} km · ${fmtH(dauerH)} · Ø ${(gesamtM/1000/dauerH).toFixed(0)} km/h ·
+${punkte[0].t.toLocaleString("de-DE")}<br>Limit aus dem bundesweiten OSM-Raster; leer heißt Ausland, Bundesstraße oder Stadt.</p>
+<table><thead><tr><th>km</th><th>Autobahn</th><th>Limit</th><th>gefahren</th><th>Abstand</th><th>Uhrzeit</th></tr></thead><tbody>
+${kmZeilen.map((z) => `<tr><td class="n">${z.km}</td><td>${z.ref ?? '<span class="t">–</span>'}</td>
+<td>${!z.ref ? "" : z.ms === 0 ? "unbegrenzt" : z.ms}</td>
+<td class="n hl" style="color:${farbe(z.kmh)}">${z.kmh.toFixed(0)}</td>
+<td class="n">${z.ref && z.ms > 0 ? (z.kmh - z.ms >= 0 ? "+" : "") + (z.kmh - z.ms).toFixed(0) : ""}</td>
+<td class="n t">${z.t.toTimeString().slice(0,5)}</td></tr>`).join("")}
+</tbody></table></body></html>`, "utf8");
+  console.log(`HTML geschrieben: ${HTML}`);
+}
