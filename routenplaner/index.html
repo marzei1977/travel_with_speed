@@ -2,10 +2,20 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="description" content="Routenvergleich nach echten Tempolimits, Baustellen und Verkehr statt nach Durchschnittstempo." />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" href="./icons/icon-192.png" type="image/png" />
+<!-- iOS zeigt eine vom Homescreen gestartete Seite nur mit diesem Schalter
+     ohne Browserleiste; das Manifest allein genügt Safari bis heute nicht. -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Linke Spur" />
 <title>Linke Spur – Ankunftszeit nach echten Tempolimits</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
 <style>
   /* ------------------------------------------------------------------
      Gestaltungssystem: wenige Tokens, starke Typo-Hierarchie, ruhige
@@ -389,6 +399,22 @@
   tr.active td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
   tr.best td:first-child { font-weight: 600; }
   .sub { display: block; font-size: 0.6875rem; color: var(--muted); font-weight: 400; }
+
+  /* Offline-Hinweis im Fuß: unaufdringlich, aber auffindbar. */
+  .offline-box {
+    margin: 1.4rem auto 0; max-width: 34rem; padding: 0.85rem 1rem;
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: var(--r-control); display: flex; gap: 0.8rem;
+    align-items: center; justify-content: center; flex-wrap: wrap;
+    font-size: 0.8125rem; color: var(--muted); text-align: left;
+  }
+  .btn-quiet {
+    font: inherit; font-weight: 550; color: var(--accent); background: var(--accent-soft);
+    border: none; border-radius: 999px; padding: 0.4rem 0.9rem; cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-quiet:hover { filter: brightness(0.95); }
+  .btn-quiet:disabled { opacity: 0.55; cursor: default; }
   .via { display: block; color: var(--muted); font-size: 0.75rem; margin-top: 0.15rem; }
   .split .free { color: var(--free); font-weight: 600; }
   .split .lim { color: var(--limited); font-weight: 600; }
@@ -545,11 +571,18 @@
       <a href="fahrt/">Gefahrene Strecke auswerten →</a><br><br>
       OpenStreetMap · OSRM · <a href="https://verkehr.autobahn.de" target="_blank" rel="noopener">Autobahn GmbH</a> ·
       <a href="https://www.bast.de" target="_blank" rel="noopener">BASt</a> — <a href="README.md">Annahmen &amp; Grenzen</a>
+      <div id="offline-box" class="offline-box" hidden>
+        <span id="offline-text">Für unterwegs: die Streckendaten einmal herunterladen, dann rechnet die
+          App auch ohne Netz.</span>
+        <button type="button" class="btn-quiet" id="offline-btn">Offline verfügbar machen</button>
+      </div>
     </footer>
   </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Leaflet liegt lokal, damit die Karte auch ohne Netz startet. Die Dateien
+     stammen unverändert von unpkg (Version 1.9.4), geprüft gegen die SRI-Hashes
+     der vorherigen CDN-Einbindung. -->
+<script src="./vendor/leaflet/leaflet.js"></script>
 <script>
   const SPEED_STORAGE_KEY = "routenplaner:wunschgeschwindigkeit";
   const CORRIDOR_STORAGE_KEY = "routenplaner:korridor";
@@ -2083,6 +2116,54 @@
   }
 
   load();
+
+  // --- Offline-Betrieb ------------------------------------------------------
+  // Der Service Worker hält Seite, Karte und Streckendaten vor. Die Daten sind
+  // zusammen rund 6 MB – die lädt niemand ungefragt, deshalb der Knopf.
+  (function offlineEinrichten() {
+    if (!("serviceWorker" in navigator)) return;
+    const box = document.getElementById("offline-box");
+    const btn = document.getElementById("offline-btn");
+    const text = document.getElementById("offline-text");
+
+    navigator.serviceWorker.register("./sw.js", { scope: "./" }).then((reg) => {
+      box.hidden = false;
+      // Eine neue Fassung liegt bereit: erst auf Zuruf übernehmen, damit einem
+      // niemand mitten in der Routensuche die Seite unter den Füßen wegzieht.
+      reg.addEventListener("updatefound", () => {
+        const neuer = reg.installing;
+        if (!neuer) return;
+        neuer.addEventListener("statechange", () => {
+          if (neuer.state === "installed" && navigator.serviceWorker.controller) {
+            text.textContent = "Eine neue Fassung ist da.";
+            btn.textContent = "Jetzt aktualisieren";
+            btn.disabled = false;
+            btn.onclick = () => { neuer.postMessage("skipWaiting"); location.reload(); };
+          }
+        });
+      });
+    }).catch(() => { /* ohne Service Worker läuft die Seite ganz normal weiter */ });
+
+    navigator.serviceWorker.addEventListener("message", (e) => {
+      if (e.data?.typ !== "vorladen") return;
+      const { fertig, gesamt } = e.data;
+      btn.textContent = fertig < gesamt ? `Lädt … ${fertig}/${gesamt}` : "Offline bereit";
+      if (fertig >= gesamt) {
+        text.textContent = "Die Streckendaten liegen jetzt auf dem Gerät. Baustellen und die freie " +
+          "Ortssuche brauchen weiterhin Netz.";
+        setTimeout(() => { btn.textContent = "Daten erneuern"; btn.disabled = false; }, 1500);
+      }
+    });
+
+    btn.addEventListener("click", () => {
+      if (btn.textContent === "Jetzt aktualisieren") return;
+      btn.disabled = true;
+      btn.textContent = "Lädt …";
+      navigator.serviceWorker.ready.then((reg) => {
+        (reg.active || navigator.serviceWorker.controller)?.postMessage("daten-vorladen");
+      });
+    });
+  })();
 </script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+{
+  "name": "Linke Spur",
+  "short_name": "Linke Spur",
+  "description": "Die Ankunftszeit für Leute, die zügig fahren: Routenvergleich nach echten Tempolimits, Baustellen und Verkehr.",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "categories": ["travel", "navigation", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Fahrt auswerten",
+      "short_name": "Fahrt",
+      "description": "Eine aufgezeichnete GPX-Datei gegen die Tempolimits halten",
+      "url": "fahrt/",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

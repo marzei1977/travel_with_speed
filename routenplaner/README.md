@@ -155,6 +155,35 @@ meist Platz. Die BASt-Daten zeigen das deutlich – die A61 hat mit im Mittel 2,
 Fahrstreifen die wenigsten und mit rund 20 % den höchsten Schwerverkehrsanteil,
 die A9 dagegen 3,1 Spuren bei rund 13 %.
 
+## Als App aufs Telefon (PWA)
+
+Die Seite ist eine installierbare Web-App. Auf dem iPhone: in Safari öffnen,
+Teilen-Symbol, "Zum Home-Bildschirm". Danach startet sie mit eigenem Icon und
+ohne Browserleiste. Android/Chrome bietet die Installation von selbst an.
+
+**Offline** funktioniert alles, was aus den mitgelieferten Daten kommt: die
+hinterlegten Korridore samt Routenvergleich, die gespeicherten Baustellen und die
+GPX-Auswertung. Ein Service Worker (`sw.js`) legt dafür zwei Sorten von Dateien
+ab:
+
+- Die App-Shell – beide Seiten, Leaflet, Icons, `config/corridors.json` – kommt
+  beim Installieren automatisch in den Cache. Zusammen rund 350 KB.
+- Die Streckendaten (`data/*.json`, zusammen etwa 6 MB) lädt niemand ungefragt.
+  Dafür gibt es unten auf der Seite den Knopf **"Offline verfügbar machen"**.
+
+Was offline *nicht* geht, weil es live abgefragt wird: die freie Ortssuche
+(Photon), Routen außerhalb der hinterlegten Korridore (OSRM), frische
+Baustellenmeldungen und neue Kartenkacheln. Die zuletzt betrachteten Kacheln
+bleiben begrenzt zwischengespeichert (400 Stück), damit die Karte nicht leer ist.
+
+Leaflet liegt deshalb unter `vendor/leaflet/` statt vom CDN zu kommen – geprüft
+gegen die SRI-Hashes der vorherigen Einbindung. Erscheint eine neue Fassung der
+Seite, meldet sich der Fuß mit "Jetzt aktualisieren"; übernommen wird erst auf
+Klick, damit niemandem mitten in der Routensuche die Seite neu lädt.
+
+Beim Ändern von `sw.js` die `VERSION` hochzählen, sonst behalten bestehende
+Installationen ihren alten Cache.
+
 ## Einen weiteren Korridor hinzufügen
 
 In `config/corridors.json` zuerst benötigte Wegpunkte in die `punkte`-Tabelle

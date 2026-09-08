@@ -30,6 +30,13 @@ die bessere Antwort als eigene Abfragen.
 
 - `routenplaner/index.html` – die ganze Anwendung, Berechnung läuft im Browser
 - `routenplaner/fahrt/index.html` – Auswertung hochgeladener GPX-Aufzeichnungen
+- `routenplaner/sw.js` + `manifest.webmanifest` – installierbare Web-App (PWA).
+  **Beim Ändern von `sw.js` die `VERSION` hochzählen**, sonst behalten bestehende
+  Installationen ihren alten Cache. Alles, was die Seiten laden, muss entweder in
+  `SHELL` stehen oder unter `data/*.json` liegen – `config/corridors.json` lag
+  einmal in keiner der beiden Listen und fehlte offline
+- `routenplaner/vendor/leaflet/` – Leaflet lokal statt vom CDN, sonst startet die
+  Karte offline nicht
 - `routenplaner/config/corridors.json` – hinterlegte Strecken und ihre Wegpunkte
 - `routenplaner/scripts/*.mjs` – Datenbeschaffung, laufen per GitHub Actions
 - `routenplaner/README.md` – **Modellannahmen und Grenzen ausführlich**; bei
