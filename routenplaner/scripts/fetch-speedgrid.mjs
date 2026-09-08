@@ -83,16 +83,26 @@ async function main() {
   // würde sonst die unbegrenzte Hauptfahrbahn in derselben Zelle überschreiben,
   // und der unbegrenzt-Anteil bräche um rund 15 Prozentpunkte ein.
   const votes = new Map();
+  // Zweite Auszählung: steht über der Zelle eine Streckenbeeinflussungsanlage?
+  // OSM markiert sie mit maxspeed:variable. Über einem sonst unbegrenzten
+  // Abschnitt ist "frei" dann die falsche Auskunft – die Anlage schaltet bei
+  // Bedarf. Wie beim Tempolimit gewinnt die Mehrheit der Knoten, damit nicht
+  // eine einzelne Auffahrt die Hauptfahrbahn übertönt.
+  const varVotes = new Map();
   for (const way of ways) {
     const ref = normalizeRef(way.tags?.ref);
     if (!ref) continue;
     const ms = parseMaxspeed(way.tags);
     if (ms === null) continue;
+    const hatAnlage = Boolean(way.tags?.["maxspeed:variable"]);
     for (const node of way.geometry || []) {
       const key = `${ref}|${Math.round(node.lat * GRID)}|${Math.round(node.lon * GRID)}`;
       let cell = votes.get(key);
       if (!cell) votes.set(key, (cell = new Map()));
       cell.set(ms, (cell.get(ms) || 0) + 1);
+      let vc = varVotes.get(key);
+      if (!vc) varVotes.set(key, (vc = { ja: 0, nein: 0 }));
+      if (hatAnlage) vc.ja++; else vc.nein++;
     }
   }
 
@@ -127,11 +137,39 @@ async function main() {
     refs[ref] = flat;
   }
 
+  // Anlagen getrennt ablegen statt als viertes Element je Zelle: so bleibt das
+  // bestehende 3er-Format unverändert und ältere Leser stolpern nicht darüber.
+  const anlagenNachRef = new Map();
+  for (const [key, vc] of varVotes) {
+    if (vc.ja <= vc.nein) continue;
+    const [ref, la, lo] = key.split("|");
+    const list = anlagenNachRef.get(ref) || [];
+    list.push([Number(la), Number(lo)]);
+    anlagenNachRef.set(ref, list);
+  }
+  const anlagen = {};
+  let anlagenZellen = 0;
+  for (const [ref, list] of anlagenNachRef) {
+    list.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const flat = [];
+    let pLa = 0;
+    let pLo = 0;
+    for (const [la, lo] of list) {
+      flat.push(la - pLa, lo - pLo);
+      pLa = la;
+      pLo = lo;
+    }
+    anlagen[ref] = flat;
+    anlagenZellen += list.length;
+  }
+  console.log(`  ${anlagenZellen} Rasterzellen mit Streckenbeeinflussungsanlage`);
+
   const output = {
     quelle: "OpenStreetMap (Overpass API), highway=motorway mit maxspeed",
     updatedAt: new Date().toISOString(),
     grid: GRID,
     refs,
+    anlagen,
   };
 
   await writeFile(

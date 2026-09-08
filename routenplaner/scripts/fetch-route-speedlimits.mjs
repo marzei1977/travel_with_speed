@@ -282,9 +282,15 @@ async function buildRoute(routeConfig, waypoints) {
     const ref = stepInfo?.ref || null;
 
     let maxspeedTag = null;
+    // Streckenbeeinflussungsanlage: OSM markiert sie mit maxspeed:variable. Wo
+    // sie über einem sonst unbegrenzten Abschnitt steht, ist "frei" die falsche
+    // Annahme – die Anlage schaltet bei Bedarf. Bundesweit betrifft das 8.215
+    // Autobahnabschnitte, 4.298 davon bei maxspeed=none.
+    let variable = null;
     if (ref) {
       const way = findNearestWay(mid, ways, ref);
       maxspeedTag = way ? parseMaxspeed(way.tags) : null;
+      variable = way?.tags?.["maxspeed:variable"] ?? null;
     }
 
     // fallbackSpeedKmh greift nur, wenn maxspeedTag null ist (kein OSM-Tag
@@ -312,6 +318,7 @@ async function buildRoute(routeConfig, waypoints) {
       name: stepInfo?.name || null,
       distanceMeters: Math.round(to - from),
       maxspeedTag, // number | "none" | null = kein OSM-Tag gefunden
+      variable, // "yes" | "peak_traffic" | ... | null = keine Wechselanzeige
       fallbackSpeedKmh, // nur gesetzt wenn maxspeedTag null ist, siehe oben
       start,
       end,

@@ -30,7 +30,15 @@ const HOURLY = [1.2,0.9,0.8,0.8,1.0,1.8,3.5,5.5,5.8,5.5,5.5,5.6,5.6,5.7,6.0,6.5,
 const HOURLY_MEAN = HOURLY.reduce((a,b)=>a+b,0)/24;
 const HOURLY_SV = [3.0,2.8,2.8,2.9,3.3,4.0,4.8,5.2,5.2,5.1,5.1,5.0,4.9,5.0,5.0,5.0,4.9,4.6,4.2,3.9,3.7,3.6,3.4,3.2];
 const HOURLY_SV_MEAN = HOURLY_SV.reduce((a,b)=>a+b,0)/24;
-const DICHTE_GEWICHT = 4.0, LKW_GEWICHT = 50.0, BLOCKIERT_FALLBACK = 60;
+const DICHTE_GEWICHT = 4.0, LKW_GEWICHT = 60.0, BLOCKIERT_FALLBACK = 60;
+// Spreizung zwischen zwei und drei Fahrstreifen – siehe index.html.
+const ENTLASTUNG_2 = 2.0, ENTLASTUNG_3 = 0.1, ENTLASTUNG_4 = 0.05;
+// Der Bremsbetrag skaliert mit dem Wunschtempo (an 185 km/h kalibriert).
+const REFERENZ_TEMPO = 185;
+// Wechselanzeige über sonst unbegrenzter Strecke: Erwartungswert aus Wunschtempo
+// und Schaltwert, weil die Anlage nur einen Teil der Zeit begrenzt.
+const ANLAGE_ANTEIL = 0.2, ANLAGE_TEMPO = 120;
+const anlageGrenze = (wunsch) => ANLAGE_ANTEIL * ANLAGE_TEMPO + (1 - ANLAGE_ANTEIL) * wunsch;
 
 const welle = (tag,std) => (tag===5&&std>=14&&std<=19)?1.25:(tag===0&&std>=15&&std<=20)?1.20:1.0;
 const tagTyp = (d) => d.getDay()===0?"sonntag":d.getDay()===6?"samstag":"werktag";
@@ -72,8 +80,9 @@ function praktisch(wunsch,t,d){
   const kfzStd=(t.kfz/24)*(HOURLY[h]/HOURLY_MEAN)*welle(d.getDay(),h);
   const svStd=(t.sv/24)*(HOURLY_SV[h]/HOURLY_SV_MEAN);
   const proSpur=kfzStd/t.spuren, svProSpur=svStd/t.spuren;
-  const entlastung=t.spuren<2.5?1.0:t.spuren<3.5?0.45:0.25;
-  return Math.max(90, wunsch - Math.pow(proSpur/1000,1.6)*DICHTE_GEWICHT - (svProSpur/100)*LKW_GEWICHT*entlastung);
+  const entlastung=t.spuren<2.5?ENTLASTUNG_2:t.spuren<3.5?ENTLASTUNG_3:ENTLASTUNG_4;
+  const abzug = Math.pow(proSpur/1000,1.6)*DICHTE_GEWICHT + (svProSpur/100)*LKW_GEWICHT*entlastung;
+  return Math.max(90, wunsch - abzug * (wunsch / REFERENZ_TEMPO));
 }
 function grenze(seg,tol){
   if(seg.maxspeedTag==="none") return null;
@@ -119,7 +128,9 @@ for(const route of korridor.routes){
     const zeit=new Date(ABFAHRT.getTime()+t*3600_000);
     const typ=tagTyp(zeit);
     const basis0=grenze(seg,TOLERANZ);
-    const basis=basis0===null?WUNSCH:Math.min(WUNSCH,basis0);
+    let basis=basis0===null?WUNSCH:Math.min(WUNSCH,basis0);
+    // Unbegrenzt, aber unter einer Wechselanzeige – siehe index.html.
+    if(basis0===null && seg.variable) basis=Math.min(basis,anlageGrenze(WUNSCH));
     let nachVerkehr=basis;
     if(seg.ref){
       const tr=verkehrAn(seg.ref,seg.start.lat,seg.start.lon,typ);

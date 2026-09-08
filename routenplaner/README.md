@@ -1,4 +1,6 @@
-# Autobahn-Routenplaner
+# Linke Spur
+
+*Die Ankunftszeit für Leute, die zügig fahren.*
 
 Vergleicht für ausgewählte Fernstrecken mehrere Routen-Alternativen – nicht nach
 "üblicher" Durchschnittsgeschwindigkeit, sondern nach den **tatsächlichen
@@ -224,10 +226,69 @@ Wegpunkt-Korrektur). Fünf Minuten zu optimistisch auf gut drei Stunden. Die
 Behandlung von Limits, Baustellen und Verkehr stimmt also im Groben; unsicher war
 vor allem der Wunschwert.
 
-Der Restfehler verteilt sich allerdings ungleich – siehe die Fahrstreifen-Notiz
-unter "Annahmen & bekannte Grenzen": auf der A61 rechnet das Modell zu
-optimistisch, auf A3/A8 zu pessimistisch. Über die ganze Strecke hebt sich das
-weitgehend auf.
+### Was die Messung am Verkehrsmodell geändert hat
+
+Der Restfehler verteilte sich zunächst sehr ungleich. Kilometerweise gegen die
+Fahrt gerechnet, nach Autobahn und Wechselanzeige gruppiert, lag das Modell so:
+
+| Gruppe | km | Modell | gemessen |
+|---|---|---|---|
+| A8 ohne Anzeige | 96 | 144 | 159 |
+| A3 ohne Anzeige | 89 | 138 | 155 |
+| A7 ohne Anzeige | 92 | 142 | 144 |
+| A61 unter Anzeige | 21 | 133 | 109 |
+
+Die A61 wurde zu optimistisch gerechnet, A3 und A8 zu pessimistisch – die
+Rangfolge der Alternativen stand damit auf dem Kopf. Drei Änderungen folgten
+daraus (gewichteter Fehler 8,4 → 6,3 km/h):
+
+1. **Der Bremsbetrag skaliert jetzt mit dem Wunschtempo** (`wunsch / 185`). Er war
+   an 185 km/h kalibriert, wurde aber als absoluter Abzug verwendet; bei 150 km/h
+   fiel er dadurch viel zu groß aus. Bei 185 ändert sich nichts, die früheren
+   Referenzfahrten bleiben also gültig.
+2. **Die Fahrstreifen-Spreizung wurde verstärkt**: der LKW-Entlastungsfaktor geht
+   von 1,0 / 0,45 / 0,25 auf **2,0 / 0,1 / 0,05**, das LKW-Gewicht von 50 auf 60.
+   Auf zwei Spuren wiegt der Schwerverkehr damit doppelt, ab drei Spuren fast
+   nichts mehr. Das entspricht der Erfahrung, dass sich auf der A61 links kaum
+   überholen lässt, und deckt sich mit den BASt-Daten: 2,11 Fahrstreifen bei
+   20,4 % Schwerverkehr gegen 3,06 Spuren bei 12,2 % auf der A9.
+3. **Wechselanzeigen werden erfasst und eingerechnet** (siehe unten).
+
+Der Dichteterm blieb bei 4,0. Die Rastersuche wollte ihn halbieren, aber eine
+einzelne verkehrsarme Sonntagsfahrt kann ihn nicht belegen, und er entscheidet
+über das Stauverhalten an Werktagen. Ihn festzuhalten kostet nur 1,1 km/h
+Genauigkeit.
+
+Kontrollrechnung Köln → München, Werktag 8 Uhr, 185 km/h: A3/A9 4 h 16, A7/A8
+4 h 42, A61 4 h 58. Vor der Änderung lag die A61 mit 4 h 06 vorn – die Reihenfolge
+ist jetzt die, die der Praxis entspricht.
+
+### Wechselverkehrszeichen
+
+Streckenbeeinflussungsanlagen zeigen Limits, die auf keinem festen Schild stehen.
+OSM markiert sie mit `maxspeed:variable`; bundesweit tragen **8.215**
+Autobahnabschnitte dieses Tag, **4.298** davon bei `maxspeed=none`. Diese Strecken
+galten im Modell als unbegrenzt, obwohl dort eine Anlage steht, die bei Bedarf
+begrenzt.
+
+Die gefahrene Strecke zeigt den Unterschied innerhalb derselben Autobahn:
+
+| | ohne Anzeige | unter Anzeige |
+|---|---|---|
+| A3 | 113 km, Ø 152 | 67 km, Ø 144 |
+| A61 | 12 km, Ø 125 | 23 km, Ø 109 |
+| alle unbegrenzten Kilometer | 371 km, Ø **149** | 137 km, Ø **139** |
+
+Gerechnet wird kein fester Deckel, sondern ein Erwartungswert: die Anlage schaltet
+nur einen Teil der Zeit, deshalb `0,2 × 120 + 0,8 × Wunschtempo`. Bei 150 km/h
+ergibt das 144 km/h – genau der Wert, der auf der A3 unter Anzeige gemessen wurde.
+So trägt der Ansatz auch bei anderen Wunschgeschwindigkeiten, statt an einer
+festen Zahl zu kleben. Wo ohnehin ein Limit gilt, bleibt die Anlage außen vor: sie
+zeigt dann in aller Regel dasselbe oder weniger.
+
+Nebeneffekt für die Auswertung: `vergleich-fahrt.mjs` und die Upload-Seite weisen
+Kilometer unter Anzeige getrennt aus und lassen sie aus dem Wunschtempo heraus.
+Daher stammt der belastbarere Wert von 149 km/h statt der ursprünglichen 147.
 
 Zwei Einschränkungen dazu: das Wunschtempo stammt aus derselben Fahrt, gegen die
 hier geprüft wird – für den freien Anteil ist das keine unabhängige Bestätigung.
@@ -260,25 +321,27 @@ nicht von den Tempolimits allein.
   Für andere Strecken können sie danebenliegen.
 - **Kein Live-Verkehr.** Die BASt-Daten sind Jahresmittel, keine aktuelle
   Verkehrslage. Ein Stau von heute Mittag steckt nicht darin.
-- **Die Fahrstreifenzahl wirkt, aber zu schwach.** Sie geht zweifach ein: über die
-  Verkehrsdichte je Spur und über einen LKW-Entlastungsfaktor (1,0 unter 2,5
-  Spuren, 0,45 unter 3,5, sonst 0,25) – auf zwei Spuren blockiert ein
-  überholender LKW eben beide. Die Richtung stimmt, der Betrag nicht: gemessen
-  wurden auf frei fließenden, unbegrenzten Abschnitten 116 km/h auf der A61 gegen
-  159 km/h auf der A8 (43 km/h Spreizung), das Modell trennt die beiden nur um
-  13 km/h (126 gegen 139). Die A61 ist im BASt-Datensatz der Extremfall: 2,11
-  Fahrstreifen bei 20,4 % Schwerverkehr, gegenüber 3,06 Spuren bei 12,2 % auf der
-  A9. Die Untergrenze von 90 km/h ist dabei nicht die Ursache – sie greift auf der
-  A61 nur auf 9 von 246 Kilometern.
-- **Wechselverkehrszeichen bleiben unberücksichtigt.** Streckenbeeinflussungs-
-  anlagen zeigen Limits, die nicht auf festen Schildern stehen; im Modell zählt
-  nur der dauerhafte Wert. Auf der A61 ist das erheblich: 397 der 1.596
-  OSM-Abschnitte tragen `maxspeed:variable`, davon 204 mit dem Zusatz
-  `peak_traffic` und **97 mit `maxspeed=none`** – die gelten hier als unbegrenzt,
-  obwohl dort eine Anlage steht, die bei Bedarf begrenzt. Wie oft sie tatsächlich
-  schaltet, sagt OSM nicht; ohne diese Information wäre jeder Aufschlag geraten.
-  Ein Teil des Effekts steckt indirekt im Verkehrsmodell, denn die Anlagen
-  schalten gerade bei dichtem Verkehr.
+- **Der Anlagen-Anteil ist der schwächste der drei Kalibrierwerte.** Dass
+  Wechselanzeigen bremsen, ist klar belegt; wie stark, hängt an einer einzigen
+  Fahrt und lässt sich darin nicht sauber von der allgemeinen Verkehrsbremse
+  trennen (siehe Kalibrierung). Der Anteil von 20 % ist so gewählt, dass er die
+  gemessenen Anlagen-Abschnitte trifft, ohne das Gesamtbild zu verschlechtern –
+  er ist plausibel, nicht bewiesen.
+- **Wie oft eine Anlage schaltet, weiß OSM nicht.** Das Tag `maxspeed:variable`
+  sagt nur, dass eine Anzeige existiert, nicht wann sie welchen Wert zeigt. Der
+  angesetzte Schaltwert von 120 km/h ist eine Annahme.
+- **Die Untergrenze von 90 km/h ist der schwächste Punkt des Verkehrsmodells.**
+  Wo der Abzug groß wird, bestimmt nicht mehr die Rechnung das Tempo, sondern
+  diese Zahl. An einem Werktagvormittag betrifft das jetzt 29 % der geprüften
+  Zählstellen – vor der Verstärkung des Fahrstreifen-Effekts waren es 13 %.
+  Betroffen sind fast nur zweispurige, LKW-reiche Strecken (A38, A6, A45, A93,
+  A31), also genau die, die der Effekt treffen soll; auf den Hauptachsen A3 und
+  A9 rechnet das Modell dafür deutlich weniger falsche Bremsung (A3 werktags
+  116 → 129 km/h). Eine weiche Sättigung statt der harten Kappung wäre die
+  saubere Lösung – sie würde die A61 werktags von 90 auf 112 km/h heben. Dafür
+  fehlt aber die Messung: die vorhandene Fahrt war ein Sonntag mit wenig Verkehr.
+  **Nächster sinnvoller Schritt ist eine GPX-Aufzeichnung an einem Werktag**,
+  gern auf der A61.
 - **Fehlendes `maxspeed`-Tag auf einer erkannten Autobahn**: OSM taggt nicht jeden
   Abschnitt lückenlos. In diesem Fall wird die Richtgeschwindigkeit (130 km/h)
   angenommen – in der UI als "begrenzt/Baustelle"-Farbe sichtbar, da nicht

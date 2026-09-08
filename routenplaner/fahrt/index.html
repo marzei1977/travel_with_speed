@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fahrt auswerten – Autobahn-Routenplaner</title>
+<title>Fahrt auswerten – Linke Spur</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
@@ -112,7 +112,7 @@
 <body>
   <div class="wrap">
     <header>
-      <a class="back" href="../">← Routenplaner</a>
+      <a class="back" href="../">← Linke Spur</a>
       <h1>Fahrt auswerten</h1>
       <p>Aufzeichnung hochladen und sehen, wie schnell du tatsächlich gefahren bist –
          Kilometer für Kilometer, farbig auf der Karte.</p>
@@ -192,7 +192,7 @@
   }
   const fmtH = (h) => `${Math.floor(h)} h ${String(Math.round((h % 1) * 60)).padStart(2, "0")} min`;
 
-  let gitter = null, gitterAufl = 200;
+  let gitter = null, gitterAufl = 200, anlagen = null;
   async function ladeRaster() {
     try {
       const res = await fetch("../data/speedgrid.json");
@@ -206,7 +206,19 @@
           la += flat[i]; lo += flat[i + 1];
           const key = `${la}|${lo}`;
           if (!gitter.has(key)) gitter.set(key, []);
-          gitter.get(key).push({ ref, ms: flat[i + 2], lat: la / gitterAufl, lon: lo / gitterAufl });
+          gitter.get(key).push({ ref, ms: flat[i + 2], lat: la / gitterAufl, lon: lo / gitterAufl,
+                                 zLa: la, zLo: lo });
+        }
+      }
+      // Zellen mit Streckenbeeinflussungsanlage: dort ist "unbegrenzt" die
+      // falsche Auskunft, denn die Anzeige kann begrenzt haben, ohne dass die
+      // Aufzeichnung das verrät.
+      anlagen = new Set();
+      for (const [ref, flat] of Object.entries(g.anlagen || {})) {
+        let la = 0, lo = 0;
+        for (let i = 0; i < flat.length; i += 2) {
+          la += flat[i]; lo += flat[i + 1];
+          anlagen.add(`${ref}|${la}|${lo}`);
         }
       }
     } catch { /* ohne Raster geht die Auswertung auch, nur ohne Limitvergleich */ }
@@ -221,7 +233,8 @@
         if (d < bd) { bd = d; best = z; }
       }
     }
-    return best && bd < 600 ? best : null;
+    if (!best || bd >= 600) return null;
+    return { ...best, anlage: anlagen?.has(`${best.ref}|${best.zLa}|${best.zLo}`) || false };
   }
 
   function parseGpx(text) {
@@ -310,7 +323,7 @@
         restS += dS * anteil;
         const tr = limitAn(punkte[i].lat, punkte[i].lon);
         out.push({ km: ++km, kmh: 3600 / restS, ref: tr?.ref ?? null,
-                   ms: tr ? tr.ms : null, t: punkte[i].t, spur });
+                   ms: tr ? tr.ms : null, anlage: Boolean(tr?.anlage), t: punkte[i].t, spur });
         dM -= 1000 - restM; dS -= dS * anteil;
         restM = 0; restS = 0;
         spur = [punkte[i]];
@@ -367,15 +380,22 @@
       .map(([k, l]) => `<div class="stat"><div class="k">${k}</div><div class="l">${l}</div></div>`).join("");
 
     const aufAB = kms.filter((k) => k.ref);
-    const frei = aufAB.filter((k) => k.ms === 0);
+    const frei = aufAB.filter((k) => k.ms === 0 && !k.anlage);
+    const unterAnlage = aufAB.filter((k) => k.ms === 0 && k.anlage);
     const begr = aufAB.filter((k) => k.ms > 0);
     let html = "<h3>Für den Routenplaner</h3>";
     if (frei.length >= 10) {
       const s = frei.reduce((a, k) => a + k.kmh, 0) / frei.length;
-      html += `<p>Auf <b>${frei.length} km</b> unbegrenzter Autobahn im Mittel <b>${s.toFixed(0)} km/h</b>
-               → Wunschtempo <b>${Math.round(s / 5) * 5}</b></p>`;
+      html += `<p>Auf <b>${frei.length} km</b> unbegrenzter Autobahn ohne Wechselanzeige im Mittel
+               <b>${s.toFixed(0)} km/h</b> → Wunschtempo <b>${Math.round(s / 5) * 5}</b></p>`;
     } else {
       html += `<p>Nur ${frei.length} km unbegrenzte Autobahn – zu wenig für einen belastbaren Wert.</p>`;
+    }
+    if (unterAnlage.length >= 10) {
+      const a = unterAnlage.reduce((x, k) => x + k.kmh, 0) / unterAnlage.length;
+      html += `<p>Weitere <b>${unterAnlage.length} km</b> waren unbegrenzt, standen aber unter einer
+               Wechselanzeige: dort <b>${a.toFixed(0)} km/h</b>. Nicht im Wunschtempo enthalten –
+               die Anlage kann begrenzt haben, ohne dass die Aufzeichnung es verrät.</p>`;
     }
     if (begr.length >= 10) {
       const d = begr.reduce((a, k) => a + (k.kmh - k.ms), 0) / begr.length;

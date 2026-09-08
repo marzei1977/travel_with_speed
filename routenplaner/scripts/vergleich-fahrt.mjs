@@ -163,16 +163,32 @@ for (const [ref, flat] of Object.entries(grid.refs)) {
     zellen.get(key).push({ ref, ms: flat[i + 2], lat: la / grid.grid, lon: lo / grid.grid });
   }
 }
+// Rasterzellen mit Streckenbeeinflussungsanlage. Über einem unbegrenzten
+// Abschnitt ist "frei" die falsche Auskunft – dort kann eine Anzeige begrenzt
+// haben, ohne dass die Aufzeichnung das verrät. Solche Kilometer gehören nicht
+// in die Statistik, aus der das Wunschtempo abgeleitet wird.
+const anlagenZellen = new Set();
+for (const [ref, flat] of Object.entries(grid.anlagen || {})) {
+  let la = 0, lo = 0;
+  for (let i = 0; i < flat.length; i += 2) {
+    la += flat[i]; lo += flat[i + 1];
+    anlagenZellen.add(`${ref}|${la}|${lo}`);
+  }
+}
 function limitAn(lat, lon) {
   const la = Math.round(lat * grid.grid), lo = Math.round(lon * grid.grid);
-  let best = null, bd = Infinity;
+  let best = null, bd = Infinity, bLa = 0, bLo = 0;
   for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
     for (const z of zellen.get(`${la + d1}|${lo + d2}`) || []) {
       const d = distM({ lat, lon }, z);
-      if (d < bd) { bd = d; best = z; }
+      if (d < bd) { bd = d; best = z; bLa = la + d1; bLo = lo + d2; }
     }
   }
-  return best && bd < 600 ? { ref: best.ref, ms: best.ms, abstand: bd } : null;
+  if (!best || bd >= 600) return null;
+  return {
+    ref: best.ref, ms: best.ms, abstand: bd,
+    anlage: anlagenZellen.has(`${best.ref}|${bLa}|${bLo}`),
+  };
 }
 
 // --- Kilometerweise auswerten ------------------------------------------------
@@ -194,6 +210,7 @@ const kmZeilen = [];
         km: ++km, kmh: 3600 / restS,
         ref: treffer?.ref ?? null,
         ms: treffer ? treffer.ms : null,
+        anlage: Boolean(treffer?.anlage),
         lat: punkte[i].lat, lon: punkte[i].lon, t: punkte[i].t,
       });
       dM -= 1000 - restM; dS -= dS * anteil;
@@ -204,7 +221,8 @@ const kmZeilen = [];
 }
 
 const aufAutobahn = kmZeilen.filter((z) => z.ref);
-const frei = aufAutobahn.filter((z) => z.ms === 0);
+const frei = aufAutobahn.filter((z) => z.ms === 0 && !z.anlage);
+const unterAnlage = aufAutobahn.filter((z) => z.ms === 0 && z.anlage);
 const begrenzt = aufAutobahn.filter((z) => z.ms > 0);
 
 console.log(`\nDavon auf erfasster Autobahn: ${aufAutobahn.length} km (${((aufAutobahn.length / kmZeilen.length) * 100).toFixed(0)} %)`);
@@ -222,9 +240,15 @@ console.log("\n── Auswertung ──");
 if (frei.length) {
   const s = frei.map((z) => z.kmh).sort((a, b) => a - b);
   const schnitt = s.reduce((a, b) => a + b, 0) / s.length;
-  console.log(`Unbegrenzte Abschnitte: ${frei.length} km, Ø ${schnitt.toFixed(0)} km/h, Median ${s[Math.floor(s.length / 2)].toFixed(0)}, oberes Viertel ab ${s[Math.floor(s.length * 0.75)].toFixed(0)}`);
+  console.log(`Unbegrenzte Abschnitte ohne Anzeige: ${frei.length} km, Ø ${schnitt.toFixed(0)} km/h, Median ${s[Math.floor(s.length / 2)].toFixed(0)}, oberes Viertel ab ${s[Math.floor(s.length * 0.75)].toFixed(0)}`);
   console.log(`  -> "Wunschtempo" im Planer: ${Math.round(schnitt / 5) * 5} km/h`);
 } else console.log("Keine unbegrenzten Abschnitte in dieser Fahrt.");
+if (unterAnlage.length) {
+  const a = unterAnlage.map((z) => z.kmh).sort((x, y) => x - y);
+  const schnitt = a.reduce((x, y) => x + y, 0) / a.length;
+  console.log(`Unbegrenzt, aber unter Wechselanzeige: ${unterAnlage.length} km, Ø ${schnitt.toFixed(0)} km/h`);
+  console.log(`  Nicht im Wunschtempo enthalten – dort kann die Anlage begrenzt haben.`);
+}
 if (begrenzt.length) {
   const d = begrenzt.map((z) => z.kmh - z.ms).sort((a, b) => a - b);
   const schnitt = d.reduce((a, b) => a + b, 0) / d.length;
@@ -234,9 +258,9 @@ if (begrenzt.length) {
 
 // --- Dateien -----------------------------------------------------------------
 if (CSV) {
-  const zeilen = ["km;autobahn;limit;gefahren_kmh;abstand_zum_limit;uhrzeit;lat;lon"];
+  const zeilen = ["km;autobahn;limit;anzeige;gefahren_kmh;abstand_zum_limit;uhrzeit;lat;lon"];
   for (const z of kmZeilen)
-    zeilen.push([z.km, z.ref ?? "", z.ref ? (z.ms === 0 ? "frei" : z.ms) : "", z.kmh.toFixed(0),
+    zeilen.push([z.km, z.ref ?? "", z.ref ? (z.ms === 0 ? "frei" : z.ms) : "", z.anlage ? "ja" : "", z.kmh.toFixed(0),
       z.ref && z.ms > 0 ? (z.kmh - z.ms).toFixed(0) : "", z.t.toTimeString().slice(0, 5),
       z.lat.toFixed(5), z.lon.toFixed(5)].join(";"));
   await writeFile(CSV, zeilen.join("\n") + "\n", "utf8");

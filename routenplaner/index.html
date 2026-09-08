@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Autobahn-Routenplaner – Tempolimit- &amp; Baustellen-bewusst</title>
+<title>Linke Spur – Ankunftszeit nach echten Tempolimits</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
@@ -426,8 +426,9 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Wie schnell<br>komme ich wirklich an?</h1>
-      <p>Routenvergleich nach echten Tempolimits, Baustellen und Verkehr – nicht nach Durchschnittstempo.</p>
+      <h1>Linke Spur</h1>
+      <p>Die Ankunftszeit für Leute, die zügig fahren: Routenvergleich nach echten
+         Tempolimits, Baustellen und Verkehr – nicht nach Durchschnittstempo.</p>
     </header>
 
     <div id="load-error" class="box error">
@@ -738,7 +739,19 @@
   //  - LKW: auf zwei Spuren blockiert ein überholender LKW beide Fahrstreifen
   //    ("Elefantenrennen"); ab drei Spuren bleibt links meist Platz.
   const TRAFFIC_DENSITY_WEIGHT = 4.0;
-  const TRAFFIC_TRUCK_WEIGHT = 50.0;
+  const TRAFFIC_TRUCK_WEIGHT = 60.0;
+  // Die Spreizung zwischen zwei und drei Fahrstreifen war zu klein: gemessen
+  // wurden auf frei fließenden, unbegrenzten Abschnitten 122 km/h auf der A61
+  // (2,1 Spuren, 20 % Schwerverkehr) gegen 159 km/h auf der A8, das Modell
+  // trennte die beiden nur um 13 km/h. Auf zwei Spuren wiegt der LKW-Anteil
+  // jetzt doppelt, ab drei Spuren fast nichts mehr.
+  const LANE_RELIEF_2 = 2.0;
+  const LANE_RELIEF_3 = 0.1;
+  const LANE_RELIEF_4 = 0.05;
+  // Der Bremsbetrag skaliert mit der Wunschgeschwindigkeit: wer 150 fahren will,
+  // wird von demselben Verkehr absolut weniger ausgebremst als wer 185 will.
+  // Ohne das war der an 185 km/h kalibrierte Abzug bei 150 km/h deutlich zu groß.
+  const TRAFFIC_REFERENCE_SPEED = 185;
 
   function practicalSpeed(wishSpeed, t, date) {
     if (!t) return wishSpeed;
@@ -752,13 +765,24 @@
 
     const perLane = kfzHour / t.lanes;
     const svPerLane = svHour / t.lanes;
-    const laneRelief = t.lanes < 2.5 ? 1.0 : t.lanes < 3.5 ? 0.45 : 0.25;
+    const laneRelief = t.lanes < 2.5 ? LANE_RELIEF_2 : t.lanes < 3.5 ? LANE_RELIEF_3 : LANE_RELIEF_4;
 
     const densityPenalty = Math.pow(perLane / 1000, 1.6) * TRAFFIC_DENSITY_WEIGHT;
     const truckPenalty = (svPerLane / 100) * TRAFFIC_TRUCK_WEIGHT * laneRelief;
+    const scale = wishSpeed / TRAFFIC_REFERENCE_SPEED;
 
-    return Math.max(90, wishSpeed - densityPenalty - truckPenalty);
+    return Math.max(90, wishSpeed - (densityPenalty + truckPenalty) * scale);
   }
+
+  // Streckenbeeinflussungsanlage über einem sonst unbegrenzten Abschnitt: die
+  // Anlage schaltet nur einen Teil der Zeit, deshalb ein Erwartungswert aus
+  // Wunschtempo und Schaltwert statt eines festen Deckels – so trägt der Effekt
+  // auch bei anderen Wunschgeschwindigkeiten. Gemessen wurde der Unterschied
+  // innerhalb derselben Autobahn und Fahrt: auf der A3 143 km/h unter einer
+  // Anlage gegen 155 km/h ohne, auf je rund 90 Kilometern.
+  const VMS_SHARE = 0.2;
+  const VMS_SPEED = 120;
+  const vmsCapKmh = (wishSpeed) => VMS_SHARE * VMS_SPEED + (1 - VMS_SHARE) * wishSpeed;
 
   function fmtDate(iso) {
     if (!iso) return "unbekannt";
@@ -853,6 +877,13 @@
 
       const baseCap = segmentCapKmh(segment, tolerance);
       let baseSpeed = baseCap === null ? userSpeed : Math.min(userSpeed, baseCap);
+
+      // Unbegrenzt, aber unter einer Wechselanzeige: nicht mit vollem Wunschtempo
+      // rechnen. Wo ein festes Limit gilt, ändert die Anlage dagegen wenig – sie
+      // zeigt dann in aller Regel dasselbe oder weniger.
+      if (baseCap === null && segment.variable) {
+        baseSpeed = Math.min(baseSpeed, vmsCapKmh(userSpeed));
+      }
 
       // Verkehrsaufkommen bremst zusätzlich – aber nie über das Tempolimit hinaus
       // hinauf, nur herunter.

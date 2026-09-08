@@ -1,4 +1,4 @@
-# Autobahn-Routenplaner
+# Linke Spur (Autobahn-Routenplaner)
 
 Statische Webseite (GitHub Pages), die Routen nach **echten Tempolimits** statt nach
 Durchschnittstempo bewertet. Zielgruppe ist ein Fahrer, der unbegrenzte Abschnitte
@@ -43,6 +43,9 @@ Raster wöchentlich, Verkehrsdaten und Kreuze monatlich.
 ```bash
 # Eine Strecke kilometerweise: Limit, Baustelle, gerechnetes Tempo
 node routenplaner/scripts/audit-route.mjs koeln-muenchen 150 0 2026-08-11T08:00 --html /tmp/a.html
+
+# Lokale Vorschau (die Seite lädt data/*.json per fetch und braucht daher HTTP)
+node routenplaner/scripts/dev-server.mjs   # -> http://localhost:8731/routenplaner/
 
 # Aufgezeichnete Fahrt gegen die Limits halten (--pause trennt Fahrt von Halt)
 node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx --csv /tmp/v.csv [--pause 180]
@@ -89,9 +92,17 @@ trifft das Modell die Messung auf eine Minute. `DEFAULT_SPEED` steht deshalb auf
 150. Offen bleibt, dass die Fahrweise zwischen den Fahrten stark schwankt – die
 früheren Referenzfahrten waren deutlich schneller.
 
-Nicht abgebildet: **Wechselverkehrszeichen**. Auf der A61 tragen 397 von 1.596
-OSM-Abschnitten `maxspeed:variable`, 97 davon bei `maxspeed=none` – die gelten im
-Modell als unbegrenzt. Wie oft die Anlagen schalten, sagt OSM nicht.
+**Zwei Kalibrierungen sind seither nachgezogen** (Details im README):
+Wechselverkehrszeichen werden erfasst (`maxspeed:variable`, bundesweit 8.215
+Abschnitte, 4.298 bei `maxspeed=none`) und mit `0,2 × 120 + 0,8 × Wunschtempo`
+gerechnet; die Fahrstreifen-Spreizung wurde verstärkt (Entlastung 1,0/0,45/0,25 →
+2,0/0,1/0,05, LKW-Gewicht 50 → 60) und der Bremsbetrag skaliert jetzt mit dem
+Wunschtempo statt absolut zu wirken. Damit liegt die A61 in der Rangfolge dort,
+wo die Praxis sie sieht – vorher lag sie bei 185 km/h fälschlich vorn.
+
+Am schwächsten belegt ist der Anlagen-Anteil von 20 %: der Effekt ist eindeutig
+(A3 unter Anzeige 144 km/h gegen 152 ohne), seine Größe hängt aber an einer
+einzigen Fahrt und ließ sich darin nicht sauber von der Verkehrsbremse trennen.
 
 ## Arbeitsweise
 
