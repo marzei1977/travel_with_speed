@@ -4,7 +4,7 @@
 // Eingabe ist eine GPX-Datei, wie sie jede Aufzeichnungs-App exportiert (getestet
 // mit Open GPX Tracker für iOS). Nötig sind nur Trackpunkte mit Zeitstempel.
 //
-//   node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx [--csv datei] [--html datei]
+//   node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx [--csv datei] [--html datei] [--pause sekunden]
 //
 // Die Auswertung braucht keine hinterlegte Route: die Autobahn und ihr Limit
 // werden für jeden Kilometer aus dem bundesweiten Raster bestimmt. Damit
@@ -18,15 +18,24 @@ import { readFile, writeFile } from "node:fs/promises";
 
 const [, , gpxPfad, ...rest] = process.argv;
 if (!gpxPfad) {
-  console.error("Aufruf: node vergleich-fahrt.mjs <datei.gpx> [--csv datei] [--html datei]");
+  console.error("Aufruf: node vergleich-fahrt.mjs <datei.gpx> [--csv datei] [--html datei] [--pause sekunden]");
   process.exit(1);
 }
 const argOf = (flag) => { const i = rest.indexOf(flag); return i >= 0 ? rest[i + 1] : null; };
 const CSV = argOf("--csv");
 const HTML = argOf("--html");
 
-// Trennt Fahrblöcke: längere Unterbrechung heißt Pause, nicht Fahrt.
-const PAUSE_S = 180;
+// Trennt Fahrblöcke: längere Unterbrechung heißt Pause, nicht Fahrt. Über --pause
+// verstellbar, weil die passende Schwelle von der Aufzeichnung abhängt: ein GPS,
+// das im Tunnel aussetzt, erzeugt Lücken, die keine Pause sind.
+const PAUSE_S = Number(argOf("--pause")) || 180;
+// Ein Block zählt erst ab dieser Länge als Fahrt. Darunter sind es Rangierwege
+// vor der Abfahrt oder die Parkplatzsuche am Ziel.
+const MIN_BLOCK_KM = 5;
+// Stillstand erkennen: Wer sich über dieses Fenster hinweg langsamer als
+// STAND_KMH bewegt, fährt nicht – das ist GPS-Drift bei stehendem Fahrzeug.
+const STAND_FENSTER_S = 300;
+const STAND_KMH = 5;
 // Einzelne Punkte mit unmöglichem Tempo sind GPS-Rauschen. Sie werden entfernt,
 // nicht als Blockgrenze behandelt: ein einziger Ausreißer würde sonst eine
 // zusammenhängende Fahrt zerteilen und die Hälfte der Strecke verwerfen.
@@ -72,8 +81,10 @@ for (let i = 1; i < alle.length; i++) {
 
 // --- Fahrt aus der Aufzeichnung herauslösen ----------------------------------
 // Aufzeichnungen enthalten regelmäßig Vor- und Nachlauf: die App lief schon vor
-// der Abfahrt oder wurde am Ziel nicht gestoppt. Statt Zeilen von Hand zu löschen
-// wird an Pausen getrennt und der längste zusammenhängende Fahrblock genommen.
+// der Abfahrt oder wurde am Ziel nicht gestoppt. Deshalb erst an Pausen trennen,
+// dann alle ernsthaften Fahrblöcke behalten – nicht nur den längsten. Ein
+// Tankstopp zerteilt sonst die Reise und die halbe Strecke fällt aus der
+// Auswertung, ohne dass es auffällt.
 const bloecke = [];
 {
   let von = 0, km = 0;
@@ -86,19 +97,58 @@ const bloecke = [];
   }
   bloecke.push({ von, bis: bereinigt.length - 1, km });
 }
-bloecke.sort((a, b) => b.km - a.km);
-const haupt = bloecke[0];
-const punkte = bereinigt.slice(haupt.von, haupt.bis + 1);
-const verworfen = alle.length - punkte.length;
 
-const dauerH = (punkte[punkte.length - 1].t - punkte[0].t) / 3600000;
-let gesamtM = 0;
-for (let i = 1; i < punkte.length; i++) gesamtM += distM(punkte[i - 1], punkte[i]);
+// Stillstand am Anfang und Ende eines Blocks abschneiden. Bei stehendem Fahrzeug
+// wandert die GPS-Position weiter; ohne das Trimmen zählen diese Minuten als
+// Fahrzeit und drücken den Schnitt (eine halbe Stunde Parkplatzsuche am Ziel
+// kostete so 13 km/h).
+function trimmeStillstand(von, bis) {
+  const strecke = (a, b) => { let m = 0; for (let i = a + 1; i <= b; i++) m += distM(bereinigt[i - 1], bereinigt[i]); return m; };
+  const faehrt = (i, richtung) => {
+    let j = i;
+    while (j + richtung >= von && j + richtung <= bis &&
+           Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
+    const dS = Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000;
+    if (dS <= 0) return true;
+    const m = richtung > 0 ? strecke(i, j) : strecke(j, i);
+    return (m / dS) * 3.6 >= STAND_KMH;
+  };
+  while (von < bis && !faehrt(von, 1)) von++;
+  while (bis > von && !faehrt(bis, -1)) bis--;
+  return { von, bis };
+}
+
+const fahrbloecke = [];
+for (const b of bloecke) {
+  if (b.km < MIN_BLOCK_KM) continue;
+  const { von, bis } = trimmeStillstand(b.von, b.bis);
+  if (bis - von < 2) continue;
+  let m = 0;
+  for (let i = von + 1; i <= bis; i++) m += distM(bereinigt[i - 1], bereinigt[i]);
+  fahrbloecke.push({ von, bis, m });
+}
+if (!fahrbloecke.length) { console.error("Kein Fahrblock über " + MIN_BLOCK_KM + " km gefunden."); process.exit(1); }
+
+// Die Punkte aller Fahrblöcke hintereinander; blockStart markiert, wo ein neuer
+// Block beginnt, damit die Pausenlücke nicht als extrem langsamer Kilometer zählt.
+const punkte = [];
+for (const b of fahrbloecke) {
+  for (let i = b.von; i <= b.bis; i++) punkte.push({ ...bereinigt[i], blockStart: i === b.von });
+}
+
+const gesamtM = fahrbloecke.reduce((a, b) => a + b.m, 0);
+const fahrH = fahrbloecke.reduce((a, b) => a + (bereinigt[b.bis].t - bereinigt[b.von].t), 0) / 3600000;
+const reiseH = (bereinigt[fahrbloecke[fahrbloecke.length - 1].bis].t - bereinigt[fahrbloecke[0].von].t) / 3600000;
+const dauerH = fahrH; // Bezug für alle Durchschnitte: gefahrene Zeit, ohne Halte
+const halteH = reiseH - fahrH;
 
 console.log(`Aufzeichnung: ${alle.length} Punkte über ${((alle[alle.length-1].t - alle[0].t) / 3600000).toFixed(1)} h`);
-console.log(`Ausgewertete Fahrt: ${punkte.length} Punkte, ${(gesamtM / 1000).toFixed(1)} km, ${fmtH(dauerH)}, Ø ${(gesamtM / 1000 / dauerH).toFixed(0)} km/h`);
-console.log(`  ${punkte[0].t.toLocaleString("de-DE")} bis ${punkte[punkte.length - 1].t.toLocaleString("de-DE")}`);
-if (verworfen) console.log(`  ${verworfen} Punkte verworfen: Pausen vor/nach der Fahrt${ausreisser ? `, davon ${ausreisser} GPS-Ausreißer` : ""}`);
+console.log(`Ausgewertete Fahrt: ${punkte.length} Punkte, ${(gesamtM / 1000).toFixed(1)} km, ${fmtH(fahrH)} fahrend, Ø ${(gesamtM / 1000 / fahrH).toFixed(0)} km/h`);
+console.log(`  ${bereinigt[fahrbloecke[0].von].t.toLocaleString("de-DE")} bis ${bereinigt[fahrbloecke[fahrbloecke.length - 1].bis].t.toLocaleString("de-DE")}`);
+if (fahrbloecke.length > 1)
+  console.log(`  ${fahrbloecke.length} Fahrblöcke, ${fmtH(halteH)} Halt dazwischen -> Reisezeit ${fmtH(reiseH)}`);
+const verworfen = alle.length - punkte.length;
+if (verworfen) console.log(`  ${verworfen} Punkte verworfen: Vor-/Nachlauf, Halte und Stillstand${ausreisser ? `, davon ${ausreisser} GPS-Ausreißer` : ""}`);
 
 // --- Tempolimit-Raster -------------------------------------------------------
 const grid = JSON.parse(await readFile(new URL("../data/speedgrid.json", import.meta.url), "utf8"));
@@ -130,6 +180,9 @@ const kmZeilen = [];
 {
   let km = 0, restM = 0, restS = 0, mitte = null;
   for (let i = 1; i < punkte.length; i++) {
+    // Die Lücke zwischen zwei Fahrblöcken ist der Halt, nicht ein sehr
+    // langsamer Kilometer – sie darf nicht in die Zeitrechnung eingehen.
+    if (punkte[i].blockStart) continue;
     let dM = distM(punkte[i - 1], punkte[i]);
     let dS = (punkte[i].t - punkte[i - 1].t) / 1000;
     if (dS <= 0) continue;
@@ -184,7 +237,7 @@ if (CSV) {
   const zeilen = ["km;autobahn;limit;gefahren_kmh;abstand_zum_limit;uhrzeit;lat;lon"];
   for (const z of kmZeilen)
     zeilen.push([z.km, z.ref ?? "", z.ref ? (z.ms === 0 ? "frei" : z.ms) : "", z.kmh.toFixed(0),
-      z.ref && z.ms > 0 ? (z.kmh - z.ms).toFixed(0) : "", z.t.toISOString().slice(11, 16),
+      z.ref && z.ms > 0 ? (z.kmh - z.ms).toFixed(0) : "", z.t.toTimeString().slice(0, 5),
       z.lat.toFixed(5), z.lon.toFixed(5)].join(";"));
   await writeFile(CSV, zeilen.join("\n") + "\n", "utf8");
   console.log(`\nCSV geschrieben: ${CSV} (${kmZeilen.length} Kilometer)`);
@@ -201,7 +254,7 @@ if (HTML) {
  tr:hover td{background:#f5f8ff}
  @media(prefers-color-scheme:dark){body{background:#000;color:#f5f5f7}table{background:#1c1c1e}th{border-color:#2c2c2e}td{border-color:#242426}tr:hover td{background:#26262a}}
 </style></head><body><h1>Gefahrene Strecke</h1>
-<p class="meta">${(gesamtM/1000).toFixed(1)} km · ${fmtH(dauerH)} · Ø ${(gesamtM/1000/dauerH).toFixed(0)} km/h ·
+<p class="meta">${(gesamtM/1000).toFixed(1)} km · ${fmtH(fahrH)} fahrend${halteH > 0.02 ? ` + ${fmtH(halteH)} Halt` : ""} · Ø ${(gesamtM/1000/fahrH).toFixed(0)} km/h ·
 ${punkte[0].t.toLocaleString("de-DE")}<br>Limit aus dem bundesweiten OSM-Raster; leer heißt Ausland, Bundesstraße oder Stadt.</p>
 <table><thead><tr><th>km</th><th>Autobahn</th><th>Limit</th><th>gefahren</th><th>Abstand</th><th>Uhrzeit</th></tr></thead><tbody>
 ${kmZeilen.map((z) => `<tr><td class="n">${z.km}</td><td>${z.ref ?? '<span class="t">–</span>'}</td>

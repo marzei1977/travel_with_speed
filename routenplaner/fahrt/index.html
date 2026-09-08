@@ -175,6 +175,13 @@
   // Wie im Auswerteskript: Pausen trennen die Fahrt, GPS-Ausreißer werden entfernt.
   const PAUSE_S = 180;
   const MAX_KMH = 260;
+  // Ein Block zählt erst ab dieser Länge als Fahrt; darunter ist es Rangieren
+  // vor der Abfahrt oder Parkplatzsuche am Ziel.
+  const MIN_BLOCK_KM = 5;
+  // Stillstand: langsamer als STAND_KMH über dieses Fenster ist GPS-Drift bei
+  // stehendem Fahrzeug, keine Fahrt.
+  const STAND_FENSTER_S = 300;
+  const STAND_KMH = 5;
 
   const rad = (d) => (d * Math.PI) / 180;
   function distM(a, b) {
@@ -251,9 +258,40 @@
       else km += distM(rein[i - 1], rein[i]) / 1000;
     }
     bloecke.push({ von, bis: rein.length - 1, km });
-    bloecke.sort((a, b) => b.km - a.km);
-    const h = bloecke[0];
-    return { punkte: rein.slice(h.von, h.bis + 1), ausreisser, verworfen: alle.length - (h.bis - h.von + 1) };
+
+    // Stillstand an den Enden eines Blocks abschneiden: bei stehendem Fahrzeug
+    // wandert die GPS-Position weiter, und diese Minuten zählten sonst als
+    // Fahrzeit (eine halbe Stunde Parkplatzsuche kostete 13 km/h im Schnitt).
+    const strecke = (a, b) => { let m = 0; for (let i = a + 1; i <= b; i++) m += distM(rein[i - 1], rein[i]); return m; };
+    function trimme(von, bis) {
+      const faehrt = (i, richtung) => {
+        let j = i;
+        while (j + richtung >= von && j + richtung <= bis &&
+               Math.abs(rein[j].t - rein[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
+        const dS = Math.abs(rein[j].t - rein[i].t) / 1000;
+        if (dS <= 0) return true;
+        return ((richtung > 0 ? strecke(i, j) : strecke(j, i)) / dS) * 3.6 >= STAND_KMH;
+      };
+      while (von < bis && !faehrt(von, 1)) von++;
+      while (bis > von && !faehrt(bis, -1)) bis--;
+      return { von, bis };
+    }
+
+    // Alle ernsthaften Fahrblöcke behalten, nicht nur den längsten: ein Tankstopp
+    // zerteilte die Reise sonst und die halbe Strecke fiel unbemerkt weg.
+    const fahrt = [];
+    for (const b of bloecke) {
+      if (b.km < MIN_BLOCK_KM) continue;
+      const t = trimme(b.von, b.bis);
+      if (t.bis - t.von >= 2) fahrt.push(t);
+    }
+    if (!fahrt.length) return { punkte: [], ausreisser, verworfen: alle.length, fahrH: 0, reiseH: 0 };
+    const punkte = [];
+    for (const b of fahrt) for (let i = b.von; i <= b.bis; i++)
+      punkte.push({ ...rein[i], blockStart: i === b.von });
+    const fahrH = fahrt.reduce((a, b) => a + (rein[b.bis].t - rein[b.von].t), 0) / 3600000;
+    const reiseH = (rein[fahrt[fahrt.length - 1].bis].t - rein[fahrt[0].von].t) / 3600000;
+    return { punkte, ausreisser, verworfen: alle.length - punkte.length, fahrH, reiseH, bloecke: fahrt.length };
   }
 
   // Kilometerweise bündeln – inklusive der Geometrie, damit die Karte dem Verlauf folgt.
@@ -261,6 +299,8 @@
     const out = [];
     let km = 0, restM = 0, restS = 0, spur = [punkte[0]];
     for (let i = 1; i < punkte.length; i++) {
+      // Die Lücke zwischen zwei Fahrblöcken ist der Halt, kein langsamer Kilometer.
+      if (punkte[i].blockStart) { spur.push(punkte[i]); continue; }
       let dM = distM(punkte[i - 1], punkte[i]);
       let dS = (punkte[i].t - punkte[i - 1].t) / 1000;
       if (dS <= 0) continue;
@@ -310,17 +350,19 @@
       .map((s) => `<span><i style="background:${s.farbe}"></i>${s.text} km/h</span>`).join("");
   }
 
-  function zeigeZahlen(kms, punkte) {
-    const dauerH = (punkte[punkte.length - 1].t - punkte[0].t) / 3600000;
+  function zeigeZahlen(kms, punkte, fahrH, reiseH) {
     let gesM = 0;
-    for (let i = 1; i < punkte.length; i++) gesM += distM(punkte[i - 1], punkte[i]);
+    for (let i = 1; i < punkte.length; i++)
+      if (!punkte[i].blockStart) gesM += distM(punkte[i - 1], punkte[i]);
     const schnellste = kms.reduce((a, b) => (b.kmh > a.kmh ? b : a), kms[0]);
+    const halteH = reiseH - fahrH;
     const werte = [
       [`${(gesM / 1000).toFixed(0)} km`, "Strecke"],
-      [fmtH(dauerH), "Fahrzeit"],
-      [`${(gesM / 1000 / dauerH).toFixed(0)} km/h`, "im Schnitt"],
+      [fmtH(fahrH), "Fahrzeit"],
+      [`${(gesM / 1000 / fahrH).toFixed(0)} km/h`, "im Schnitt"],
       [`${schnellste.kmh.toFixed(0)} km/h`, `schnellster km (${schnellste.km})`],
     ];
+    if (halteH > 0.02) werte.splice(2, 0, [fmtH(halteH), "Halt unterwegs"]);
     document.getElementById("stats").innerHTML = werte
       .map(([k, l]) => `<div class="stat"><div class="k">${k}</div><div class="l">${l}</div></div>`).join("");
 
@@ -401,15 +443,16 @@
     return out;
   }
 
-  function alsDatensatz(name, kms, punkte) {
+  function alsDatensatz(name, kms, punkte, fahrH) {
     let gesM = 0;
-    for (let i = 1; i < punkte.length; i++) gesM += distM(punkte[i - 1], punkte[i]);
+    for (let i = 1; i < punkte.length; i++)
+      if (!punkte[i].blockStart) gesM += distM(punkte[i - 1], punkte[i]);
     return {
       id: String(Date.now()),
       name,
       start: punkte[0].t.toISOString(),
       km: Math.round(gesM / 1000),
-      dauerH: (punkte[punkte.length - 1].t - punkte[0].t) / 3600000,
+      dauerH: fahrH,
       kms: kms.map((k) => ({
         km: k.km, v: Math.round(k.kmh), ref: k.ref, ms: k.ms,
         t: k.t.toISOString(), g: duenneAus(k.spur),
@@ -547,7 +590,7 @@
       const text = await datei.text();
       const alle = parseGpx(text);
       if (alle.length < 20) throw new Error(`Nur ${alle.length} Punkte mit Zeitstempel gefunden – zu wenig.`);
-      const { punkte, ausreisser, verworfen } = fahrtHerausloesen(alle);
+      const { punkte, ausreisser, verworfen, fahrH, reiseH, bloecke } = fahrtHerausloesen(alle);
       if (punkte.length < 20) throw new Error("Keine zusammenhängende Fahrt in der Aufzeichnung gefunden.");
       await ladeRaster();
       const kms = proKilometer(punkte);
@@ -555,7 +598,7 @@
       for (const id of ["karte-karte", "karte-zahlen", "karte-tabelle"])
         document.getElementById(id).classList.remove("hidden");
       zeichne(kms);
-      zeigeZahlen(kms, punkte);
+      zeigeZahlen(kms, punkte, fahrH, reiseH);
       document.getElementById("karte-titel").textContent = "";
       const vorschlag = `${new Date(punkte[0].t).toLocaleDateString("de-DE")} – ${kms.length} km`;
       document.getElementById("speichern").innerHTML =
@@ -563,14 +606,15 @@
          <button class="btn-primary" id="fahrt-speichern">Fahrt speichern</button>`;
       document.getElementById("fahrt-speichern").addEventListener("click", () => {
         const name = document.getElementById("fahrt-name").value.trim() || vorschlag;
-        fahrten.push(alsDatensatz(name, kms, punkte));
+        fahrten.push(alsDatensatz(name, kms, punkte, fahrH));
         if (sichere()) {
           zeigeGespeicherte(); zeigeVergleich();
           sage(`"${name}" gespeichert – ${fahrten.length} Fahrt(en) vorhanden.`);
         }
       });
       sage(`${alle.length} Punkte gelesen, ${kms.length} km ausgewertet` +
-        (verworfen ? ` · ${verworfen} Punkte vor/nach der Fahrt verworfen` : "") +
+        (bloecke > 1 ? ` · ${bloecke} Fahrblöcke, ${fmtH(reiseH - fahrH)} Halt dazwischen` : "") +
+        (verworfen ? ` · ${verworfen} Punkte Vor-/Nachlauf und Stillstand verworfen` : "") +
         (ausreisser ? ` · ${ausreisser} GPS-Ausreißer entfernt` : ""));
     } catch (e) {
       sage(e.message || "Datei konnte nicht gelesen werden.", true);

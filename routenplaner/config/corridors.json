@@ -85,6 +85,71 @@
       "name": "Kreuz Hannover-Ost (A2/A7)",
       "lon": 9.9078,
       "lat": 52.39633
+    },
+    "frankfurterKreuz-a3west": {
+      "name": "A3 westlich Frankfurter Kreuz",
+      "lon": 8.46339,
+      "lat": 50.0294
+    },
+    "biebelried-a3ost": {
+      "name": "A3 östlich Kreuz Biebelried",
+      "lon": 10.15658,
+      "lat": 49.78597
+    },
+    "biebelried-a7sued": {
+      "name": "A7 südlich Kreuz Biebelried",
+      "lon": 10.10233,
+      "lat": 49.71879
+    },
+    "biebelried-a7nord": {
+      "name": "A7 nördlich Kreuz Biebelried",
+      "lon": 10.03808,
+      "lat": 49.8323
+    },
+    "ulmElchingen-a7nord": {
+      "name": "A7 nördlich Kreuz Ulm/Elchingen",
+      "lon": 10.08998,
+      "lat": 48.53415
+    },
+    "speyer-a61nord": {
+      "name": "A61 nördlich Kreuz Speyer",
+      "lon": 8.34084,
+      "lat": 49.39412
+    },
+    "hattenbach-a7nord": {
+      "name": "A7 nördlich Hattenbacher Dreieck",
+      "lon": 9.59975,
+      "lat": 50.87447
+    },
+    "bremerKreuz-a1west": {
+      "name": "A1 westlich Bremer Kreuz",
+      "lon": 8.87308,
+      "lat": 53.03518
+    },
+    "dreieckLeer-a31nord": {
+      "name": "A31 nördlich Dreieck Leer",
+      "lon": 7.43835,
+      "lat": 53.33089
+    },
+    "dreieckSuhl-a71nord": {
+      "name": "A71 nördlich Dreieck Suhl",
+      "lon": 10.68582,
+      "lat": 50.66751
+    },
+    "westhofen-a1nord": {
+      "name": "A1 nördlich Westhofener Kreuz",
+      "lon": 7.61227,
+      "lat": 51.48044
+    },
+    "schkeuditz-a14nord": {
+      "name": "A14 nordwestlich Schkeuditzer Kreuz",
+      "lon": 12.09466,
+      "lat": 51.46427
+    },
+    "kreuzMagdeburg-a2west": {
+      "name": "A2 westlich Kreuz Magdeburg",
+      "lon": 11.42837,
+      "lat": 52.18847
     }
   },
   "corridors": [
@@ -100,7 +165,7 @@
           "via": [
             "muenchen",
             "biebelried",
-            "frankfurterKreuz",
+            "frankfurterKreuz-a3west",
             "koeln"
           ]
         },
@@ -109,9 +174,9 @@
           "label": "via A8/A7 (Ulm – Würzburg – Frankfurt)",
           "via": [
             "muenchen",
-            "ulmElchingen",
+            "ulmElchingen-a7nord",
             "biebelried",
-            "frankfurterKreuz",
+            "frankfurterKreuz-a3west",
             "koeln"
           ]
         },
@@ -120,7 +185,7 @@
           "label": "via A61 (Speyer)",
           "via": [
             "muenchen",
-            "speyer",
+            "speyer-a61nord",
             "koeln"
           ]
         }
@@ -138,7 +203,7 @@
           "via": [
             "koeln",
             "frankfurterKreuz",
-            "biebelried",
+            "biebelried-a3ost",
             "muenchen"
           ]
         },
@@ -148,7 +213,7 @@
           "via": [
             "koeln",
             "frankfurterKreuz",
-            "biebelried",
+            "biebelried-a7sued",
             "ulmElchingen",
             "muenchen"
           ]
@@ -175,10 +240,10 @@
           "label": "via A9/A3/A7 (Nürnberg – Würzburg – Kassel – Bremen)",
           "via": [
             "muenchen",
-            "biebelried",
-            "hattenbach",
-            "bremerKreuz",
-            "dreieckLeer",
+            "biebelried-a7nord",
+            "hattenbach-a7nord",
+            "bremerKreuz-a1west",
+            "dreieckLeer-a31nord",
             "norddeich"
           ]
         },
@@ -187,10 +252,10 @@
           "label": "via A8/A7 durchgehend (Ulm – Würzburg – Kassel – Bremen)",
           "via": [
             "muenchen",
-            "ulmElchingen",
-            "hattenbach",
-            "bremerKreuz",
-            "dreieckLeer",
+            "ulmElchingen-a7nord",
+            "hattenbach-a7nord",
+            "bremerKreuz-a1west",
+            "dreieckLeer-a31nord",
             "norddeich"
           ]
         },
@@ -199,10 +264,10 @@
           "label": "via A9/A71 (Nürnberg – Suhl – Erfurt) und A7",
           "via": [
             "muenchen",
-            "dreieckSuhl",
-            "hattenbach",
-            "bremerKreuz",
-            "dreieckLeer",
+            "dreieckSuhl-a71nord",
+            "hattenbach-a7nord",
+            "bremerKreuz-a1west",
+            "dreieckLeer-a31nord",
             "norddeich"
           ]
         },
@@ -213,7 +278,7 @@
             "muenchen",
             "biebelried",
             "gambach",
-            "westhofen",
+            "westhofen-a1nord",
             "schuettorf",
             "norddeich"
           ]
@@ -224,7 +289,7 @@
           "via": [
             "muenchen",
             "biebelried",
-            "frankfurterKreuz",
+            "frankfurterKreuz-a3west",
             "koeln",
             "schuettorf",
             "norddeich"
@@ -235,11 +300,11 @@
           "label": "via A9 durchgehend (Nürnberg – Leipzig), A14 Magdeburg und A2 westwärts",
           "via": [
             "muenchen",
-            "schkeuditz",
-            "kreuzMagdeburg",
+            "schkeuditz-a14nord",
+            "kreuzMagdeburg-a2west",
             "hannoverOst",
-            "bremerKreuz",
-            "dreieckLeer",
+            "bremerKreuz-a1west",
+            "dreieckLeer-a31nord",
             "norddeich"
           ]
         }

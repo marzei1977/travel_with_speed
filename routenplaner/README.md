@@ -159,9 +159,21 @@ In `config/corridors.json` zuerst benötigte Wegpunkte in die `punkte`-Tabelle
 eintragen, dann einen Korridor mit `id`, `name`, `von`, `nach` und mehreren
 `routes` (je mit `id`, `label`, `via` als Liste von Punkt-Schlüsseln) ergänzen.
 Für die Gegenrichtung einen zweiten Korridor mit umgekehrter `via`-Reihenfolge
-anlegen. Die Zwischenpunkte sollten möglichst genau auf der gewünschten Autobahn
-liegen (am besten eine Anschlussstelle/ein Autobahnkreuz statt eines Stadtzentrums
-wählen, sonst kann OSRM unnötige Umwege über Stadtstraßen nehmen). Danach einmal
+anlegen.
+
+**Zwischenpunkte gehören nicht in das Autobahnkreuz, sondern einige Kilometer
+dahinter auf die Zielfahrbahn.** Ein Punkt im Kreuz selbst snappt bei OSRM leicht
+auf eine Verbindungsrampe; um sie zu erreichen, fährt die Route am Kreuz vorbei,
+wendet und kommt zurück. Das kostet ohne jede Warnung 8 bis 32 km je Punkt – am
+Frankfurter Kreuz waren es 32 km und rund 15 Minuten. Weil die Richtungsfahrbahnen
+in OSM getrennte Wege sind, ist ein solcher Punkt außerdem **richtungsabhängig**:
+derselbe Punkt taugt nicht für Hin- und Rückweg. Deshalb heißen die Punkte nach
+Kreuz, Autobahn und Fahrtrichtung – `biebelried-a7sued` gilt für Köln → München,
+`biebelried-a7nord` für München → Norddeich.
+
+Nach jeder Änderung prüfen, dass keine Kehrtwende entstanden ist: in
+`data/routes.json` darf kein Abschnitt einem mehr als drei Kilometer früheren
+Abschnitt wieder auf 300 m nahekommen. Danach einmal
 `node routenplaner/scripts/fetch-route-speedlimits.mjs` laufen lassen (lokal oder
 per "Run workflow"), anschließend `node routenplaner/scripts/fetch-roadworks.mjs`.
 
@@ -185,6 +197,43 @@ eingerechnetem Verkehr:
 
 Beide Referenzfahrten werden also mit +10 bis +15 km/h Toleranz auf wenige
 Minuten genau getroffen.
+
+### Dritte Referenzfahrt: gemessen statt geschätzt
+
+Aachen → München am 6.9.2026, als GPX aufgezeichnet und mit
+`vergleich-fahrt.mjs` ausgewertet: 678 km, 5 h 38 min reine Fahrzeit
+(+ 4 min Halt), Ø 120 km/h.
+
+Das Entscheidende daran ist nicht die Gesamtzeit, sondern das **gemessene Tempo
+auf freier Strecke**: auf den 508 unbegrenzten Kilometern Ø **147 km/h**, Median
+152, oberes Viertel erst ab 171. Auf den 153 begrenzten Kilometern lag das Tempo
+im Mittel **5 km/h unter** dem Limit.
+
+Damit ist die Annahme "180–190 auf freier Strecke" widerlegt – sie war eine
+Selbsteinschätzung, das Messergebnis liegt rund 35 km/h darunter. Genau daher kam
+die Lücke der ersten Kalibrierung: mit 185 km/h und +15 Toleranz sagt das Modell
+für Köln → München 4 h 06 min, mit 150 km/h dagegen 4 h 43 min. Nicht das Modell
+war zu optimistisch, sondern der eingegebene Wunschwert. Die Voreinstellung im
+Planer steht deshalb auf **150 km/h** (zwischen Mittel 147 und Median 152) und die
+Toleranz auf 0.
+
+Auf dem Stück, das sich mit einer hinterlegten Route deckt – Frankfurter Kreuz →
+München über A7/A8 –, kommt das Modell der Messung nahe: real 3 h 15 min für
+417 km, Modell 3 h 10 min für 416 km (bei 150 km/h, Toleranz 0, nach der
+Wegpunkt-Korrektur). Fünf Minuten zu optimistisch auf gut drei Stunden. Die
+Behandlung von Limits, Baustellen und Verkehr stimmt also im Groben; unsicher war
+vor allem der Wunschwert.
+
+Der Restfehler verteilt sich allerdings ungleich – siehe die Fahrstreifen-Notiz
+unter "Annahmen & bekannte Grenzen": auf der A61 rechnet das Modell zu
+optimistisch, auf A3/A8 zu pessimistisch. Über die ganze Strecke hebt sich das
+weitgehend auf.
+
+Zwei Einschränkungen dazu: das Wunschtempo stammt aus derselben Fahrt, gegen die
+hier geprüft wird – für den freien Anteil ist das keine unabhängige Bestätigung.
+Und die Fahrweise schwankt erheblich: dieselbe Person fuhr auf den früheren
+Referenzfahrten deutlich schneller als hier. Ein einzelner Vorgabewert kann das
+nicht abbilden, deshalb bleibt das Feld verstellbar.
 
 Ohne Verkehrsfaktor liegt die A61-Route zeitlich knapp vorn, obwohl der
 A61-Abschnitt selbst nur zu rund einem Drittel unbegrenzt ist – sie kompensiert
@@ -211,6 +260,25 @@ nicht von den Tempolimits allein.
   Für andere Strecken können sie danebenliegen.
 - **Kein Live-Verkehr.** Die BASt-Daten sind Jahresmittel, keine aktuelle
   Verkehrslage. Ein Stau von heute Mittag steckt nicht darin.
+- **Die Fahrstreifenzahl wirkt, aber zu schwach.** Sie geht zweifach ein: über die
+  Verkehrsdichte je Spur und über einen LKW-Entlastungsfaktor (1,0 unter 2,5
+  Spuren, 0,45 unter 3,5, sonst 0,25) – auf zwei Spuren blockiert ein
+  überholender LKW eben beide. Die Richtung stimmt, der Betrag nicht: gemessen
+  wurden auf frei fließenden, unbegrenzten Abschnitten 116 km/h auf der A61 gegen
+  159 km/h auf der A8 (43 km/h Spreizung), das Modell trennt die beiden nur um
+  13 km/h (126 gegen 139). Die A61 ist im BASt-Datensatz der Extremfall: 2,11
+  Fahrstreifen bei 20,4 % Schwerverkehr, gegenüber 3,06 Spuren bei 12,2 % auf der
+  A9. Die Untergrenze von 90 km/h ist dabei nicht die Ursache – sie greift auf der
+  A61 nur auf 9 von 246 Kilometern.
+- **Wechselverkehrszeichen bleiben unberücksichtigt.** Streckenbeeinflussungs-
+  anlagen zeigen Limits, die nicht auf festen Schildern stehen; im Modell zählt
+  nur der dauerhafte Wert. Auf der A61 ist das erheblich: 397 der 1.596
+  OSM-Abschnitte tragen `maxspeed:variable`, davon 204 mit dem Zusatz
+  `peak_traffic` und **97 mit `maxspeed=none`** – die gelten hier als unbegrenzt,
+  obwohl dort eine Anlage steht, die bei Bedarf begrenzt. Wie oft sie tatsächlich
+  schaltet, sagt OSM nicht; ohne diese Information wäre jeder Aufschlag geraten.
+  Ein Teil des Effekts steckt indirekt im Verkehrsmodell, denn die Anlagen
+  schalten gerade bei dichtem Verkehr.
 - **Fehlendes `maxspeed`-Tag auf einer erkannten Autobahn**: OSM taggt nicht jeden
   Abschnitt lückenlos. In diesem Fall wird die Richtgeschwindigkeit (130 km/h)
   angenommen – in der UI als "begrenzt/Baustelle"-Farbe sichtbar, da nicht
@@ -231,6 +299,10 @@ nicht von den Tempolimits allein.
 - **Zeitfenster nur, wo angegeben.** Rund ein Fünftel der Meldungen nennt konkrete
   Gültigkeitsfenster; der Rest sind Dauerbaustellen und gilt rund um die Uhr. Eine
   Meldung ohne erkennbares Fenster wird also immer eingerechnet.
+- **Zwischenpunkte können Umwege erzeugen.** Liegt ein Punkt im Autobahnkreuz,
+  baut OSRM eine Kehrtwende ein (siehe "Einen weiteren Korridor hinzufügen").
+  Alle zwölf hinterlegten Routen sind daraufhin geprüft und bereinigt; sie waren
+  zuvor zwischen 6 und 70 km zu lang. Bei neuen Routen ist das erneut zu prüfen.
 - **Routen-Alternativen** werden über feste Zwischenpunkte erzwungen, nicht über
   eine Nachbildung dessen, was ein bestimmter kommerzieller Kartendienst gerade
   empfiehlt – die berechneten Distanzen können daher von Google/Apple Maps &

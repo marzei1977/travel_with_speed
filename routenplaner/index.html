@@ -554,7 +554,10 @@
   const CORRIDOR_STORAGE_KEY = "routenplaner:korridor";
   const TRAFFIC_STORAGE_KEY = "routenplaner:verkehr";
   const TOLERANCE_STORAGE_KEY = "routenplaner:toleranz";
-  const DEFAULT_SPEED = 185;
+  // Aus der GPX-Messung Aachen -> München (6.9.2026, 678 km): auf unbegrenzten
+  // Abschnitten Ø 147 km/h, Median 152. 185 war eine Selbsteinschätzung und lag
+  // rund 35 km/h darüber – damit fiel jede Prognose zu optimistisch aus.
+  const DEFAULT_SPEED = 150;
   // Angenommenes Tempo in einer als gesperrt gemeldeten Stelle ohne eigene
   // Geschwindigkeitsangabe.
   const BLOCKED_SPEED_FALLBACK = 60;
