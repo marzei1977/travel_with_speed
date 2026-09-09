@@ -218,6 +218,11 @@ Die Seite ist eine installierbare Web-App. Auf dem iPhone: in Safari öffnen,
 Teilen-Symbol, "Zum Home-Bildschirm". Danach startet sie mit eigenem Icon und
 ohne Browserleiste. Android/Chrome bietet die Installation von selbst an.
 
+Im Standalone-Modus rechnen die Seiten mit `env(safe-area-inset-*)`, damit der Kopf
+nicht unter der Uhr und die Ränder nicht unter den abgerundeten Ecken sitzen. Ein
+`.nojekyll` im Wurzelverzeichnis sorgt dafür, dass GitHub Pages `sw.js`,
+`manifest.webmanifest` und die Ordner `icons/` und `vendor/` unverändert ausliefert.
+
 **Offline** funktioniert alles, was aus den mitgelieferten Daten kommt: die
 hinterlegten Korridore samt Routenvergleich, die gespeicherten Baustellen und die
 GPX-Auswertung. Ein Service Worker (`sw.js`) legt dafür zwei Sorten von Dateien

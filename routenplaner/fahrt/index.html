@@ -35,8 +35,14 @@
     }
   }
   * { box-sizing: border-box; }
+  /* Auf dem iPhone startet die App ohne Browserleiste – ohne diese Zugabe säße
+     der Kopf unter der Uhr und die Ränder unter den abgerundeten Ecken. */
   body {
-    margin: 0; padding: 3rem 1.25rem 5rem; background: var(--bg); color: var(--text);
+    margin: 0; background: var(--bg); color: var(--text);
+    padding: max(3rem, calc(env(safe-area-inset-top) + 1.25rem))
+             max(1.25rem, env(safe-area-inset-right))
+             calc(5rem + env(safe-area-inset-bottom))
+             max(1.25rem, env(safe-area-inset-left));
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased;
   }

@@ -62,9 +62,14 @@
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
+  /* Auf dem iPhone startet die App ohne Browserleiste – ohne diese Zugabe säße
+     der Kopf unter der Uhr und die Ränder unter den abgerundeten Ecken. */
   body {
     margin: 0;
-    padding: 3rem 1.25rem 5rem;
+    padding: max(3rem, calc(env(safe-area-inset-top) + 1.25rem))
+             max(1.25rem, env(safe-area-inset-right))
+             calc(5rem + env(safe-area-inset-bottom))
+             max(1.25rem, env(safe-area-inset-left));
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
@@ -465,7 +470,10 @@
   footer a { color: var(--muted); }
 
   @media (max-width: 560px) {
-    body { padding: 2rem 1rem 3rem; }
+    body { padding: max(2rem, calc(env(safe-area-inset-top) + 1rem))
+                    max(1rem, env(safe-area-inset-right))
+                    calc(3rem + env(safe-area-inset-bottom))
+                    max(1rem, env(safe-area-inset-left)); }
     .card, .result { padding: 1.25rem; }
     /* Die Segmente bleiben nebeneinander – ihre Beschriftungen sind kurz genug.
        Umbrechen in fünf Zeilen würde den halben Bildschirm belegen. */
