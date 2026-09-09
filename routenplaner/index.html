@@ -347,12 +347,24 @@
   /* Streckenband */
   .bar { display: flex; height: 6px; border-radius: 999px; overflow: hidden; margin: 1.1rem 0 0.6rem; background: var(--surface-sunken); }
   .bar .seg-none { background: var(--free); }
+  /* Unbegrenzt, aber unter einer Wechselanzeige: dort kann jederzeit ein Limit
+     geschaltet sein. Grün wie die freie Strecke, aber mit Lücken in der Farbe
+     der Karte – der Unterschied trägt so auch ohne Farbwahrnehmung. */
+  .bar .seg-vms {
+    background: repeating-linear-gradient(135deg,
+      var(--free) 0 3px, var(--surface) 3px 6px);
+  }
   .bar .seg-limited { background: var(--limited); }
   .bar .seg-local { background: var(--muted); opacity: .4; }
   .bar-key { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--muted); }
   .bar-key span { display: inline-flex; align-items: center; gap: 0.35rem; }
   .bar-key i { width: 7px; height: 7px; border-radius: 50%; }
   .bar-key .i-none { background: var(--free); }
+  /* Bei 7 px trägt keine Schraffur – der Punkt wird deshalb zum Ring. */
+  .bar-key .i-vms {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 2px var(--free);
+  }
   .bar-key .i-limited { background: var(--limited); }
   .bar-key .i-local { background: var(--muted); opacity: .4; }
 
@@ -426,6 +438,19 @@
   .maps-btn:hover { background: var(--accent-soft); }
   .data-table td:first-child { color: var(--muted); width: 40%; }
   .note { font-size: 0.8125rem; color: var(--muted); margin-top: 1rem; }
+
+  /* Die beiden Referenzzeiten in der Ergebniskarte: gleichrangig nebeneinander,
+     deutlich zurückgenommen gegenüber der Zeit zur gewählten Abfahrt. */
+  .referenz {
+    display: flex; gap: 1.4rem; align-items: center; flex-wrap: wrap;
+    margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--hairline);
+  }
+  .ref-zelle { min-width: 7.5rem; }
+  .ref-l { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+  .ref-l span { text-transform: none; letter-spacing: 0; opacity: .8; }
+  .ref-k { font-size: 1.0625rem; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: .1rem; }
+  .ref-s { font-size: 0.75rem; color: var(--muted); }
+  .referenz .maps-btn { margin-left: auto; }
 
   /* Hinweise --------------------------------------------------------- */
   .box {
@@ -548,18 +573,12 @@
 
     <div id="routes"></div>
 
+    <p class="note" id="routes-note" style="display:none"></p>
+
     <div class="card" id="map-panel" style="display:none">
       <h2 class="card-title">Karte</h2>
       <div id="map"></div>
       <div class="map-legend" id="map-legend"></div>
-    </div>
-
-    <div class="card" id="overview-panel" style="display:none">
-      <h2 class="card-title">Vergleich</h2>
-      <div class="table-scroll">
-        <table id="overview-table"></table>
-      </div>
-      <p class="note" id="overview-note"></p>
     </div>
 
     <div class="card" id="datastate-panel" style="display:none">
@@ -886,6 +905,10 @@
     let limitedKm = 0;
     let localKm = 0;
     let roadworkKm = 0;
+    // Unbegrenzte Kilometer unter einer Wechselanzeige. Sie zählen in noneKm mit
+    // – frei sind sie ja im Grundsatz –, verdienen aber eine eigene Zahl: dort
+    // kann eine Anlage jederzeit begrenzen, und das Modell rechnet auch so.
+    let vmsKm = 0;
     let trafficLossHours = 0;
     const roadworkItems = new Map();
 
@@ -932,8 +955,10 @@
 
       if (affecting.length === 0) {
         timeHours += segKm / baseSpeed;
-        if (segment.maxspeedTag === "none") noneKm += segKm;
-        else if (segment.ref) limitedKm += segKm;
+        if (segment.maxspeedTag === "none") {
+          noneKm += segKm;
+          if (segment.variable) vmsKm += segKm;
+        } else if (segment.ref) limitedKm += segKm;
         else localKm += segKm;
         return;
       }
@@ -959,8 +984,10 @@
       roadworkKm += affectedKm;
       limitedKm += affectedKm;
       // Der nicht betroffene Rest zählt weiter nach seinem eigentlichen Charakter.
-      if (segment.maxspeedTag === "none") noneKm += freeKm;
-      else if (segment.ref) limitedKm += freeKm;
+      if (segment.maxspeedTag === "none") {
+        noneKm += freeKm;
+        if (segment.variable) vmsKm += freeKm;
+      } else if (segment.ref) limitedKm += freeKm;
       else localKm += freeKm;
     });
 
@@ -969,6 +996,7 @@
       timeHours,
       distKm,
       noneKm,
+      vmsKm,
       limitedKm,
       localKm,
       roadworkKm,
@@ -1007,10 +1035,14 @@
       </details>`;
   }
 
-  function renderRouteCard(result, isFastest, corridorId, isSelected) {
-    const { route, timeHours, distKm, noneKm, limitedKm, localKm, roadworkKm,
+  function renderRouteCard(result, isFastest, corridorId, isSelected, referenz) {
+    const { route, timeHours, distKm, noneKm, vmsKm, limitedKm, localKm, roadworkKm,
             trafficLossHours, avgSpeed, arrival, roadworks } = result;
-    const noneP = (noneKm / distKm) * 100;
+    // Der unbegrenzte Anteil zerfällt in zwei sehr verschiedene Sorten: wirklich
+    // freie Strecke und solche unter einer Wechselanzeige, die jederzeit
+    // begrenzen kann. Die Leiste trennt beide, sonst verspricht sie zu viel.
+    const freiP = ((noneKm - vmsKm) / distKm) * 100;
+    const vmsP = (vmsKm / distKm) * 100;
     const limitedP = (limitedKm / distKm) * 100;
     const localP = (localKm / distKm) * 100;
 
@@ -1018,14 +1050,36 @@
     const stats = [
       [`${distKm.toFixed(0)} km`, "Strecke"],
       [`${avgSpeed.toFixed(0)} km/h`, "im Schnitt"],
-      [`${noneP.toFixed(0)} %`, "unbegrenzt"],
+      [`${((noneKm / distKm) * 100).toFixed(0)} %`, "unbegrenzt"],
     ];
+    if (vmsKm >= 0.5) stats.push([`${vmsKm.toFixed(0)} km`, "Wechselanzeige"]);
     if (roadworkKm >= 0.5) stats.push([`${roadworkKm.toFixed(0)} km`, "Baustelle"]);
     if (trafficLossHours >= 1 / 60) stats.push([`${Math.round(trafficLossHours * 60)} min`, "durch Verkehr"]);
 
+    const url = googleMapsUrl(corridorId, route.id);
+
+    // Die beiden festen Referenzzeitpunkte aus dem früheren Vergleichsabschnitt.
+    // Sie hängen nicht an der oben gewählten Abfahrt und machen die Routen
+    // dadurch untereinander vergleichbar.
+    const ref = referenz
+      ? `<div class="referenz">
+           <div class="ref-zelle">
+             <div class="ref-l">Werktag <span>Di 08:00</span></div>
+             <div class="ref-k">${fmtHours(referenz.werktag.timeHours)}</div>
+             <div class="ref-s">Ø ${referenz.werktag.avgSpeed.toFixed(0)} km/h</div>
+           </div>
+           <div class="ref-zelle">
+             <div class="ref-l">Wochenende <span>So 07:00</span></div>
+             <div class="ref-k">${fmtHours(referenz.wochenende.timeHours)}</div>
+             <div class="ref-s">Ø ${referenz.wochenende.avgSpeed.toFixed(0)} km/h</div>
+           </div>
+           ${url ? `<a class="maps-btn" href="${url}" target="_blank" rel="noopener">Maps ↗</a>` : ""}
+         </div>`
+      : "";
+
     return `
       <div class="result ${isFastest ? "" : "secondary"} ${isSelected ? "is-selected" : ""}"
-           data-route="${route.id}">
+           data-route="${route.id}" title="Klicken, um diese Strecke in der Karte hervorzuheben">
         ${isFastest ? '<div class="rank">Schnellste</div>' : ""}
         <h3>${route.label.replace(/^via\s+/, "")}</h3>
         <div class="sub">${viaLabel(corridorId, route.id)}</div>
@@ -1037,15 +1091,18 @@
           ${stats.map(([k, l]) => `<div class="stat"><div class="k">${k}</div><div class="l">${l}</div></div>`).join("")}
         </div>
         <div class="bar">
-          <div class="seg-none" style="width:${noneP}%"></div>
+          <div class="seg-none" style="width:${freiP}%"></div>
+          <div class="seg-vms" style="width:${vmsP}%"></div>
           <div class="seg-limited" style="width:${limitedP}%"></div>
           <div class="seg-local" style="width:${localP}%"></div>
         </div>
         <div class="bar-key">
           <span><i class="i-none"></i> unbegrenzt</span>
+          ${vmsP >= 0.5 ? '<span><i class="i-vms"></i> unbegrenzt, Wechselanzeige</span>' : ""}
           <span><i class="i-limited"></i> begrenzt</span>
           <span><i class="i-local"></i> Ort</span>
         </div>
+        ${ref}
         ${renderRoadworks(roadworks)}
       </div>`;
   }
@@ -1143,12 +1200,13 @@
   // Die Übersichtstabelle steht unter der Karte. Wird von dort ausgewählt, ändert
   // sich die Hervorhebung außerhalb des Sichtfelds – deshalb wird die Karte dann
   // herangeholt. Bei Klick auf die Karte selbst oder ihre Legende wäre das unnötig.
-  function selectRoute(routeId, opts) {
+  // Ausgewählt wird aus der Ergebniskarte, der Kartenlinie oder der Legende –
+  // dieselbe Geste an drei Stellen. Zur Karte gescrollt wird dabei nicht mehr:
+  // sie steht jetzt direkt unter den Ergebnissen, ein Sprung würde nur die eben
+  // angeklickte Karte aus dem Blick nehmen.
+  function selectRoute(routeId) {
     selectedRouteId = selectedRouteId === routeId ? null : routeId;
     render();
-    if (opts && opts.revealMap) {
-      document.getElementById("map-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
   }
 
   const DAY_LABEL = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -1231,83 +1289,6 @@
   // Übersichtstabelle
   // ---------------------------------------------------------------------------
 
-  function renderOverview(corridor, userSpeed, tolerance) {
-    const panel = document.getElementById("overview-panel");
-    const routes = corridor.routes.filter((r) => r.segments && r.segments.length);
-    if (!routes.length) {
-      panel.style.display = "none";
-      return;
-    }
-    panel.style.display = "block";
-
-    // Werktag morgens gegen ruhiges Wochenende – beide mit Verkehr, sonst wäre der
-    // Unterschied definitionsgemäß null.
-    const werktag = nextWeekday(2, 8); // Dienstag 08:00
-    const wochenende = nextWeekday(0, 7); // Sonntag 07:00
-
-    const rows = routes
-      .map((r) => ({
-        route: r,
-        w: computeRoute(corridor, r, userSpeed, { date: werktag, useTraffic: true, tolerance }),
-        e: computeRoute(corridor, r, userSpeed, { date: wochenende, useTraffic: true, tolerance }),
-      }))
-      .sort((a, b) => a.w.timeHours - b.w.timeHours);
-
-    const body = rows
-      .map((row, i) => {
-        const { route, w, e } = row;
-        const freeP = Math.round((w.noneKm / w.distKm) * 100);
-        const limP = Math.round(((w.limitedKm + w.localKm) / w.distKm) * 100);
-        const url = googleMapsUrl(corridor.id, route.id);
-        const active = (selectedRouteId || rows[0].route.id) === route.id;
-        return `
-        <tr class="${i === 0 ? "best" : ""} ${active ? "active" : ""} selectable" data-route="${route.id}"
-            title="Klicken, um diese Strecke in der Karte hervorzuheben">
-          <td>
-            ${route.label.replace(/^via\s+/, "")}
-            <span class="via">${viaLabel(corridor.id, route.id)}</span>
-          </td>
-          <td class="num">${w.distKm.toFixed(0)}</td>
-          <td class="num split">
-            <span class="free">${freeP}%</span> / <span class="lim">${limP}%</span>
-            <span class="sub">${w.roadworkKm.toFixed(0)} km Baustelle</span>
-          </td>
-          <td class="num">${fmtHours(w.timeHours)}<span class="sub">Ø ${w.avgSpeed.toFixed(0)} km/h</span></td>
-          <td class="num">${fmtHours(e.timeHours)}<span class="sub">Ø ${e.avgSpeed.toFixed(0)} km/h</span></td>
-          <td class="num">${url ? `<a class="maps-btn" href="${url}" target="_blank" rel="noopener">Maps ↗</a>` : ""}</td>
-        </tr>`;
-      })
-      .join("");
-
-    document.getElementById("overview-table").innerHTML = `
-      <thead>
-        <tr>
-          <th>Strecke</th>
-          <th class="num">km</th>
-          <th class="num">unbegrenzt /<br>begrenzt</th>
-          <th class="num">Werktag<span class="sub">Di 08:00</span></th>
-          <th class="num">Wochenende<span class="sub">So 07:00</span></th>
-          <th class="num">Export</th>
-        </tr>
-      </thead>
-      <tbody>${body}</tbody>`;
-
-    document.getElementById("overview-note").textContent =
-      `Beide Zeitspalten mit eingerechnetem Verkehr, ${userSpeed} km/h Wunschgeschwindigkeit` +
-      `${tolerance ? ` und +${tolerance} km/h über ausgeschilderten Limits` : ""}, zu festen ` +
-      `Referenzzeitpunkten – dadurch untereinander vergleichbar, unabhängig von der oben gewählten ` +
-      `Abfahrt. Eine Zeile anklicken hebt die Strecke in der Karte hervor. "Maps" öffnet sie in ` +
-      `Google Maps mit Stützpunkten auf der Autobahn; dazwischen wählt Maps den Weg weiterhin selbst.`;
-
-    document.querySelectorAll("#overview-table tr.selectable").forEach((tr) => {
-      tr.addEventListener("click", (ev) => {
-        // Klick auf den Maps-Link soll die Auswahl nicht mit umschalten.
-        if (ev.target.closest("a")) return;
-        selectRoute(tr.dataset.route, { revealMap: true });
-      });
-    });
-  }
-
   // ---------------------------------------------------------------------------
   // Datenstand
   // ---------------------------------------------------------------------------
@@ -1378,20 +1359,29 @@
       routesEl.innerHTML = "";
       naviEl.textContent = "";
       document.getElementById("map-panel").style.display = "none";
-      document.getElementById("overview-panel").style.display = "none";
       return;
     }
     emptyBox.style.display = "none";
-    renderOverview(corridor, userSpeed, tolerance);
 
     const results = corridor.routes
       .filter((r) => r.segments && r.segments.length)
       .map((r) => computeRoute(corridor, r, userSpeed, { date, useTraffic, tolerance }))
       .sort((a, b) => a.timeHours - b.timeHours);
 
+    // Zwei feste Referenzzeitpunkte, beide mit Verkehr: sie hängen nicht an der
+    // oben gewählten Abfahrt und machen die Routen dadurch untereinander
+    // vergleichbar. Früher stand das in einer eigenen Tabelle unter der Karte.
+    const werktag = nextWeekday(2, 8);   // Dienstag 08:00
+    const wochenende = nextWeekday(0, 7); // Sonntag 07:00
+    const referenzen = new Map(results.map((r) => [r.route.id, {
+      werktag: computeRoute(corridor, r.route, userSpeed, { date: werktag, useTraffic: true, tolerance }),
+      wochenende: computeRoute(corridor, r.route, userSpeed, { date: wochenende, useTraffic: true, tolerance }),
+    }]));
+
     const highlighted = selectedRouteId || results[0]?.route.id;
     routesEl.innerHTML = results
-      .map((r, i) => renderRouteCard(r, i === 0, corridor.id, selectedRouteId === r.route.id))
+      .map((r, i) => renderRouteCard(r, i === 0, corridor.id, selectedRouteId === r.route.id,
+                                     referenzen.get(r.route.id)))
       .join("");
 
     // Auch die Ergebniskarten selbst wählen die Route aus – dieselbe Geste wie
@@ -1402,6 +1392,15 @@
         selectRoute(el.dataset.route);
       });
     });
+
+    const note = document.getElementById("routes-note");
+    note.style.display = "block";
+    note.textContent =
+      `Die beiden Referenzzeiten je Strecke rechnen mit Verkehr, ${userSpeed} km/h Wunschgeschwindigkeit` +
+      `${tolerance ? ` und +${tolerance} km/h über ausgeschilderten Limits` : ""} zu festen Zeitpunkten – ` +
+      `dadurch sind die Strecken untereinander vergleichbar, unabhängig von der oben gewählten Abfahrt. ` +
+      `Eine Karte anklicken hebt die Strecke unten hervor. "Maps" öffnet sie in Google Maps mit ` +
+      `Stützpunkten auf der Autobahn; dazwischen wählt Maps den Weg weiterhin selbst.`;
 
     renderMap(results);
 

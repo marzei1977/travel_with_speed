@@ -155,6 +155,31 @@ meist Platz. Die BASt-Daten zeigen das deutlich – die A61 hat mit im Mittel 2,
 Fahrstreifen die wenigsten und mit rund 20 % den höchsten Schwerverkehrsanteil,
 die A9 dagegen 3,1 Spuren bei rund 13 %.
 
+## Was in einer Ergebniskarte steht
+
+Je Strecke eine Karte, darunter erst die Landkarte. Früher standen die Zeiten
+oben und ein Vergleich als Tabelle unter der Karte – dieselben Zahlen an zwei
+Stellen, mit der Karte dazwischen. Jetzt trägt jede Ergebniskarte alles:
+
+- Fahrzeit und Ankunft **zur oben gewählten Abfahrt**, dazu Strecke,
+  Durchschnitt, Anteil unbegrenzt sowie Baustellen-Kilometer und Zeitverlust
+  durch Verkehr, wo es sie gibt.
+- **Kilometer unter Wechselanzeige** – unbegrenzte Strecke mit einer
+  Streckenbeeinflussungsanlage darüber. Auf Köln → München sind das je nach
+  Route 67 bis 117 km.
+- Die **Leiste** teilt die Strecke in vier statt bisher drei Abschnitte:
+  unbegrenzt, unbegrenzt unter Wechselanzeige (schraffiert), begrenzt, Ort. Die
+  Trennung lohnt sich, weil hinter beiden Grüntönen ein sehr verschiedenes
+  Fahrgefühl steckt.
+- Die **beiden Referenzzeiten** (Werktag Di 08:00, Wochenende So 07:00), beide
+  mit Verkehr. Sie hängen nicht an der gewählten Abfahrt und machen die Strecken
+  untereinander vergleichbar.
+- **Maps-Verknüpfung** und die **Baustellenmeldungen** zum Aufklappen, mit der
+  Zahl der eingerechneten Meldungen.
+
+Ein Klick auf die Karte hebt die Strecke in der Landkarte hervor – dieselbe
+Geste wie ein Klick auf die Linie oder die Legende.
+
 ## Fahrten selbst aufzeichnen
 
 `aufzeichnen/` schreibt die laufende Fahrt direkt mit – ohne fremde App und ohne
