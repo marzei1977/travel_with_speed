@@ -29,7 +29,13 @@ die bessere Antwort als eigene Abfragen.
 ## Aufbau
 
 - `routenplaner/index.html` – die ganze Anwendung, Berechnung läuft im Browser
-- `routenplaner/fahrt/index.html` – Auswertung hochgeladener GPX-Aufzeichnungen
+- `routenplaner/fahrt/index.html` – Auswertung hochgeladener GPX-Aufzeichnungen;
+  nimmt über `?aufzeichnung=<id>` auch eine selbst aufgezeichnete Fahrt aus
+  IndexedDB entgegen
+- `routenplaner/aufzeichnen/index.html` – eigener GPS-Tracker. Punkte liegen in
+  IndexedDB (`linke-spur`, Stores `fahrten` und `bloecke`), minütlich in Blöcken
+  geschrieben. **Web-Apps bekommen keinen Standort im Hintergrund** – deshalb
+  Wake Lock und der Hinweis, den Bildschirm anzulassen
 - `routenplaner/sw.js` + `manifest.webmanifest` – installierbare Web-App (PWA).
   **Beim Ändern von `sw.js` die `VERSION` hochzählen**, sonst behalten bestehende
   Installationen ihren alten Cache. Alles, was die Seiten laden, muss entweder in

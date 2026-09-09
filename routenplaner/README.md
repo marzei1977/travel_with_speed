@@ -155,6 +155,38 @@ meist Platz. Die BASt-Daten zeigen das deutlich – die A61 hat mit im Mittel 2,
 Fahrstreifen die wenigsten und mit rund 20 % den höchsten Schwerverkehrsanteil,
 die A9 dagegen 3,1 Spuren bei rund 13 %.
 
+## Fahrten selbst aufzeichnen
+
+`aufzeichnen/` schreibt die laufende Fahrt direkt mit – ohne fremde App und ohne
+Dateien hin- und herzuschieben. Am Ziel führt ein Tippen auf "Auswerten" in
+dieselbe Kilometerwertung, die sonst eine hochgeladene GPX-Datei durchläuft.
+
+**Die Grenze zuerst, weil sie den Umgang bestimmt:** iOS und Android geben
+Web-Apps keinen Standort im Hintergrund. Sperrst du den Bildschirm oder wechselst
+die App, entsteht eine Lücke in der Spur. Die Seite fordert deshalb einen
+Wake Lock an (Safari ab 16.4), damit der Bildschirm anbleibt, und sagt das auch.
+Für eine Autobahnfahrt mit dem Telefon in der Halterung am Ladekabel taugt das;
+für "Handy in die Tasche und losfahren" nicht. Nur eine native App käme an
+`CoreLocation` im Hintergrund heran.
+
+Wie aufgezeichnet wird:
+
+- Ein Punkt je Ortung über `watchPosition` mit `enableHighAccuracy`. Punkte mit
+  einer Unschärfe über **50 m** fliegen sofort raus: unter freiem Himmel liefert
+  ein Telefon 5 bis 15 m, alles darüber stammt aus WLAN- oder Funkzellenortung
+  und würde die Kilometerwertung verfälschen.
+- Gespeichert wird in **IndexedDB**, nicht in `localStorage`. Eine sechsstündige
+  Fahrt sind rund 20.000 Punkte – damit ist der Rahmen von `localStorage` längst
+  gesprengt.
+- Geschrieben wird **minütlich in Blöcken**, nicht erst am Ende. Stürzt der
+  Browser ab, fehlt höchstens die letzte Minute; die Fahrt bleibt als
+  "unvollständig beendet" in der Liste stehen und lässt sich trotzdem auswerten.
+- **GPX-Export** über das Teilen-Blatt (Telefon) oder als Download (Rechner),
+  damit die Aufzeichnungen nicht im Browser gefangen sind.
+
+Die Übergabe an die Auswertung läuft über `fahrt/?aufzeichnung=<id>`; die
+Auswerteseite liest die Punkte direkt aus IndexedDB.
+
 ## Als App aufs Telefon (PWA)
 
 Die Seite ist eine installierbare Web-App. Auf dem iPhone: in Safari öffnen,

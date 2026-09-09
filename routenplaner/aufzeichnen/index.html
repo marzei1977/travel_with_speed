@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="description" content="Eine Fahrt direkt im Browser aufzeichnen und anschließend gegen die Tempolimits halten." />
+<link rel="manifest" href="../manifest.webmanifest" />
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png" />
+<link rel="icon" href="../icons/icon-192.png" type="image/png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Linke Spur" />
+<title>Fahrt aufzeichnen – Linke Spur</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f5f7; --surface: #ffffff; --surface-sunken: #f0f0f3;
+    --text: #1d1d1f; --muted: #86868b; --hairline: rgba(0,0,0,.08);
+    --accent: #0071e3; --accent-soft: rgba(0,113,227,.1);
+    --gut: #1d8a3f; --warn: #b8860b; --danger: #c4271b;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 30px -12px rgba(0,0,0,.18);
+    --r-card: 20px; --r-control: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000; --surface: #1c1c1e; --surface-sunken: #2c2c2e;
+      --text: #f5f5f7; --muted: #98989d; --hairline: rgba(255,255,255,.12);
+      --accent: #0a84ff; --accent-soft: rgba(10,132,255,.18);
+      --gut: #30d158; --warn: #ffd60a; --danger: #ff453a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -12px rgba(0,0,0,.7);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .back { color: var(--muted); text-decoration: none; font-size: .875rem; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: clamp(1.8rem,5.5vw,2.4rem); line-height: 1.05; letter-spacing: -.03em; margin: .6rem 0 .4rem; }
+  header p { color: var(--muted); margin: 0 0 2rem; max-width: 34em; }
+  .card { background: var(--surface); border-radius: var(--r-card); box-shadow: var(--shadow);
+          padding: 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: .8125rem; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
+                color: var(--muted); margin: 0 0 1.1rem; }
+
+  /* Während der Fahrt zählt Lesbarkeit aus einem Meter Entfernung. */
+  .tacho { text-align: center; padding: 1.6rem 1rem 1.2rem; }
+  .tacho .v { font-size: clamp(4rem,22vw,7rem); font-weight: 700; letter-spacing: -.04em;
+              line-height: 1; font-variant-numeric: tabular-nums; }
+  /* Der Platzhalter soll nicht wie ein Balken wirken, solange nichts läuft. */
+  .tacho .v.wartet { font-size: 3rem; color: var(--muted); font-weight: 400; }
+  .tacho .e { font-size: 1rem; color: var(--muted); margin-top: .2rem; }
+  .werte { display: grid; grid-template-columns: repeat(3,1fr); gap: .5rem; margin-top: 1.6rem; }
+  .wert { background: var(--surface-sunken); border-radius: var(--r-control); padding: .8rem .5rem; text-align: center; }
+  .wert .k { font-size: clamp(1.1rem,5vw,1.5rem); font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .wert .l { font-size: .6875rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin-top: .15rem; }
+
+  .knopfreihe { display: flex; gap: .6rem; margin-top: 1.4rem; }
+  button { font: inherit; cursor: pointer; border: none; border-radius: 999px; padding: .95rem 1.3rem; font-weight: 600; }
+  button:disabled { opacity: .5; cursor: default; }
+  .btn-start { background: var(--accent); color: #fff; flex: 1; font-size: 1.05rem; }
+  .btn-stop { background: var(--danger); color: #fff; flex: 1; font-size: 1.05rem; }
+  .btn-zweit { background: var(--surface-sunken); color: var(--text); }
+  .btn-primary { background: var(--accent); color: #fff; }
+
+  .status { display: flex; align-items: center; gap: .55rem; font-size: .8125rem; color: var(--muted);
+            margin-top: 1.1rem; justify-content: center; flex-wrap: wrap; }
+  .punkt { width: .55rem; height: .55rem; border-radius: 50%; background: var(--muted); flex: none; }
+  .punkt.gut { background: var(--gut); }
+  .punkt.warn { background: var(--warn); }
+  .punkt.aus { background: var(--danger); }
+  .punkt.puls { animation: puls 1.6s ease-in-out infinite; }
+  @keyframes puls { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+  @media (prefers-reduced-motion: reduce) { .punkt.puls { animation: none } }
+
+  .hinweis { background: var(--accent-soft); border-radius: var(--r-control); padding: .9rem 1rem;
+             font-size: .875rem; margin-top: 1rem; }
+  .hinweis.warnung { background: rgba(196,39,27,.1); }
+  .hinweis b { font-weight: 650; }
+
+  .liste { list-style: none; margin: 0; padding: 0; }
+  .liste li { display: flex; align-items: center; gap: .8rem; padding: .8rem 0; border-bottom: 1px solid var(--hairline); }
+  .liste li:last-child { border-bottom: none; }
+  .liste .titel { font-weight: 600; }
+  .liste .unter { font-size: .8125rem; color: var(--muted); }
+  .liste .rechts { margin-left: auto; display: flex; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+  /* Auf schmalen Schirmen unter den Text statt daneben – sonst bricht die
+     Knopfreihe mitten entzwei. */
+  @media (max-width: 30rem) {
+    .liste li { flex-direction: column; align-items: stretch; gap: .6rem; }
+    .liste .rechts { margin-left: 0; justify-content: flex-start; }
+  }
+  .liste button { padding: .45rem .8rem; font-size: .8125rem; font-weight: 550; }
+  .leer { color: var(--muted); font-size: .875rem; }
+  .fehler { color: var(--danger); }
+  .fuss { text-align: center; color: var(--muted); font-size: .8125rem; margin-top: 2.5rem; }
+  .fuss a { color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="back" href="../">← Linke Spur</a>
+      <h1>Fahrt aufzeichnen</h1>
+      <p>Zeichnet die Strecke direkt hier auf – ohne fremde App und ohne Dateien hin- und
+         herzuschieben. Am Ziel geht es mit einem Tippen in die Auswertung.</p>
+    </header>
+
+    <div class="card tacho">
+      <div class="v wartet" id="tempo">–</div>
+      <div class="e">km/h</div>
+      <div class="werte">
+        <div class="wert"><div class="k" id="strecke">0,0</div><div class="l">km</div></div>
+        <div class="wert"><div class="k" id="dauer">0:00</div><div class="l">Dauer</div></div>
+        <div class="wert"><div class="k" id="punkte">0</div><div class="l">Punkte</div></div>
+      </div>
+      <div class="knopfreihe">
+        <button class="btn-start" id="start">Aufzeichnung starten</button>
+        <button class="btn-stop" id="stop" hidden>Beenden</button>
+      </div>
+      <div class="status">
+        <span class="punkt" id="signal"></span><span id="signal-text">bereit</span>
+      </div>
+      <div class="hinweis" id="hinweis" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Aufgezeichnete Fahrten</h2>
+      <ul class="liste" id="liste"></ul>
+      <p class="leer" id="liste-leer">Noch nichts aufgezeichnet.</p>
+    </div>
+
+    <p class="fuss">
+      <a href="../fahrt/">Stattdessen eine GPX-Datei auswerten →</a><br><br>
+      Die Aufzeichnung bleibt auf diesem Gerät. Nichts wird hochgeladen.
+    </p>
+  </div>
+
+<script>
+  // --- Kleine Helfer ---------------------------------------------------------
+  const $ = (id) => document.getElementById(id);
+  const rad = (d) => (d * Math.PI) / 180;
+  function distM(a, b) {
+    const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+    const s = Math.sin(dLat / 2) ** 2 +
+      Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * 6371000 * Math.asin(Math.sqrt(s));
+  }
+  const zwei = (n) => String(n).padStart(2, "0");
+  const fmtDauer = (ms) => {
+    const s = Math.floor(ms / 1000);
+    return s >= 3600 ? `${Math.floor(s / 3600)}:${zwei(Math.floor(s / 60) % 60)}` : `${Math.floor(s / 60)}:${zwei(s % 60)}`;
+  };
+
+  // --- Ablage ----------------------------------------------------------------
+  // IndexedDB statt localStorage: eine lange Fahrt sind schnell 20.000 Punkte,
+  // damit ist der 5-MB-Rahmen von localStorage gesprengt. Die Punkte liegen in
+  // Blöcken zu je einer Minute, damit weder einzelne Schreibvorgänge zu häufig
+  // noch die Objekte zu groß werden.
+  const DB_NAME = "linke-spur";
+  const DB_VERSION = 1;
+  let dbP = null;
+  function db() {
+    if (dbP) return dbP;
+    dbP = new Promise((ok, fehl) => {
+      const r = indexedDB.open(DB_NAME, DB_VERSION);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        if (!d.objectStoreNames.contains("fahrten"))
+          d.createObjectStore("fahrten", { keyPath: "id" });
+        if (!d.objectStoreNames.contains("bloecke")) {
+          const s = d.createObjectStore("bloecke", { keyPath: ["fahrtId", "nr"] });
+          s.createIndex("fahrtId", "fahrtId");
+        }
+      };
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => fehl(r.error);
+    });
+    return dbP;
+  }
+  async function schreibe(store, wert) {
+    const d = await db();
+    return new Promise((ok, fehl) => {
+      const t = d.transaction(store, "readwrite");
+      t.objectStore(store).put(wert);
+      t.oncomplete = ok;
+      t.onerror = () => fehl(t.error);
+    });
+  }
+  async function alleFahrten() {
+    const d = await db();
+    return new Promise((ok, fehl) => {
+      const r = d.transaction("fahrten").objectStore("fahrten").getAll();
+      r.onsuccess = () => ok(r.result.sort((a, b) => b.start - a.start));
+      r.onerror = () => fehl(r.error);
+    });
+  }
+  async function punkteVon(fahrtId) {
+    const d = await db();
+    return new Promise((ok, fehl) => {
+      const r = d.transaction("bloecke").objectStore("bloecke").index("fahrtId").getAll(fahrtId);
+      r.onsuccess = () => ok(r.result.sort((a, b) => a.nr - b.nr).flatMap((b) => b.punkte));
+      r.onerror = () => fehl(r.error);
+    });
+  }
+  async function loesche(fahrtId) {
+    const d = await db();
+    return new Promise((ok, fehl) => {
+      const t = d.transaction(["fahrten", "bloecke"], "readwrite");
+      t.objectStore("fahrten").delete(fahrtId);
+      const idx = t.objectStore("bloecke").index("fahrtId").openKeyCursor(fahrtId);
+      idx.onsuccess = () => { const c = idx.result; if (c) { t.objectStore("bloecke").delete(c.primaryKey); c.continue(); } };
+      t.oncomplete = ok;
+      t.onerror = () => fehl(t.error);
+    });
+  }
+
+  // --- Aufzeichnung ----------------------------------------------------------
+  // Punkte mit grober Ortung fliegen gleich raus: unter freiem Himmel liefert
+  // ein Telefon 5 bis 15 m, alles jenseits von 50 m stammt aus WLAN- oder
+  // Funkzellen-Ortung und würde die Kilometerwertung verfälschen.
+  const MAX_UNSCHAERFE_M = 50;
+  const BLOCK_MS = 60_000;
+
+  let lauf = null;          // { id, start, punkte, letzter, meter, blockNr, blockPunkte, blockBis }
+  let watchId = null;
+  let wakeLock = null;
+  let ticker = null;
+
+  async function wakeLockHolen() {
+    if (!("wakeLock" in navigator)) return false;
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+      return true;
+    } catch { return false; }
+  }
+
+  function zeigeStatus(klasse, text, pulsiert = false) {
+    const p = $("signal");
+    p.className = "punkt " + klasse + (pulsiert ? " puls" : "");
+    $("signal-text").textContent = text;
+  }
+  function hinweis(text, warnung = false) {
+    const h = $("hinweis");
+    if (!text) { h.hidden = true; return; }
+    h.hidden = false;
+    h.className = "hinweis" + (warnung ? " warnung" : "");
+    h.innerHTML = text;
+  }
+
+  function aktualisiereAnzeige(pos) {
+    if (pos && pos.coords.speed != null && pos.coords.speed >= 0) {
+      $("tempo").textContent = Math.round(pos.coords.speed * 3.6);
+      $("tempo").classList.remove("wartet");
+    }
+    if (!lauf) return;
+    $("strecke").textContent = (lauf.meter / 1000).toFixed(1).replace(".", ",");
+    $("dauer").textContent = fmtDauer(Date.now() - lauf.start);
+    $("punkte").textContent = lauf.punkte;
+  }
+
+  async function blockSichern(erzwingen = false) {
+    if (!lauf || !lauf.blockPunkte.length) return;
+    if (!erzwingen && Date.now() < lauf.blockBis) return;
+    const block = { fahrtId: lauf.id, nr: lauf.blockNr, punkte: lauf.blockPunkte };
+    lauf.blockNr++; lauf.blockPunkte = []; lauf.blockBis = Date.now() + BLOCK_MS;
+    try {
+      await schreibe("bloecke", block);
+      await schreibe("fahrten", {
+        id: lauf.id, start: lauf.start, ende: Date.now(),
+        punkte: lauf.punkte, meter: Math.round(lauf.meter), offen: true,
+      });
+    } catch (e) {
+      hinweis("Der Gerätespeicher nimmt nichts mehr an. Bitte eine ältere Fahrt löschen – " +
+              "die laufende Aufzeichnung geht sonst verloren.", true);
+    }
+  }
+
+  function neuerPunkt(pos) {
+    const g = pos.coords.accuracy;
+    if (g > MAX_UNSCHAERFE_M) {
+      zeigeStatus("warn", `Ortung ungenau (±${Math.round(g)} m) – Punkt verworfen`, true);
+      return;
+    }
+    const p = {
+      lat: +pos.coords.latitude.toFixed(6),
+      lon: +pos.coords.longitude.toFixed(6),
+      t: Math.round(pos.timestamp),
+    };
+    if (pos.coords.altitude != null) p.ele = Math.round(pos.coords.altitude);
+    if (lauf.letzter) lauf.meter += distM(lauf.letzter, p);
+    lauf.letzter = p;
+    lauf.punkte++;
+    lauf.blockPunkte.push(p);
+    zeigeStatus("gut", `zeichnet auf · Ortung ±${Math.round(g)} m`, true);
+    aktualisiereAnzeige(pos);
+    blockSichern();
+  }
+
+  function ortungsFehler(err) {
+    if (err.code === err.PERMISSION_DENIED) {
+      zeigeStatus("aus", "Zugriff auf den Standort abgelehnt");
+      hinweis("Ohne Standortfreigabe kann nichts aufgezeichnet werden. In den " +
+              "Einstellungen freigeben und die Seite neu laden.", true);
+      beenden(false);
+      return;
+    }
+    zeigeStatus("warn", err.code === err.TIMEOUT ? "wartet auf Satelliten …" : "kein Signal", true);
+  }
+
+  async function starten() {
+    if (!("geolocation" in navigator)) {
+      hinweis("Dieses Gerät liefert dem Browser keine Position.", true);
+      return;
+    }
+    lauf = {
+      id: `f${Date.now()}`, start: Date.now(), punkte: 0, letzter: null,
+      meter: 0, blockNr: 0, blockPunkte: [], blockBis: Date.now() + BLOCK_MS,
+    };
+    $("start").hidden = true;
+    $("stop").hidden = false;
+    $("tempo").textContent = "0";
+    $("tempo").classList.remove("wartet");
+    zeigeStatus("warn", "sucht Satelliten …", true);
+
+    const wach = await wakeLockHolen();
+    hinweis(wach
+      ? "Der Bildschirm bleibt an, solange aufgezeichnet wird. <b>Sperrst du ihn " +
+        "oder wechselst die App, entsteht eine Lücke</b> – Safari und Chrome geben " +
+        "Web-Apps keinen Standort im Hintergrund. Am besten am Ladekabel."
+      : "<b>Bildschirm bitte anlassen.</b> Sperrst du ihn oder wechselst die App, " +
+        "entsteht eine Lücke – Web-Apps bekommen im Hintergrund keinen Standort.");
+
+    watchId = navigator.geolocation.watchPosition(neuerPunkt, ortungsFehler, {
+      enableHighAccuracy: true, maximumAge: 0, timeout: 20_000,
+    });
+    ticker = setInterval(() => aktualisiereAnzeige(null), 1000);
+  }
+
+  async function beenden(sichern = true) {
+    if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if (ticker) { clearInterval(ticker); ticker = null; }
+    if (wakeLock) { try { await wakeLock.release(); } catch {} wakeLock = null; }
+    $("start").hidden = false;
+    $("stop").hidden = true;
+    $("tempo").textContent = "–";
+    $("tempo").classList.add("wartet");
+
+    if (sichern && lauf) {
+      await blockSichern(true);
+      if (lauf.punkte >= 10) {
+        await schreibe("fahrten", {
+          id: lauf.id, start: lauf.start, ende: Date.now(),
+          punkte: lauf.punkte, meter: Math.round(lauf.meter), offen: false,
+        });
+        zeigeStatus("gut", `${lauf.punkte} Punkte über ${(lauf.meter / 1000).toFixed(1)} km gesichert`);
+        hinweis("");
+      } else {
+        await loesche(lauf.id);
+        zeigeStatus("", "zu wenige Punkte – nichts gesichert");
+      }
+    }
+    lauf = null;
+    $("strecke").textContent = "0,0"; $("dauer").textContent = "0:00"; $("punkte").textContent = "0";
+    zeigeListe();
+  }
+
+  // Wake Lock geht beim Wegwechseln verloren und muss zurückgeholt werden.
+  // Gleichzeitig ist das der Moment, in dem eine Lücke entstanden ist.
+  document.addEventListener("visibilitychange", async () => {
+    if (!lauf) return;
+    if (document.visibilityState === "visible") {
+      if (!wakeLock) await wakeLockHolen();
+    } else {
+      zeigeStatus("warn", "im Hintergrund – hier entsteht eine Lücke");
+    }
+  });
+
+  // Beim Schließen der Seite retten, was noch nicht geschrieben ist.
+  window.addEventListener("pagehide", () => { if (lauf) blockSichern(true); });
+
+  // --- GPX -------------------------------------------------------------------
+  const xmlSicher = (t) => String(t).replace(/[<>&'"]/g, (c) =>
+    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c]));
+
+  function alsGpx(punkte, name) {
+    const kopf = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Linke Spur">\n' +
+      `\t<trk>\n\t\t<name>${xmlSicher(name)}</name>\n\t\t<trkseg>\n`;
+    const leib = punkte.map((p) =>
+      `\t\t\t<trkpt lat="${p.lat}" lon="${p.lon}">\n` +
+      (p.ele != null ? `\t\t\t\t<ele>${p.ele}</ele>\n` : "") +
+      `\t\t\t\t<time>${new Date(p.t).toISOString()}</time>\n\t\t\t</trkpt>\n`).join("");
+    return kopf + leib + "\t\t</trkseg>\n\t</trk>\n</gpx>\n";
+  }
+
+  async function gpxSichern(f) {
+    const punkte = await punkteVon(f.id);
+    const name = new Date(f.start).toLocaleString("de-DE").replace(/[/:,]/g, "-");
+    const datei = new File([alsGpx(punkte, name)], `${name}.gpx`, { type: "application/gpx+xml" });
+    // Auf dem Telefon ist das Teilen-Blatt der brauchbare Weg; am Rechner ein Download.
+    if (navigator.canShare?.({ files: [datei] })) {
+      try { await navigator.share({ files: [datei], title: name }); return; } catch { /* abgebrochen */ }
+    }
+    const url = URL.createObjectURL(datei);
+    const a = Object.assign(document.createElement("a"), { href: url, download: datei.name });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  // --- Liste -----------------------------------------------------------------
+  async function zeigeListe() {
+    let fahrten = [];
+    try { fahrten = await alleFahrten(); } catch { }
+    const ul = $("liste");
+    ul.innerHTML = "";
+    $("liste-leer").hidden = fahrten.length > 0;
+    for (const f of fahrten) {
+      const li = document.createElement("li");
+      const dauer = fmtDauer(f.ende - f.start);
+      li.innerHTML =
+        `<div><div class="titel">${new Date(f.start).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" })}</div>` +
+        `<div class="unter">${(f.meter / 1000).toFixed(1).replace(".", ",")} km · ${dauer} · ${f.punkte} Punkte` +
+        `${f.offen ? " · <span class=\"fehler\">unvollständig beendet</span>" : ""}</div></div>` +
+        `<div class="rechts">
+           <button class="btn-primary" data-tun="auswerten">Auswerten</button>
+           <button class="btn-zweit" data-tun="gpx">GPX</button>
+           <button class="btn-zweit" data-tun="weg">Löschen</button>
+         </div>`;
+      li.querySelector('[data-tun="auswerten"]').onclick = () => {
+        location.href = `../fahrt/?aufzeichnung=${encodeURIComponent(f.id)}`;
+      };
+      li.querySelector('[data-tun="gpx"]').onclick = () => gpxSichern(f);
+      li.querySelector('[data-tun="weg"]').onclick = async () => {
+        if (!confirm("Diese Aufzeichnung löschen?")) return;
+        await loesche(f.id);
+        zeigeListe();
+      };
+      ul.append(li);
+    }
+  }
+
+  $("start").addEventListener("click", starten);
+  $("stop").addEventListener("click", () => beenden(true));
+  zeigeListe();
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(() => {});
+</script>
+</body>
+</html>

@@ -15,7 +15,7 @@
 // Alles Übrige (OSRM, Photon, die Autobahn-API) läuft ausschließlich über das
 // Netz – veraltete Baustellenmeldungen wären schlimmer als gar keine.
 
-const VERSION = "v2";
+const VERSION = "v4";
 const SHELL_CACHE = `linke-spur-shell-${VERSION}`;
 const DATEN_CACHE = `linke-spur-daten-${VERSION}`;
 const KACHEL_CACHE = `linke-spur-kacheln-${VERSION}`;
@@ -26,6 +26,8 @@ const SHELL = [
   "./index.html",
   "./fahrt/",
   "./fahrt/index.html",
+  "./aufzeichnen/",
+  "./aufzeichnen/index.html",
   "./manifest.webmanifest",
   // Die Korridordefinitionen liegen neben data/ und wurden deshalb leicht
   // übersehen – ohne sie kennt die Seite offline keine einzige Strecke.
@@ -136,8 +138,27 @@ self.addEventListener("fetch", (e) => {
   // Fremde Hosts (OSRM, Photon, Autobahn-API): nur Netz.
   if (url.origin !== self.location.origin) return;
 
-  // App-Shell: Cache zuerst, im Hintergrund auffrischen. Bei Seitenaufrufen
-  // notfalls die Startseite ausliefern, damit offline kein Browserfehler kommt.
+  // Seitenaufrufe: erst das Netz, dann der Cache. Andersherum sieht man
+  // Änderungen an der Seite erst beim übernächsten Start – das hat beim
+  // Entwickeln prompt zugeschlagen und wäre auch im Betrieb lästig.
+  if (request.mode === "navigate") {
+    e.respondWith((async () => {
+      const cache = await caches.open(SHELL_CACHE);
+      try {
+        const res = await fetch(request);
+        if (res.ok) cache.put(request, res.clone());
+        return res;
+      } catch {
+        return (await cache.match(request, { ignoreSearch: true })) ||
+          (await cache.match("./index.html")) || (await cache.match("./")) ||
+          new Response("Offline und nichts im Zwischenspeicher.", { status: 503 });
+      }
+    })());
+    return;
+  }
+
+  // Alles andere aus der Shell – Leaflet, Icons, corridors.json – ändert sich
+  // nur mit einer neuen Fassung: Cache zuerst, im Hintergrund auffrischen.
   e.respondWith((async () => {
     const cache = await caches.open(SHELL_CACHE);
     const treffer = await cache.match(request, { ignoreSearch: true });
@@ -148,10 +169,6 @@ self.addEventListener("fetch", (e) => {
     if (treffer) return treffer;
     const res = await netz;
     if (res) return res;
-    if (request.mode === "navigate") {
-      return (await cache.match("./index.html")) || (await cache.match("./")) ||
-        new Response("Offline und nichts im Zwischenspeicher.", { status: 503 });
-    }
     return new Response("", { status: 504 });
   })());
 });

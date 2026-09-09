@@ -125,7 +125,8 @@
       <a class="back" href="../">← Linke Spur</a>
       <h1>Fahrt auswerten</h1>
       <p>Aufzeichnung hochladen und sehen, wie schnell du tatsächlich gefahren bist –
-         Kilometer für Kilometer, farbig auf der Karte.</p>
+         Kilometer für Kilometer, farbig auf der Karte.
+         Ohne fremde App geht es auch: <a href="../aufzeichnen/">direkt hier aufzeichnen</a>.</p>
     </header>
 
     <label class="drop" id="drop">
@@ -620,7 +621,17 @@
     try {
       sage("Lese Datei …");
       const text = await datei.text();
-      const alle = parseGpx(text);
+      await werteAus(parseGpx(text));
+    } catch (e) {
+      sage(e.message || "Datei konnte nicht gelesen werden.", true);
+      console.error(e);
+    }
+  }
+
+  // Der Auswerteteil selbst – gefüttert entweder aus einer GPX-Datei oder aus
+  // einer hier aufgezeichneten Fahrt.
+  async function werteAus(alle) {
+    try {
       if (alle.length < 20) throw new Error(`Nur ${alle.length} Punkte mit Zeitstempel gefunden – zu wenig.`);
       const { punkte, ausreisser, verworfen, fahrH, reiseH, bloecke } = fahrtHerausloesen(alle);
       if (punkte.length < 20) throw new Error("Keine zusammenhängende Fahrt in der Aufzeichnung gefunden.");
@@ -649,9 +660,42 @@
         (verworfen ? ` · ${verworfen} Punkte Vor-/Nachlauf und Stillstand verworfen` : "") +
         (ausreisser ? ` · ${ausreisser} GPS-Ausreißer entfernt` : ""));
     } catch (e) {
-      sage(e.message || "Datei konnte nicht gelesen werden.", true);
+      sage(e.message || "Die Aufzeichnung ließ sich nicht auswerten.", true);
       console.error(e);
     }
+  }
+
+  // --- Übergabe aus der eigenen Aufzeichnung ---------------------------------
+  // Die Aufzeichnungsseite legt Rohpunkte in IndexedDB ab und ruft hier mit
+  // ?aufzeichnung=<id> auf. So bleibt der Umweg über eine GPX-Datei aus.
+  async function ausAufzeichnung(id) {
+    sage("Lese Aufzeichnung …");
+    const d = await new Promise((ok, fehl) => {
+      const r = indexedDB.open("linke-spur", 1);
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => fehl(r.error);
+      // Kommt hier jemand vor der Aufzeichnungsseite an, gibt es die Ablage noch
+      // nicht – dann sollen die Stores wenigstens leer existieren.
+      r.onupgradeneeded = () => {
+        const b = r.result;
+        if (!b.objectStoreNames.contains("fahrten")) b.createObjectStore("fahrten", { keyPath: "id" });
+        if (!b.objectStoreNames.contains("bloecke")) {
+          const st = b.createObjectStore("bloecke", { keyPath: ["fahrtId", "nr"] });
+          st.createIndex("fahrtId", "fahrtId");
+        }
+      };
+    });
+    const bloecke = await new Promise((ok, fehl) => {
+      const r = d.transaction("bloecke").objectStore("bloecke").index("fahrtId").getAll(id);
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => fehl(r.error);
+    });
+    if (!bloecke.length) throw new Error("Diese Aufzeichnung ist nicht (mehr) auf dem Gerät.");
+    const punkte = bloecke.sort((a, b) => a.nr - b.nr)
+      .flatMap((b) => b.punkte)
+      .map((p) => ({ lat: p.lat, lon: p.lon, t: new Date(p.t) }))
+      .sort((a, b) => a.t - b.t);
+    await werteAus(punkte);
   }
 
   const drop = document.getElementById("drop");
@@ -665,6 +709,14 @@
   ladeFahrten();
   zeigeGespeicherte();
   zeigeVergleich();
+
+  const ausId = new URLSearchParams(location.search).get("aufzeichnung");
+  if (ausId) {
+    ausAufzeichnung(ausId).catch((e) => {
+      sage(e.message || "Die Aufzeichnung ließ sich nicht laden.", true);
+      console.error(e);
+    });
+  }
 
   drop.addEventListener("drop", (e) => {
     const f = e.dataTransfer?.files?.[0];
