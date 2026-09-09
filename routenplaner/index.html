@@ -559,6 +559,8 @@
           <dd>Zuschlag auf ausgeschilderte Limits samt Baustellen. Nicht auf Ortsdurchfahrten – dort steht ohnehin schon die geschätzte Reisegeschwindigkeit.</dd>
           <dt>Abfahrt</dt>
           <dd>Bestimmt, welche Baustellen gerade gelten und wie dicht der Verkehr ist. Die Uhr läuft während der Fahrt mit: jeder Kilometer wird mit der Zeit bewertet, zu der man ihn erreicht.</dd>
+          <dt>Beschleunigen</dt>
+          <dd>Nach jedem Tempolimit und jeder Baustelle muss erst wieder beschleunigt werden. Aus einer aufgezeichneten Fahrt gemessen: ein Anstieg um 70 km/h kostet rund 16 Sekunden.</dd>
           <dt>Verkehr</dt>
           <dd>Aus: rechtlich mögliche Fahrzeit bei freier Bahn. Ein: zusätzlich gebremst – auf zwei Spuren stärker, weil überholende LKW dort beides blockieren.</dd>
         </dl>
@@ -837,6 +839,33 @@
   const VMS_SPEED = 120;
   const vmsCapKmh = (wishSpeed) => VMS_SHARE * VMS_SPEED + (1 - VMS_SHARE) * wishSpeed;
 
+  // Beschleunigen kostet Zeit, die in "1 km / Tempo" nicht vorkommt: dort steht
+  // das neue Tempo sofort an. Endet eine 80er-Baustelle, vergehen real rund 40
+  // Sekunden und fast ein ganzer Kilometer, bis 150 anliegen.
+  //
+  // Die Form kommt aus der Physik: Verlust = Δv² / (2·a·v_ziel). Der Vorfaktor
+  // ist an der GPX-Aufzeichnung kalibriert, und zwar an der richtigen Teilmenge:
+  // von den 65 gemessenen Beschleunigungsvorgängen begannen nur 31 in einem
+  // ausgeschilderten Limit (zusammen 9,3 min). Die anderen 34 waren Beschleunigen
+  // nach verkehrsbedingtem Abbremsen – die stecken bereits im Wunschtempo und
+  // dürfen hier nicht ein zweites Mal zu Buche schlagen.
+  //
+  // Der Faktor liegt über dem, was die reinen Messwerte ergäben (0,5), weil das
+  // Modell nur Schilder kennt: Es weiß nichts vom tatsächlichen Abbremsen vor
+  // einer Baustelle und sieht dadurch systematisch kleinere Tempo-Sprünge.
+  //
+  //   Δv 40 auf 130 -> 9 s      Δv 70 auf 150 -> 23 s      Δv 100 auf 170 -> 41 s
+  const ACCEL_FACTOR = 0.7;
+  // Darunter ist es kein Beschleunigungsvorgang, sondern Messrauschen.
+  const ACCEL_MIN_DELTA = 15;
+
+  function accelPenaltyHours(vorher, nachher) {
+    if (!vorher || !nachher || nachher <= vorher) return 0;
+    const dv = nachher - vorher;
+    if (dv < ACCEL_MIN_DELTA) return 0;
+    return (ACCEL_FACTOR * dv * dv) / nachher / 3600;
+  }
+
   function fmtDate(iso) {
     if (!iso) return "unbekannt";
     const d = new Date(iso);
@@ -910,6 +939,13 @@
     // kann eine Anlage jederzeit begrenzen, und das Modell rechnet auch so.
     let vmsKm = 0;
     let trafficLossHours = 0;
+    let accelLossHours = 0;
+    // Bezug für den Beschleunigungszuschlag ist das *langsamste* Tempo des vorigen
+    // Kilometers, nicht sein Mischtempo: Wer eine Baustelle durchfährt, die den
+    // halben Kilometer belegt, beschleunigt danach aus dem Baustellentempo heraus,
+    // nicht aus dem Mittelwert. Mit dem Mischtempo fielen die Sprünge nur halb so
+    // groß aus wie in der Aufzeichnung.
+    let prevSpeed = null;
     const roadworkItems = new Map();
 
     route.segments.forEach((segment, index) => {
@@ -954,7 +990,10 @@
       }
 
       if (affecting.length === 0) {
-        timeHours += segKm / baseSpeed;
+        const zuschlag = accelPenaltyHours(prevSpeed, baseSpeed);
+        accelLossHours += zuschlag;
+        timeHours += segKm / baseSpeed + zuschlag;
+        prevSpeed = baseSpeed;
         if (segment.maxspeedTag === "none") {
           noneKm += segKm;
           if (segment.variable) vmsKm += segKm;
@@ -980,7 +1019,13 @@
       const affectedKm = segKm * fraction;
       const freeKm = segKm - affectedKm;
 
-      timeHours += affectedKm / roadworkSpeed + freeKm / baseSpeed;
+      const segStunden = affectedKm / roadworkSpeed + freeKm / baseSpeed;
+      // Beschleunigt wird auf das Mischtempo dieses Kilometers, losgefahren aber
+      // aus dem langsamsten Tempo des vorigen.
+      const zuschlag = accelPenaltyHours(prevSpeed, segKm / segStunden);
+      accelLossHours += zuschlag;
+      timeHours += segStunden + zuschlag;
+      prevSpeed = roadworkSpeed;
       roadworkKm += affectedKm;
       limitedKm += affectedKm;
       // Der nicht betroffene Rest zählt weiter nach seinem eigentlichen Charakter.
@@ -1001,6 +1046,7 @@
       localKm,
       roadworkKm,
       trafficLossHours,
+      accelLossHours,
       avgSpeed: distKm / timeHours,
       arrival: new Date(date.getTime() + timeHours * 3600_000),
       roadworks: [...roadworkItems.values()],
@@ -1037,7 +1083,7 @@
 
   function renderRouteCard(result, isFastest, corridorId, isSelected, referenz) {
     const { route, timeHours, distKm, noneKm, vmsKm, limitedKm, localKm, roadworkKm,
-            trafficLossHours, avgSpeed, arrival, roadworks } = result;
+            trafficLossHours, accelLossHours, avgSpeed, arrival, roadworks } = result;
     // Der unbegrenzte Anteil zerfällt in zwei sehr verschiedene Sorten: wirklich
     // freie Strecke und solche unter einer Wechselanzeige, die jederzeit
     // begrenzen kann. Die Leiste trennt beide, sonst verspricht sie zu viel.
@@ -1055,6 +1101,7 @@
     if (vmsKm >= 0.5) stats.push([`${vmsKm.toFixed(0)} km`, "Wechselanzeige"]);
     if (roadworkKm >= 0.5) stats.push([`${roadworkKm.toFixed(0)} km`, "Baustelle"]);
     if (trafficLossHours >= 1 / 60) stats.push([`${Math.round(trafficLossHours * 60)} min`, "durch Verkehr"]);
+    if (accelLossHours >= 1 / 60) stats.push([`${Math.round(accelLossHours * 60)} min`, "Beschleunigen"]);
 
     const url = googleMapsUrl(corridorId, route.id);
 

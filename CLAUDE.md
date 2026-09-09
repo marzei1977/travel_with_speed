@@ -113,6 +113,17 @@ gerechnet; die Fahrstreifen-Spreizung wurde verstärkt (Entlastung 1,0/0,45/0,25
 Wunschtempo statt absolut zu wirken. Damit liegt die A61 in der Rangfolge dort,
 wo die Praxis sie sieht – vorher lag sie bei 185 km/h fälschlich vorn.
 
+**Erreichtes Tempo ist nicht Wunschtempo.** Das Auswertewerkzeug nennt das
+harmonische Mittel der freien Abschnitte (135 km/h) als Prüfgröße – ins Eingabefeld
+gehört es nicht, denn davon zieht das Modell Verkehr und Beschleunigen erst noch ab.
+Für die Referenzfahrt trifft Wunschtempo 150 die gemessene Zeit exakt, 135 läge
+14 min daneben.
+
+**Beschleunigen ist seit kurzem eingerechnet** (`ACCEL_FACTOR`, Form Δv²/v_ziel).
+Kalibriert an den 31 von 65 gemessenen Vorgängen, die wirklich in einem
+ausgeschilderten Limit begannen – die übrigen 34 waren verkehrsbedingt und stecken
+schon im Wunschtempo.
+
 Am schwächsten belegt ist der Anlagen-Anteil von 20 %: der Effekt ist eindeutig
 (A3 unter Anzeige 144 km/h gegen 152 ohne), seine Größe hängt aber an einer
 einzigen Fahrt und ließ sich darin nicht sauber von der Verkehrsbremse trennen.

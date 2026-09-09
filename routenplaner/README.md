@@ -349,6 +349,45 @@ Kontrollrechnung Köln → München, Werktag 8 Uhr, 185 km/h: A3/A9 4 h 16, A7/A
 4 h 42, A61 4 h 58. Vor der Änderung lag die A61 mit 4 h 06 vorn – die Reihenfolge
 ist jetzt die, die der Praxis entspricht.
 
+### Beschleunigen nach Limits und Baustellen
+
+Jeder Kilometer wird mit einem konstanten Tempo gerechnet — endet eine 80er-Baustelle,
+stand im nächsten Kilometer bis vor kurzem sofort das volle Wunschtempo an. Real
+vergehen dafür rund 40 Sekunden und fast ein ganzer Kilometer.
+
+Die Form des Zuschlags kommt aus der Physik: `Verlust = Δv² / (2·a·v_ziel)`, also
+quadratisch im Tempoanstieg und fallend im Zieltempo. Angesetzt wird er ab 15 km/h
+Anstieg, gemessen gegen das *langsamste* Tempo des vorigen Kilometers — wer eine
+Baustelle durchfährt, beschleunigt danach aus dem Baustellentempo heraus, nicht aus
+dem Mittelwert des Kilometers.
+
+Der Vorfaktor (0,7) ist an der Aufzeichnung kalibriert, und zwar an der richtigen
+Teilmenge. Von 65 gemessenen Beschleunigungsvorgängen begannen nur **31 in einem
+ausgeschilderten Limit** (zusammen 9,3 min); die anderen 34 waren Beschleunigen nach
+verkehrsbedingtem Abbremsen (10,5 min) — die stecken bereits im Wunschtempo und
+dürfen hier nicht ein zweites Mal zählen. Das Modell findet auf derselben Strecke
+ebenfalls 31 Anstiege, was für die Erkennung spricht.
+
+Auf Köln → München macht der Zuschlag 4 bis 8 Minuten aus, je nach Zahl der
+Limitwechsel. Der eigentliche Gewinn ist nicht die Gesamtzeit, sondern der Vergleich:
+Eine Route mit vielen Limitwechseln wird jetzt gegenüber einer durchgehend freien
+richtig bewertet.
+
+### Erreichtes Tempo ist nicht Wunschtempo
+
+Das Auswertewerkzeug nennt für die freien Abschnitte jetzt das **harmonische** Mittel
+(135 km/h für die Referenzfahrt) statt des arithmetischen (149). Für die Fahrzeit
+zählt, dass ein Kilometer bei 60 km/h eine Minute dauert und einer bei 180 nur zwanzig
+Sekunden — im einfachen Mittel wiegen beide gleich, in der Fahrzeit nicht.
+
+**Dieser Wert gehört aber nicht ins Eingabefeld.** Er ist die Prüfgröße für eine
+Prognose: so schnell war man wirklich. Das Wunschtempo ist der Ausgangswert, von dem
+das Modell Verkehr und Beschleunigen erst noch abzieht — trüge man dort die erreichten
+135 ein, zöge es beides ein zweites Mal ab. Nachgerechnet: Frankfurter Kreuz → München
+dauerte real 3 h 15; das Modell liefert mit Wunschtempo 150 exakt diese Zeit, mit 135
+dagegen 3 h 29. Das Werkzeug schlägt deshalb den Median vor (hier 155) und schreibt
+den Unterschied dazu.
+
 ### Wechselverkehrszeichen
 
 Streckenbeeinflussungsanlagen zeigen Limits, die auf keinem festen Schild stehen.

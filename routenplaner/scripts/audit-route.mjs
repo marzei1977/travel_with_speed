@@ -39,6 +39,13 @@ const REFERENZ_TEMPO = 185;
 // und Schaltwert, weil die Anlage nur einen Teil der Zeit begrenzt.
 const ANLAGE_ANTEIL = 0.2, ANLAGE_TEMPO = 120;
 const anlageGrenze = (wunsch) => ANLAGE_ANTEIL * ANLAGE_TEMPO + (1 - ANLAGE_ANTEIL) * wunsch;
+// Beschleunigen nach einem Limit – siehe index.html. Aus 65 gemessenen Vorgängen.
+const BESCHL_FAKTOR = 0.7, BESCHL_MIN = 15;
+function beschlZuschlagStd(vorher, nachher) {
+  if (!vorher || !nachher || nachher <= vorher) return 0;
+  const dv = nachher - vorher;
+  return dv < BESCHL_MIN ? 0 : (BESCHL_FAKTOR * dv * dv) / nachher / 3600;
+}
 
 const welle = (tag,std) => (tag===5&&std>=14&&std<=19)?1.25:(tag===0&&std>=15&&std<=20)?1.20:1.0;
 const tagTyp = (d) => d.getDay()===0?"sonntag":d.getDay()===6?"samstag":"werktag";
@@ -123,6 +130,7 @@ for(const route of korridor.routes){
   if(!route.segments?.length) continue;
   let t=0;
   const zeilen=[];
+  let vorTempo=null, beschlStd=0;
   route.segments.forEach((seg,i)=>{
     const km=seg.distanceMeters/1000;
     const zeit=new Date(ABFAHRT.getTime()+t*3600_000);
@@ -145,10 +153,15 @@ for(const route of korridor.routes){
       const bwTempo=Math.min(nachVerkehr,bwLimit);
       anteil=Math.max(...treffer.map(x=>abdeckung(x,route.id)));
       const gebremst=km*anteil, frei=km-gebremst;
-      t+=gebremst/bwTempo+frei/nachVerkehr;
-      effektiv=km/(gebremst/bwTempo+frei/nachVerkehr);   // Mischtempo dieses Kilometers
+      const std=gebremst/bwTempo+frei/nachVerkehr;
+      effektiv=km/std;   // Mischtempo dieses Kilometers
+      const zu=beschlZuschlagStd(vorTempo,effektiv);
+      beschlStd+=zu; t+=std+zu;
+      vorTempo=bwTempo;   // aus dem Baustellentempo heraus geht es weiter
     } else {
-      t+=km/nachVerkehr;
+      const zu=beschlZuschlagStd(vorTempo,nachVerkehr);
+      beschlStd+=zu; t+=km/nachVerkehr+zu;
+      vorTempo=nachVerkehr;
     }
     zeilen.push({i,ref:seg.ref,osm:seg.maxspeedTag,fb:seg.fallbackSpeedKmh,basis,nachVerkehr,effektiv,bwLimit,anteil,zeit});
     csvZeilen.push([route.id,i+1,seg.ref||"",seg.maxspeedTag==="none"?"frei":(seg.maxspeedTag??`(${seg.fallbackSpeedKmh})`),
@@ -167,7 +180,8 @@ for(const route of korridor.routes){
     if(letzter&&letzter.sig===sig){ letzter.bis=z.i; letzter.n++; }
     else bloecke.push({sig,von:z.i,bis:z.i,n:1,...z});
   }
-  console.log(`── ${route.label}   ${fmt(t)}   ${(route.segments.reduce((a,s)=>a+s.distanceMeters,0)/1000).toFixed(0)} km`);
+  console.log(`── ${route.label}   ${fmt(t)}   ${(route.segments.reduce((a,s)=>a+s.distanceMeters,0)/1000).toFixed(0)} km` +
+    (beschlStd >= 1/60 ? `   davon ${Math.round(beschlStd*60)} min Beschleunigen` : ""));
   console.log("   km          Autobahn  OSM-Limit   Baustelle   gerechnet");
   for(const b of bloecke){
     if(b.n<3 && b.ref) continue;                       // Rauschen ausblenden

@@ -72,6 +72,7 @@
   .stats { display: flex; flex-wrap: wrap; gap: 1.6rem; }
   .stat .k { font-size: 1.4rem; font-weight: 650; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .stat .l { font-size: .75rem; color: var(--muted); }
+  .leiser { color: var(--muted); font-size: .875rem; }
 
   .ergebnis { background: var(--accent-soft); border-radius: var(--r-control); padding: 1rem 1.2rem; margin-top: 1.2rem; }
   .ergebnis h3 { margin: 0 0 .5rem; font-size: .9375rem; }
@@ -398,14 +399,27 @@
     const begr = aufAB.filter((k) => k.ms > 0);
     let html = "<h3>Für den Routenplaner</h3>";
     if (frei.length >= 10) {
-      const s = frei.reduce((a, k) => a + k.kmh, 0) / frei.length;
-      html += `<p>Auf <b>${frei.length} km</b> unbegrenzter Autobahn ohne Wechselanzeige im Mittel
-               <b>${s.toFixed(0)} km/h</b> → Wunschtempo <b>${Math.round(s / 5) * 5}</b></p>`;
+      // Harmonisches Mittel: für die Fahrzeit wiegt ein langsamer Kilometer schwerer
+      // als ein schneller. Der einfache Mittelwert fällt zu optimistisch aus.
+      const harm = frei.length / frei.reduce((a, k) => a + 1 / k.kmh, 0);
+      const arith = frei.reduce((a, k) => a + k.kmh, 0) / frei.length;
+      const sortiert = frei.map((k) => k.kmh).sort((a, b) => a - b);
+      const oben = sortiert[Math.floor(sortiert.length * 0.75)];
+      const median = sortiert[Math.floor(sortiert.length / 2)];
+      html += `<p>Auf <b>${frei.length} km</b> unbegrenzter Autobahn ohne Wechselanzeige
+               tatsächlich erreicht: <b>${harm.toFixed(0)} km/h</b>.
+               <span class="leiser">Daran muss sich eine Prognose messen lassen. Der einfache
+               Mittelwert wäre ${arith.toFixed(0)} – für die Fahrzeit zählt aber, dass ein
+               langsamer Kilometer länger dauert.</span></p>
+               <p>→ Wunschtempo im Planer: <b>${Math.round(median / 5) * 5}</b>
+               <span class="leiser">Nicht das erreichte Tempo eintragen: der Planer zieht davon
+               Verkehr und Beschleunigen erst noch ab. Auf freier Bahn möglich waren
+               ${Math.round(oben / 5) * 5} km/h (oberes Viertel).</span></p>`;
     } else {
       html += `<p>Nur ${frei.length} km unbegrenzte Autobahn – zu wenig für einen belastbaren Wert.</p>`;
     }
     if (unterAnlage.length >= 10) {
-      const a = unterAnlage.reduce((x, k) => x + k.kmh, 0) / unterAnlage.length;
+      const a = unterAnlage.length / unterAnlage.reduce((x, k) => x + 1 / k.kmh, 0);
       html += `<p>Weitere <b>${unterAnlage.length} km</b> waren unbegrenzt, standen aber unter einer
                Wechselanzeige: dort <b>${a.toFixed(0)} km/h</b>. Nicht im Wunschtempo enthalten –
                die Anlage kann begrenzt haben, ohne dass die Aufzeichnung es verrät.</p>`;

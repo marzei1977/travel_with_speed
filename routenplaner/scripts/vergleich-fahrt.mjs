@@ -239,14 +239,29 @@ for (const z of kmZeilen.filter((_, i) => i % Math.max(1, Math.ceil(kmZeilen.len
 console.log("\n── Auswertung ──");
 if (frei.length) {
   const s = frei.map((z) => z.kmh).sort((a, b) => a - b);
-  const schnitt = s.reduce((a, b) => a + b, 0) / s.length;
-  console.log(`Unbegrenzte Abschnitte ohne Anzeige: ${frei.length} km, Ø ${schnitt.toFixed(0)} km/h, Median ${s[Math.floor(s.length / 2)].toFixed(0)}, oberes Viertel ab ${s[Math.floor(s.length * 0.75)].toFixed(0)}`);
-  console.log(`  -> "Wunschtempo" im Planer: ${Math.round(schnitt / 5) * 5} km/h`);
+  // Für die erreichte Reisegeschwindigkeit zählt das harmonische Mittel, nicht das
+  // arithmetische: ein Kilometer bei 60 km/h dauert eine Minute, einer bei 180 nur
+  // zwanzig Sekunden. Im einfachen Mittel wiegen beide gleich, in der Fahrzeit nicht.
+  //
+  // Dieser Wert ist die Prüfgröße für eine Prognose – aber nicht der Wert fürs
+  // Eingabefeld. Dort steht das angestrebte Tempo, von dem der Planer Verkehr und
+  // Beschleunigen abzieht; trüge man das erreichte ein, zöge er sie ein zweites Mal ab.
+  const harmonisch = s.length / s.reduce((a, b) => a + 1 / b, 0);
+  const arithmetisch = s.reduce((a, b) => a + b, 0) / s.length;
+  const median = s[Math.floor(s.length / 2)];
+  const obenViertel = s[Math.floor(s.length * 0.75)];
+  console.log(`Unbegrenzte Abschnitte ohne Anzeige: ${frei.length} km`);
+  console.log(`  tatsächlich erreicht: ${harmonisch.toFixed(0)} km/h`);
+  console.log(`    Das ist der Wert, an dem sich eine Prognose messen lassen muss.`);
+  console.log(`    (einfacher Mittelwert ${arithmetisch.toFixed(0)}, Median ${median.toFixed(0)}, oberes Viertel ab ${obenViertel.toFixed(0)})`);
+  console.log(`  -> "Wunschtempo" im Planer: ${Math.round(median / 5) * 5} km/h`);
+  console.log(`    Nicht das erreichte Tempo eintragen: der Planer zieht davon Verkehr`);
+  console.log(`    und Beschleunigen erst noch ab. Einzutragen ist das angestrebte Tempo.`);
 } else console.log("Keine unbegrenzten Abschnitte in dieser Fahrt.");
 if (unterAnlage.length) {
   const a = unterAnlage.map((z) => z.kmh).sort((x, y) => x - y);
-  const schnitt = a.reduce((x, y) => x + y, 0) / a.length;
-  console.log(`Unbegrenzt, aber unter Wechselanzeige: ${unterAnlage.length} km, Ø ${schnitt.toFixed(0)} km/h`);
+  const schnitt = a.length / a.reduce((x, y) => x + 1 / y, 0);
+  console.log(`Unbegrenzt, aber unter Wechselanzeige: ${unterAnlage.length} km, ${schnitt.toFixed(0)} km/h`);
   console.log(`  Nicht im Wunschtempo enthalten – dort kann die Anlage begrenzt haben.`);
 }
 if (begrenzt.length) {
