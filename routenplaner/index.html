@@ -1083,7 +1083,7 @@
 
   function renderRouteCard(result, isFastest, corridorId, isSelected, referenz) {
     const { route, timeHours, distKm, noneKm, vmsKm, limitedKm, localKm, roadworkKm,
-            trafficLossHours, accelLossHours, avgSpeed, arrival, roadworks } = result;
+            trafficLossHours, avgSpeed, arrival, roadworks } = result;
     // Der unbegrenzte Anteil zerfällt in zwei sehr verschiedene Sorten: wirklich
     // freie Strecke und solche unter einer Wechselanzeige, die jederzeit
     // begrenzen kann. Die Leiste trennt beide, sonst verspricht sie zu viel.
@@ -1093,15 +1093,17 @@
     const localP = (localKm / distKm) * 100;
 
     // Kennzahlen statt Fließtext: nur was die Routenwahl wirklich entscheidet.
+    // Streckenanteile als Prozent: nebeneinander sind sie so vergleichbar, auch
+    // wenn die Routen unterschiedlich lang sind.
+    const anteil = (km) => `${((km / distKm) * 100).toFixed(0)} %`;
     const stats = [
       [`${distKm.toFixed(0)} km`, "Strecke"],
       [`${avgSpeed.toFixed(0)} km/h`, "im Schnitt"],
-      [`${((noneKm / distKm) * 100).toFixed(0)} %`, "unbegrenzt"],
+      [anteil(noneKm), "unbegrenzt"],
     ];
-    if (vmsKm >= 0.5) stats.push([`${vmsKm.toFixed(0)} km`, "Wechselanzeige"]);
-    if (roadworkKm >= 0.5) stats.push([`${roadworkKm.toFixed(0)} km`, "Baustelle"]);
+    if (vmsKm >= 0.5) stats.push([anteil(vmsKm), "Wechselanzeige"]);
+    if (roadworkKm >= 0.5) stats.push([anteil(roadworkKm), "Baustelle"]);
     if (trafficLossHours >= 1 / 60) stats.push([`${Math.round(trafficLossHours * 60)} min`, "durch Verkehr"]);
-    if (accelLossHours >= 1 / 60) stats.push([`${Math.round(accelLossHours * 60)} min`, "Beschleunigen"]);
 
     const url = googleMapsUrl(corridorId, route.id);
 

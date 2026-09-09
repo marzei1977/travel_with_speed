@@ -15,7 +15,7 @@
 // Alles Übrige (OSRM, Photon, die Autobahn-API) läuft ausschließlich über das
 // Netz – veraltete Baustellenmeldungen wären schlimmer als gar keine.
 
-const VERSION = "v6";
+const VERSION = "v7";
 const SHELL_CACHE = `linke-spur-shell-${VERSION}`;
 const DATEN_CACHE = `linke-spur-daten-${VERSION}`;
 const KACHEL_CACHE = `linke-spur-kacheln-${VERSION}`;
