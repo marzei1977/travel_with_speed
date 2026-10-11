@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-11T19:53:19.318Z",
+  "updatedAt": "2026-10-11T20:25:45.550Z",
   "items": [
     {
       "id": "A9-roadworks-2023-001923--vi-bs.2025-11-12_00-00-00-000.devi-zus.2024-04-08_06-00-00-000.f_001.de21",
@@ -8767,7 +8767,7 @@
       ]
     },
     {
-      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-10-11_19-29-00-313.de0",
+      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-10-11_20-00-00-624.de0",
       "ref": "A3",
       "type": "warning",
       "title": "A3 | Limburg-Süd - Idstein",
@@ -17418,6 +17418,96 @@
       ]
     },
     {
+      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de7",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Marktbreit - Wolfsgraben-Ost",
+      "subtitle": " Ulm -> Würzburg",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 05.10.26 um 00:00 Uhr",
+        "Ende: 20.01.30 um 00:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 02.05.33)",
+        "",
+        "A7: Ulm -> Würzburg, zwischen 1.9 km hinter AS Marktbreit und 2.8 km vor Wolfsgraben-Ost",
+        "",
+        "Länge: 1.5 km | Maximale Durchfahrtsbreite: 5.5 m",
+        "",
+        "A7 Brückenneubau Talbrücke Marktbreit Bw 682"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": null,
+      "lengthKm": 1.5,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 49.66376214371205,
+        "lon": 10.129926438956616
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 268,
+          "distanceMeters": 617
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 269,
+          "distanceMeters": 14
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 270,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 271,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 272,
+          "distanceMeters": 880
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 268,
+          "distanceMeters": 617
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 269,
+          "distanceMeters": 14
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 270,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 271,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 272,
+          "distanceMeters": 880
+        }
+      ]
+    },
+    {
       "id": "A7-roadworks-2026-051656--vi-bs.2026-10-09_07-00-00-000.devi-zus.2026-10-09_07-00-00-000_001.de1",
       "ref": "A7",
       "type": "roadworks",
@@ -18372,18 +18462,18 @@
       ]
     },
     {
-      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de7",
+      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de5",
       "ref": "A7",
       "type": "roadworks",
-      "title": "A7 | Marktbreit - Wolfsgraben-Ost",
-      "subtitle": " Ulm -> Würzburg",
+      "title": "A7 | Wolfsgraben-Ost - Marktbreit",
+      "subtitle": " Würzburg -> Ulm",
       "description": [
         "Zeitraum dieser Bauphase:",
         "Beginn: 05.10.26 um 00:00 Uhr",
         "Ende: 20.01.30 um 00:00 Uhr",
         "(Ende der Gesamtmaßnahme: 02.05.33)",
         "",
-        "A7: Ulm -> Würzburg, zwischen 1.9 km hinter AS Marktbreit und 2.8 km vor Wolfsgraben-Ost",
+        "A7: Würzburg -> Ulm, zwischen 2.8 km hinter Wolfsgraben-Ost und 1.9 km vor AS Marktbreit",
         "",
         "Länge: 1.5 km | Maximale Durchfahrtsbreite: 5.5 m",
         "",
@@ -18395,69 +18485,39 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 49.66376214371205,
-        "lon": 10.129926438956616
+        "lat": 49.67683971183888,
+        "lon": 10.12487300416418
       },
       "affects": [
         {
-          "corridorId": "muenchen-koeln",
+          "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 268,
-          "distanceMeters": 617
+          "segmentIndex": 322,
+          "distanceMeters": 621
         },
         {
-          "corridorId": "muenchen-koeln",
+          "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 269,
-          "distanceMeters": 14
+          "segmentIndex": 323,
+          "distanceMeters": 3
         },
         {
-          "corridorId": "muenchen-koeln",
+          "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 270,
-          "distanceMeters": 2
+          "segmentIndex": 324,
+          "distanceMeters": 0
         },
         {
-          "corridorId": "muenchen-koeln",
+          "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 271,
-          "distanceMeters": 6
+          "segmentIndex": 325,
+          "distanceMeters": 1
         },
         {
-          "corridorId": "muenchen-koeln",
+          "corridorId": "koeln-muenchen",
           "routeId": "a8-a7",
-          "segmentIndex": 272,
-          "distanceMeters": 880
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 268,
-          "distanceMeters": 617
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 269,
-          "distanceMeters": 14
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 270,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 271,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 272,
-          "distanceMeters": 880
+          "segmentIndex": 326,
+          "distanceMeters": 874
         }
       ]
     },
@@ -18929,66 +18989,6 @@
           "routeId": "a8-a7",
           "segmentIndex": 393,
           "distanceMeters": 1460
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de5",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Wolfsgraben-Ost - Marktbreit",
-      "subtitle": " Würzburg -> Ulm",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 05.10.26 um 00:00 Uhr",
-        "Ende: 20.01.30 um 00:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 02.05.33)",
-        "",
-        "A7: Würzburg -> Ulm, zwischen 2.8 km hinter Wolfsgraben-Ost und 1.9 km vor AS Marktbreit",
-        "",
-        "Länge: 1.5 km | Maximale Durchfahrtsbreite: 5.5 m",
-        "",
-        "A7 Brückenneubau Talbrücke Marktbreit Bw 682"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": 1.5,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.67683971183888,
-        "lon": 10.12487300416418
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 322,
-          "distanceMeters": 621
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 323,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 324,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 325,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 326,
-          "distanceMeters": 874
         }
       ]
     },
@@ -27042,18 +27042,18 @@
       "id": "A5-warning-INRIX--vi-avl.2026-10-11_19-37-00-000_002.de0",
       "ref": "A5",
       "type": "warning",
-      "title": "A5 | Bad Homburger Kreuz - Spießwald",
+      "title": "A5 | Taunusblick - Spießwald",
       "subtitle": " Frankfurt -> Kassel",
       "description": [
         "Beginn: 11.10.26 um 21:37 Uhr",
         "",
         "Angespannte Verkehrslage, seit 11.10.2026, 19:37",
-        "A5: Frankfurt -> Kassel, zwischen 0.4 km hinter AK Bad Homburger Kreuz und 3.5 km vor Spießwald",
+        "A5: Frankfurt -> Kassel, zwischen 5.7 km hinter Taunusblick und 3.3 km vor Spießwald",
         "",
         "Ereignismeldung:",
         "- Stockender Verkehr",
         "- Durchschnittsgeschwindigkeit: 25 km/h",
-        "- Reisezeitverlust: 4 Minuten"
+        "- Reisezeitverlust: 6 Minuten (zunehmend)"
       ],
       "isBlocked": false,
       "speedLimitKmh": null,
@@ -27061,8 +27061,8 @@
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
-        "lat": 50.203437330988265,
-        "lon": 8.649625987572957
+        "lat": 50.198172404136145,
+        "lon": 8.640509436441125
       },
       "affects": [
         {
@@ -27081,13 +27081,13 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 409,
-          "distanceMeters": 208
+          "distanceMeters": 16
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a45-a31",
           "segmentIndex": 410,
-          "distanceMeters": 1208
+          "distanceMeters": 1016
         }
       ]
     },
@@ -29274,64 +29274,6 @@
           "routeId": "a61",
           "segmentIndex": 557,
           "distanceMeters": 668
-        }
-      ]
-    },
-    {
-      "id": "A61-warning-INRIX--vi-avl.2026-10-11_19-29-00-000_001.de0",
-      "ref": "A61",
-      "type": "warning",
-      "title": "A61 | Pfalzmarkt - Schifferstadt",
-      "subtitle": " Ludwigshafen -> Speyer",
-      "description": [
-        "Beginn: 11.10.26 um 21:29 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 11.10.2026, 19:29",
-        "A61: Ludwigshafen -> Speyer, zwischen 2.6 km hinter AS Pfalzmarkt und 1.8 km vor AS Schifferstadt",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Reisezeitverlust: 11 Minuten (zunehmend)"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.414978489430865,
-        "lon": 8.34009661072039
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 252,
-          "distanceMeters": 1168
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 253,
-          "distanceMeters": 170
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 254,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 255,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 256,
-          "distanceMeters": 764
         }
       ]
     },
@@ -34889,60 +34831,6 @@
       ]
     },
     {
-      "id": "A45-roadworks-2023-002196--vi-bs.2024-12-10_05-00-00-000.devi-zus.2023-09-01_19-00-00-000.f_001.de68",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Gaulskopf - Dillenburg",
-      "subtitle": " Gießen -> Hagen",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 10.12.24 um 05:00 Uhr",
-        "Ende: 27.09.27 um 05:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 17.04.31)",
-        "",
-        "A45: Gießen -> Hagen, zwischen 1.7 km hinter Gaulskopf und 0.5 km vor AS Dillenburg",
-        "",
-        "Länge: 0.71 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 6.25 m",
-        "",
-        "A45 - Ersatzneubau BW Sechshelden  - AlD 2196"
-      ],
-      "isBlocked": false,
-      "speedLimitKmh": 80,
-      "lengthKm": 0.71,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.738799788984636,
-        "lon": 8.273772204428731
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 487,
-          "distanceMeters": 581
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 488,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 489,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 490,
-          "distanceMeters": 681
-        }
-      ]
-    },
-    {
       "id": "A45-roadworks-2023-002196--vi-bs.2024-12-10_05-00-00-000.devi-zus.2023-09-01_19-00-00-000.f_001.de58",
       "ref": "A45",
       "type": "roadworks",
@@ -35011,6 +34899,60 @@
           "routeId": "a45-a31",
           "segmentIndex": 493,
           "distanceMeters": 557
+        }
+      ]
+    },
+    {
+      "id": "A45-roadworks-2023-002196--vi-bs.2024-12-10_05-00-00-000.devi-zus.2023-09-01_19-00-00-000.f_001.de68",
+      "ref": "A45",
+      "type": "roadworks",
+      "title": "A45 | Gaulskopf - Dillenburg",
+      "subtitle": " Gießen -> Hagen",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 10.12.24 um 05:00 Uhr",
+        "Ende: 27.09.27 um 05:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 17.04.31)",
+        "",
+        "A45: Gießen -> Hagen, zwischen 1.7 km hinter Gaulskopf und 0.5 km vor AS Dillenburg",
+        "",
+        "Länge: 0.71 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 6.25 m",
+        "",
+        "A45 - Ersatzneubau BW Sechshelden  - AlD 2196"
+      ],
+      "isBlocked": false,
+      "speedLimitKmh": 80,
+      "lengthKm": 0.71,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.738799788984636,
+        "lon": 8.273772204428731
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 487,
+          "distanceMeters": 581
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 488,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 489,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 490,
+          "distanceMeters": 681
         }
       ]
     },
