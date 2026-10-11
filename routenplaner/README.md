@@ -246,6 +246,21 @@ Klick, damit niemandem mitten in der Routensuche die Seite neu lädt.
 Beim Ändern von `sw.js` die `VERSION` hochzählen, sonst behalten bestehende
 Installationen ihren alten Cache.
 
+## Freie Suche: woher die Alternativen kommen
+
+Für eine selbst eingegebene Strecke fragt die Seite OSRM nach Alternativen und
+erzwingt zusätzliche Varianten über Autobahnkreuze aus `data/junctions.json` –
+nötig, weil OSRM nach seiner eigenen Zeitschätzung aussiebt und die bei rund
+110 km/h gedeckelt ist: Der Unterschied zwischen unbegrenzt und 130 existiert
+dort nicht.
+
+Diese Kreuze müssen genauso sauber auf der Fahrbahn liegen wie die Wegpunkte der
+hinterlegten Korridore. `fetch-junctions.mjs` prüft das zweifach: Der Name muss
+auf ein eigenständiges "Kreuz" oder "Dreieck" enden, und der Punkt muss nach
+`speedgrid.json` höchstens 600 m von einer Autobahn entfernt liegen. Ohne die
+Prüfung waren 31 von 336 Einträgen falsch – darunter Bundesstraßen-Dreiecke, ein
+Rastplatz und die Stadt Kreuztal.
+
 ## Einen weiteren Korridor hinzufügen
 
 In `config/corridors.json` zuerst benötigte Wegpunkte in die `punkte`-Tabelle

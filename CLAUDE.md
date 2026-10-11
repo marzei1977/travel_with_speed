@@ -77,6 +77,11 @@ Diese Fallen sind behoben. Sie beim Ändern nicht wieder aufreißen:
   die Richtungsfahrbahnen getrennte OSM-Wege sind, gilt ein solcher Punkt nur für
   **eine** Fahrtrichtung; daher die Namen `biebelried-a7sued`, `hattenbach-a7nord`
   usw. Betraf einmal alle zwölf Routen (bis zu 70 km zu lang).
+- **Die freie Suche hat eigene Wegpunkte (`junctions.json`) – dieselbe Falle.**
+  `motorway_junction` steht auch an Bundesstraßen, der Namensfilter kannte keine
+  Wortgrenzen; 31 von 336 Einträgen waren falsch ("Aalener Dreieck" schickte
+  Routen durch Aalen). `fetch-junctions.mjs` filtert jetzt nach Wortgrenze und
+  Abstand zur Autobahn (`speedgrid.json`); `--nur-filtern` geht ohne Overpass.
 - **OSRM-Steps taugen nicht als Auswertungseinheit** – einer kann 150 km lang sein.
   Deshalb feste 1-km-Abschnitte.
 - **Beim Raster gewinnt die Mehrheit, nicht der strengste Wert.** Sonst überschreibt
@@ -90,43 +95,31 @@ Diese Fallen sind behoben. Sie beim Ändern nicht wieder aufreißen:
   Leaflet keine Größe und `fitBounds` schrumpft auf einen Punkt.
 - **Schreibende Skripte dürfen bei Fehlern keine guten Daten überschreiben.**
 
-## Bekannte Schwäche
+## Modellstand (Details und Belege im README)
 
-Das Verkehrsmodell ist der am wenigsten belegte Teil: die Stundenverteilung ist
-eine Annahme, die Koeffizienten sind an einer einzigen Referenzfahrt kalibriert.
-Auf der A61 greift dabei über weite Strecken die Untergrenze von 90 km/h – ob das
-realistisch ist, ist offen.
+Kalibriert an einer GPX-Fahrt Aachen → München (6.9.2026, Sonntag): Modell trifft
+das gemessene Teilstück auf die Minute. Kernwerte: `DEFAULT_SPEED` 150,
+Wechselanzeige `0,2 × 120 + 0,8 × Wunsch`, LKW-Entlastung 2,0/0,1/0,05, Bremsbetrag
+skaliert mit `wunsch/185`, Beschleunigen `0,7 × Δv²/v_ziel`.
 
-**Die Kalibrierungslücke ist geklärt** (GPX-Messung Aachen → München, 6.9.2026,
-678 km): nicht das Modell war zu optimistisch, sondern das eingegebene
-Wunschtempo. Gemessen wurden auf freier Strecke Ø 147 km/h (Median 152), nicht die
-angenommenen 185. Auf dem Stück, das sich mit einer hinterlegten Route deckt,
-trifft das Modell die Messung auf eine Minute. `DEFAULT_SPEED` steht deshalb auf
-150. Offen bleibt, dass die Fahrweise zwischen den Fahrten stark schwankt – die
-früheren Referenzfahrten waren deutlich schneller.
+**Erreichtes Tempo ist nicht Wunschtempo:** das harmonische Mittel aus einer
+Aufzeichnung (135) ist Prüfgröße, nicht Eingabewert – sonst zieht das Modell
+Verkehr und Beschleunigen doppelt ab.
 
-**Zwei Kalibrierungen sind seither nachgezogen** (Details im README):
-Wechselverkehrszeichen werden erfasst (`maxspeed:variable`, bundesweit 8.215
-Abschnitte, 4.298 bei `maxspeed=none`) und mit `0,2 × 120 + 0,8 × Wunschtempo`
-gerechnet; die Fahrstreifen-Spreizung wurde verstärkt (Entlastung 1,0/0,45/0,25 →
-2,0/0,1/0,05, LKW-Gewicht 50 → 60) und der Bremsbetrag skaliert jetzt mit dem
-Wunschtempo statt absolut zu wirken. Damit liegt die A61 in der Rangfolge dort,
-wo die Praxis sie sieht – vorher lag sie bei 185 km/h fälschlich vorn.
+## Offen
 
-**Erreichtes Tempo ist nicht Wunschtempo.** Das Auswertewerkzeug nennt das
-harmonische Mittel der freien Abschnitte (135 km/h) als Prüfgröße – ins Eingabefeld
-gehört es nicht, denn davon zieht das Modell Verkehr und Beschleunigen erst noch ab.
-Für die Referenzfahrt trifft Wunschtempo 150 die gemessene Zeit exakt, 135 läge
-14 min daneben.
-
-**Beschleunigen ist seit kurzem eingerechnet** (`ACCEL_FACTOR`, Form Δv²/v_ziel).
-Kalibriert an den 31 von 65 gemessenen Vorgängen, die wirklich in einem
-ausgeschilderten Limit begannen – die übrigen 34 waren verkehrsbedingt und stecken
-schon im Wunschtempo.
-
-Am schwächsten belegt ist der Anlagen-Anteil von 20 %: der Effekt ist eindeutig
-(A3 unter Anzeige 144 km/h gegen 152 ohne), seine Größe hängt aber an einer
-einzigen Fahrt und ließ sich darin nicht sauber von der Verkehrsbremse trennen.
+- Nur **eine** Fahrt belegt das Modell, und die war ein verkehrsarmer Sonntag.
+  Eine Werktagsfahrt fehlt; dort greift die Untergrenze 90 km/h bei 29 % der
+  Zählstellen statt der Rechnung.
+- Schwächster Einzelwert: der Anlagen-Anteil 20 %.
+- Vorschlag Stufe 2 und 4 aus der Rechenweg-Übersicht: Kalibrierpunkt je
+  aufgezeichneter Fahrt, Koeffizienten laufend nachziehen.
+  Übersicht: https://claude.ai/code/artifact/8d4bb3e5-16dd-4019-a5f8-0c0f6008a9b9
+- App-Store-Weg, falls gewünscht: Capacitor → Xcode aufs eigene iPhone (kostenlos)
+  → TestFlight (99 $/Jahr). Hintergrund-Ortung gibt es nur nativ.
+- Overpass antwortet abends oft mit 504; die Skripte überschreiben dann nichts,
+  `fetch-route-speedlimits` behält bei Teilausfall die alten Segmente.
+- GitHub Actions drosselt die Cronjobs: Baustellen kommen real alle 3–6 h.
 
 ## Arbeitsweise
 
@@ -134,4 +127,4 @@ einzigen Fahrt und ließ sich darin nicht sauber von der Verkehrsbremse trennen.
 - Vor jedem Push `git pull --rebase origin main`: der Bot committet alle 30 Minuten
   in `data/`, die Stände laufen sonst auseinander.
 - Antworten auf Deutsch.
-- Node ist installiert, Xcode nicht.
+- Node ist installiert, Xcode nicht. `gh` ist angemeldet und als Git-Credential-Helper eingerichtet.
