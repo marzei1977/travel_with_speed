@@ -802,7 +802,11 @@
   //  - LKW: auf zwei Spuren blockiert ein überholender LKW beide Fahrstreifen
   //    ("Elefantenrennen"); ab drei Spuren bleibt links meist Platz.
   const TRAFFIC_DENSITY_WEIGHT = 4.0;
-  const TRAFFIC_TRUCK_WEIGHT = 60.0;
+  // War 60 – an einer Sonntagsfahrt eingestellt, an der kaum LKW fuhren. Am
+  // Werktag (12.10.2026, München ⇄ Wiesbaden) drückte das jede zweispurige
+  // Strecke auf die Untergrenze 90; gefahren wurden dort 131 km/h, genauso viel
+  // wie am Sonntag. Mit 9 treffen beide Werktagsfahrten auf ±3 Minuten.
+  const TRAFFIC_TRUCK_WEIGHT = 9.0;
   // Die Spreizung zwischen zwei und drei Fahrstreifen war zu klein: gemessen
   // wurden auf frei fließenden, unbegrenzten Abschnitten 122 km/h auf der A61
   // (2,1 Spuren, 20 % Schwerverkehr) gegen 159 km/h auf der A8, das Modell

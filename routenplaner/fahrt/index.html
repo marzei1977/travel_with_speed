@@ -292,22 +292,43 @@
     }
     bloecke.push({ von, bis: rein.length - 1, km });
 
-    // Stillstand an den Enden eines Blocks abschneiden: bei stehendem Fahrzeug
-    // wandert die GPS-Position weiter, und diese Minuten zählten sonst als
-    // Fahrzeit (eine halbe Stunde Parkplatzsuche kostete 13 km/h im Schnitt).
+    // Stillstand erkennen: bei stehendem Fahrzeug wandert die GPS-Position weiter,
+    // und diese Minuten zählten sonst als Fahrzeit (eine halbe Stunde
+    // Parkplatzsuche kostete 13 km/h im Schnitt).
     const strecke = (a, b) => { let m = 0; for (let i = a + 1; i <= b; i++) m += distM(rein[i - 1], rein[i]); return m; };
+    const faehrt = (i, richtung, von, bis) => {
+      let j = i;
+      while (j + richtung >= von && j + richtung <= bis &&
+             Math.abs(rein[j].t - rein[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
+      const dS = Math.abs(rein[j].t - rein[i].t) / 1000;
+      if (dS <= 0) return true;
+      return ((richtung > 0 ? strecke(i, j) : strecke(j, i)) / dS) * 3.6 >= STAND_KMH;
+    };
     function trimme(von, bis) {
-      const faehrt = (i, richtung) => {
-        let j = i;
-        while (j + richtung >= von && j + richtung <= bis &&
-               Math.abs(rein[j].t - rein[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
-        const dS = Math.abs(rein[j].t - rein[i].t) / 1000;
-        if (dS <= 0) return true;
-        return ((richtung > 0 ? strecke(i, j) : strecke(j, i)) / dS) * 3.6 >= STAND_KMH;
-      };
-      while (von < bis && !faehrt(von, 1)) von++;
-      while (bis > von && !faehrt(bis, -1)) bis--;
+      while (von < bis && !faehrt(von, 1, von, bis)) von++;
+      while (bis > von && !faehrt(bis, -1, von, bis)) bis--;
       return { von, bis };
+    }
+    // Halte mitten im Block: auf dem Rastplatz zeichnet die App oft weiter auf,
+    // dann gibt es keine Lücke über PAUSE_S. Wie im Auswerteskript wird der
+    // Block dort geteilt; die Ränder wachsen, solange das Fahrzeug im Umkreis
+    // des Halts bleibt.
+    const STAND_RADIUS_M = 100;
+    function teileAnStillstand(von, bis) {
+      const teile = [];
+      let start = von;
+      for (let i = von; i <= bis; i++) {
+        if (faehrt(i, 1, von, bis)) continue;
+        let j = i;
+        while (j < bis && !faehrt(j + 1, 1, von, bis)) j++;
+        let a = i, b = j;
+        while (a > start && distM(rein[a - 1], rein[i]) < STAND_RADIUS_M) a--;
+        while (b < bis && distM(rein[b + 1], rein[j]) < STAND_RADIUS_M) b++;
+        if (a - start >= 2) teile.push({ von: start, bis: a });
+        start = b; i = b;
+      }
+      if (bis - start >= 2) teile.push({ von: start, bis });
+      return teile;
     }
 
     // Alle ernsthaften Fahrblöcke behalten, nicht nur den längsten: ein Tankstopp
@@ -315,8 +336,10 @@
     const fahrt = [];
     for (const b of bloecke) {
       if (b.km < MIN_BLOCK_KM) continue;
-      const t = trimme(b.von, b.bis);
-      if (t.bis - t.von >= 2) fahrt.push(t);
+      for (const teil of teileAnStillstand(b.von, b.bis)) {
+        const t = trimme(teil.von, teil.bis);
+        if (t.bis - t.von >= 2) fahrt.push(t);
+      }
     }
     if (!fahrt.length) return { punkte: [], ausreisser, verworfen: alle.length, fahrH: 0, reiseH: 0 };
     const punkte = [];

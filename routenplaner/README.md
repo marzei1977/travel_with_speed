@@ -149,11 +149,13 @@ Beide Zahlen sind richtig, sie beantworten nur verschiedene Fragen. Ein einzelne
 Wert kann beides nicht leisten: der Bestfall-Referenzwert (siehe Kalibrierung)
 lässt sich nicht mit einem Durchschnitts-Verkehrsaufschlag verrechnen.
 
-Warum der LKW-Anteil so stark eingeht: auf einer zweispurigen Richtungsfahrbahn
+Warum der LKW-Anteil überhaupt eingeht: auf einer zweispurigen Richtungsfahrbahn
 blockiert ein überholender LKW beide Fahrstreifen, ab drei Spuren bleibt links
-meist Platz. Die BASt-Daten zeigen das deutlich – die A61 hat mit im Mittel 2,1
+meist Platz. Die BASt-Daten zeigen den Unterschied – die A61 hat mit im Mittel 2,1
 Fahrstreifen die wenigsten und mit rund 20 % den höchsten Schwerverkehrsanteil,
-die A9 dagegen 3,1 Spuren bei rund 13 %.
+die A9 dagegen 3,1 Spuren bei rund 13 %. Wie *viel* das kostet, ist allerdings
+weit weniger, als lange angenommen: zwei Werktagsfahrten zeigen auf zweispurigen
+Abschnitten dasselbe Tempo wie am Sonntag (siehe Kalibrierung, Werktagsfahrten).
 
 ## Was in einer Ergebniskarte steht
 
@@ -310,7 +312,10 @@ Minuten genau getroffen.
 
 Aachen → München am 6.9.2026, als GPX aufgezeichnet und mit
 `vergleich-fahrt.mjs` ausgewertet: 678 km, 5 h 38 min reine Fahrzeit
-(+ 4 min Halt), Ø 120 km/h.
+(+ 4 min Halt), Ø 120 km/h. *(Nachtrag 12.10.2026: darin steckte ein
+9-Minuten-Halt bei Rothenburg, den das Werkzeug damals nicht als Halt erkannte,
+weil die App auf dem Rastplatz weiter Punkte aufzeichnete. Richtig sind 5 h 28
+Fahrzeit und 9 + 4 min Halt. Die Schlüsse unten ändert das nur um wenige Minuten.)*
 
 Das Entscheidende daran ist nicht die Gesamtzeit, sondern das **gemessene Tempo
 auf freier Strecke**: auf den 508 unbegrenzten Kilometern Ø **147 km/h**, Median
@@ -354,6 +359,7 @@ daraus (gewichteter Fehler 8,4 → 6,3 km/h):
    Referenzfahrten bleiben also gültig.
 2. **Die Fahrstreifen-Spreizung wurde verstärkt**: der LKW-Entlastungsfaktor geht
    von 1,0 / 0,45 / 0,25 auf **2,0 / 0,1 / 0,05**, das LKW-Gewicht von 50 auf 60.
+   *(Das LKW-Gewicht ist inzwischen auf 9 gesenkt – siehe Werktagsfahrten.)*
    Auf zwei Spuren wiegt der Schwerverkehr damit doppelt, ab drei Spuren fast
    nichts mehr. Das entspricht der Erfahrung, dass sich auf der A61 links kaum
    überholen lässt, und deckt sich mit den BASt-Daten: 2,11 Fahrstreifen bei
@@ -441,12 +447,60 @@ Und die Fahrweise schwankt erheblich: dieselbe Person fuhr auf den früheren
 Referenzfahrten deutlich schneller als hier. Ein einzelner Vorgabewert kann das
 nicht abbilden, deshalb bleibt das Feld verstellbar.
 
+### Werktagsfahrten: der LKW-Abzug war siebenfach zu hoch
+
+München → Wiesbaden und zurück am Montag, 12.10.2026 (9:23 und 15:28 Uhr), beide
+über A8/A7/A3 und als GPX aufgezeichnet. Kilometerweise gegen die hinterlegte
+Route A7/A8 gerechnet, jeweils zur tatsächlichen Uhrzeit, Wunschtempo 150,
+Toleranz 0, Pausenkilometer herausgenommen:
+
+| 426 km gemeinsame Strecke | real | Modell (LKW 60) | Modell (LKW 9) |
+|---|---|---|---|
+| hin, Vormittag | 3 h 18 | 3 h 45 (+27) | 3 h 15 (−3) |
+| zurück, Nachmittag/Abend | 3 h 13 | 3 h 44 (+31) | 3 h 16 (+3) |
+| Aachen → München (Sonntag), Teilstück 500 km | – | +7 | +3 |
+
+Gut 20 der knapp 30 Minuten entstanden auf **zweispurigen Abschnitten** (A7
+Ulm–Würzburg, A3 Spessart): Das Modell rechnete dort 90 km/h, gefahren wurden
+131 bzw. 140. Nachgerechnet an der A7 um 11 Uhr: rund 280 LKW pro Stunde und
+Richtung, auf zwei Spuren also 140 je Spur, ergeben `140/100 × 60 × 2,0` = 168
+km/h Abzug, auf Wunschtempo 150 skaliert 136 – übrig blieben 14 km/h, die
+Untergrenze hob das auf 90.
+
+Der Grund: das LKW-Gewicht war an der Sonntagsfahrt eingestellt worden. Sonntags
+gilt das LKW-Fahrverbot, die Zählstelle Langenau meldet dann 581 Schwerfahrzeuge
+am Tag statt 4.576 werktags. Der Koeffizient wurde bei einem Zehntel der Menge
+bestimmt und am Werktag weit über seinen Messbereich hinaus angewendet. Gemessen
+liegt das Tempo auf den zweispurigen Abschnitten werktags (130/131 km/h) genau
+dort, wo es sonntags lag (131) – für diese Fahrweise kosten die LKW dort praktisch
+nichts. Auf drei Spuren traf das Modell schon vorher (130 gegen 129/133).
+
+Eine Rastersuche über den Faktor (×1 bis ×0) ergab das Minimum bei ×0,1 bis ×0,2;
+gewählt ist **×0,15, also LKW-Gewicht 9**. Die Untergrenze 90 km/h greift damit an
+einem Werktagvormittag bei keiner Zählstelle mehr (vorher 38 %).
+
+Was sonst noch auffiel, aber nicht geändert wurde:
+
+- Frankfurt im Feierabendverkehr unter Wechselanzeige: real 124, Modell 140 – drei
+  Minuten zu optimistisch. Der Anlagen-Anteil von 20 % ist ein Tagesmittel.
+- Die Zählstelle Rohrbrunn (A3 Spessart) steht mit zwei Fahrstreifen in den Daten;
+  gefahren wurden dort 155–179 km/h. Vermutlich ist der Ausbau neuer als der
+  Datenstand – nicht geprüft.
+- An Limits lag das Tempo im Mittel 3–5 km/h darüber, wie schon auf der ersten
+  Aufzeichnung.
+- Wunschtempo 150 bestätigt: Median auf freien Abschnitten 149 und 153 (Sonntag 152).
+
+**Folge für die Rangfolge.** Köln → München, Montag 8 Uhr: vorher A3/A9 4 h 57,
+A7/A8 5 h 21, A61 5 h 30 – jetzt 4 h 49, 4 h 52, 4 h 55. Die A61 bleibt hinten,
+aber nur noch knapp. Ihr früherer großer Rückstand hing fast ganz am LKW-Abzug,
+und der ist nur auf A7 und A3 gemessen, nicht auf der A61 selbst. Eine
+Werktagsfahrt über die A61 ist deshalb der nächste sinnvolle Prüfpunkt.
+
 Ohne Verkehrsfaktor liegt die A61-Route zeitlich knapp vorn, obwohl der
 A61-Abschnitt selbst nur zu rund einem Drittel unbegrenzt ist – sie kompensiert
 das über einen langen, fast durchgehend unbegrenzten A8-Abschnitt und weniger
-Stadtanteil. Erst das Verkehrsaufkommen (zwei Spuren, hoher LKW-Anteil) dreht
-die Reihenfolge um. Die Praxiserfahrung wird also vom Verkehrsmodell abgebildet,
-nicht von den Tempolimits allein.
+Stadtanteil. Erst das Verkehrsaufkommen dreht die Reihenfolge um, seit der
+Werktagskorrektur aber nur noch um wenige Minuten.
 
 ## Annahmen & bekannte Grenzen
 
@@ -475,18 +529,12 @@ nicht von den Tempolimits allein.
 - **Wie oft eine Anlage schaltet, weiß OSM nicht.** Das Tag `maxspeed:variable`
   sagt nur, dass eine Anzeige existiert, nicht wann sie welchen Wert zeigt. Der
   angesetzte Schaltwert von 120 km/h ist eine Annahme.
-- **Die Untergrenze von 90 km/h ist der schwächste Punkt des Verkehrsmodells.**
-  Wo der Abzug groß wird, bestimmt nicht mehr die Rechnung das Tempo, sondern
-  diese Zahl. An einem Werktagvormittag betrifft das jetzt 29 % der geprüften
-  Zählstellen – vor der Verstärkung des Fahrstreifen-Effekts waren es 13 %.
-  Betroffen sind fast nur zweispurige, LKW-reiche Strecken (A38, A6, A45, A93,
-  A31), also genau die, die der Effekt treffen soll; auf den Hauptachsen A3 und
-  A9 rechnet das Modell dafür deutlich weniger falsche Bremsung (A3 werktags
-  116 → 129 km/h). Eine weiche Sättigung statt der harten Kappung wäre die
-  saubere Lösung – sie würde die A61 werktags von 90 auf 112 km/h heben. Dafür
-  fehlt aber die Messung: die vorhandene Fahrt war ein Sonntag mit wenig Verkehr.
-  **Nächster sinnvoller Schritt ist eine GPX-Aufzeichnung an einem Werktag**,
-  gern auf der A61.
+- **Die Untergrenze von 90 km/h greift kaum noch.** Mit dem an Sonntagsdaten
+  eingestellten LKW-Gewicht 60 bestimmte sie an einem Werktagvormittag bei 38 %
+  der Zählstellen das Tempo statt der Rechnung. Zwei Werktagsfahrten haben das
+  widerlegt (siehe Kalibrierung); mit LKW-Gewicht 9 liegt keine Zählstelle mehr
+  auf der Grenze. Belegt ist der neue Wert nur für A7 und A3 – **eine
+  Werktagsfahrt über die A61** fehlt noch.
 - **Fehlendes `maxspeed`-Tag auf einer erkannten Autobahn**: OSM taggt nicht jeden
   Abschnitt lückenlos. In diesem Fall wird die Richtgeschwindigkeit (130 km/h)
   angenommen – in der UI als "begrenzt/Baustelle"-Farbe sichtbar, da nicht

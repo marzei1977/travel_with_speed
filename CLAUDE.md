@@ -60,7 +60,8 @@ node routenplaner/scripts/audit-route.mjs koeln-muenchen 150 0 2026-08-11T08:00 
 # Lokale Vorschau (die Seite lädt data/*.json per fetch und braucht daher HTTP)
 node routenplaner/scripts/dev-server.mjs   # -> http://localhost:8731/routenplaner/
 
-# Aufgezeichnete Fahrt gegen die Limits halten (--pause trennt Fahrt von Halt)
+# Aufgezeichnete Fahrt gegen die Limits halten (--pause trennt Fahrt von Halt;
+# Halte ohne Aufzeichnungslücke – Rastplatz – werden über Stillstand erkannt)
 node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx --csv /tmp/v.csv [--pause 180]
 ```
 
@@ -97,10 +98,16 @@ Diese Fallen sind behoben. Sie beim Ändern nicht wieder aufreißen:
 
 ## Modellstand (Details und Belege im README)
 
-Kalibriert an einer GPX-Fahrt Aachen → München (6.9.2026, Sonntag): Modell trifft
-das gemessene Teilstück auf die Minute. Kernwerte: `DEFAULT_SPEED` 150,
-Wechselanzeige `0,2 × 120 + 0,8 × Wunsch`, LKW-Entlastung 2,0/0,1/0,05, Bremsbetrag
-skaliert mit `wunsch/185`, Beschleunigen `0,7 × Δv²/v_ziel`.
+Kalibriert an drei GPX-Fahrten: Aachen → München (6.9.2026, Sonntag) und
+München ⇄ Wiesbaden (12.10.2026, Montag, über A8/A7/A3). Alle drei trifft das Modell
+auf ±3 Minuten. Kernwerte: `DEFAULT_SPEED` 150, Wechselanzeige
+`0,2 × 120 + 0,8 × Wunsch`, **LKW-Gewicht 9** (war 60), LKW-Entlastung 2,0/0,1/0,05,
+Bremsbetrag skaliert mit `wunsch/185`, Beschleunigen `0,7 × Δv²/v_ziel`.
+
+**Koeffizienten nicht an Sonntagsfahrten einstellen, die werktags wirken.** Das
+LKW-Gewicht 60 stammte von der Sonntagsfahrt (LKW-Fahrverbot, ein Zehntel der
+Menge) und drückte werktags jede zweispurige Strecke auf die Untergrenze 90 –
+gefahren wurden dort 131 km/h, 30 Minuten Fehler je Fahrt.
 
 **Erreichtes Tempo ist nicht Wunschtempo:** das harmonische Mittel aus einer
 Aufzeichnung (135) ist Prüfgröße, nicht Eingabewert – sonst zieht das Modell
@@ -108,9 +115,11 @@ Verkehr und Beschleunigen doppelt ab.
 
 ## Offen
 
-- Nur **eine** Fahrt belegt das Modell, und die war ein verkehrsarmer Sonntag.
-  Eine Werktagsfahrt fehlt; dort greift die Untergrenze 90 km/h bei 29 % der
-  Zählstellen statt der Rechnung.
+- Der niedrigere LKW-Abzug ist nur auf A7 und A3 belegt. Die A61 lag früher vor
+  allem wegen dieses Abzugs deutlich hinten und liegt jetzt nur noch knapp hinter
+  A3/A9 und A7/A8. **Eine Werktagsfahrt über die A61** fehlt.
+- Frankfurt im Feierabendverkehr unter Wechselanzeige rechnet das Modell zu
+  optimistisch (140 statt 124 km/h).
 - Schwächster Einzelwert: der Anlagen-Anteil 20 %.
 - Vorschlag Stufe 2 und 4 aus der Rechenweg-Übersicht: Kalibrierpunkt je
   aufgezeichneter Fahrt, Koeffizienten laufend nachziehen.

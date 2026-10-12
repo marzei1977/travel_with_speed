@@ -98,34 +98,56 @@ const bloecke = [];
   bloecke.push({ von, bis: bereinigt.length - 1, km });
 }
 
-// Stillstand am Anfang und Ende eines Blocks abschneiden. Bei stehendem Fahrzeug
-// wandert die GPS-Position weiter; ohne das Trimmen zählen diese Minuten als
-// Fahrzeit und drücken den Schnitt (eine halbe Stunde Parkplatzsuche am Ziel
-// kostete so 13 km/h).
+// Stillstand erkennen. Bei stehendem Fahrzeug wandert die GPS-Position weiter;
+// ohne diese Prüfung zählen solche Minuten als Fahrzeit und drücken den Schnitt
+// (eine halbe Stunde Parkplatzsuche am Ziel kostete so 13 km/h).
+const strecke = (a, b) => { let m = 0; for (let i = a + 1; i <= b; i++) m += distM(bereinigt[i - 1], bereinigt[i]); return m; };
+function faehrt(i, richtung, von, bis) {
+  let j = i;
+  while (j + richtung >= von && j + richtung <= bis &&
+         Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
+  const dS = Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000;
+  if (dS <= 0) return true;
+  const m = richtung > 0 ? strecke(i, j) : strecke(j, i);
+  return (m / dS) * 3.6 >= STAND_KMH;
+}
 function trimmeStillstand(von, bis) {
-  const strecke = (a, b) => { let m = 0; for (let i = a + 1; i <= b; i++) m += distM(bereinigt[i - 1], bereinigt[i]); return m; };
-  const faehrt = (i, richtung) => {
-    let j = i;
-    while (j + richtung >= von && j + richtung <= bis &&
-           Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000 < STAND_FENSTER_S) j += richtung;
-    const dS = Math.abs(bereinigt[j].t - bereinigt[i].t) / 1000;
-    if (dS <= 0) return true;
-    const m = richtung > 0 ? strecke(i, j) : strecke(j, i);
-    return (m / dS) * 3.6 >= STAND_KMH;
-  };
-  while (von < bis && !faehrt(von, 1)) von++;
-  while (bis > von && !faehrt(bis, -1)) bis--;
+  while (von < bis && !faehrt(von, 1, von, bis)) von++;
+  while (bis > von && !faehrt(bis, -1, von, bis)) bis--;
   return { von, bis };
+}
+// Halte mitten in einem Block: auf dem Rastplatz zeichnet die App oft weiter
+// Punkte auf, dann entsteht keine Lücke über PAUSE_S. Ein 10-Minuten-Halt zählte
+// so als Fahrzeit (München → Wiesbaden, 12.10.2026). Der Block wird am Halt
+// geteilt; die Ränder wachsen, solange das Fahrzeug im Umkreis des Halts bleibt.
+// Ein Stau, in dem man fünf Minuten lang praktisch steht, gilt damit ebenfalls
+// als Halt – das ist selten und der kleinere Fehler.
+const STAND_RADIUS_M = 100;
+function teileAnStillstand(von, bis) {
+  const teile = [];
+  let start = von;
+  for (let i = von; i <= bis; i++) {
+    if (faehrt(i, 1, von, bis)) continue;
+    let j = i;
+    while (j < bis && !faehrt(j + 1, 1, von, bis)) j++;
+    let a = i, b = j;
+    while (a > start && distM(bereinigt[a - 1], bereinigt[i]) < STAND_RADIUS_M) a--;
+    while (b < bis && distM(bereinigt[b + 1], bereinigt[j]) < STAND_RADIUS_M) b++;
+    if (a - start >= 2) teile.push({ von: start, bis: a });
+    start = b; i = b;
+  }
+  if (bis - start >= 2) teile.push({ von: start, bis });
+  return teile;
 }
 
 const fahrbloecke = [];
 for (const b of bloecke) {
   if (b.km < MIN_BLOCK_KM) continue;
-  const { von, bis } = trimmeStillstand(b.von, b.bis);
-  if (bis - von < 2) continue;
-  let m = 0;
-  for (let i = von + 1; i <= bis; i++) m += distM(bereinigt[i - 1], bereinigt[i]);
-  fahrbloecke.push({ von, bis, m });
+  for (const teil of teileAnStillstand(b.von, b.bis)) {
+    const { von, bis } = trimmeStillstand(teil.von, teil.bis);
+    if (bis - von < 2) continue;
+    fahrbloecke.push({ von, bis, m: strecke(von, bis) });
+  }
 }
 if (!fahrbloecke.length) { console.error("Kein Fahrblock über " + MIN_BLOCK_KM + " km gefunden."); process.exit(1); }
 
