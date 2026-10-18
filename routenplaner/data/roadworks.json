@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-18T22:01:05.338Z",
+  "updatedAt": "2026-10-18T23:59:01.450Z",
   "items": [
     {
       "id": "A9-roadworks-2023-001923--vi-bs.2025-11-12_00-00-00-000.devi-zus.2024-04-08_06-00-00-000.f_001.de21",
@@ -531,10 +531,10 @@
       "subtitle": " Nürnberg -> Halle/Leipzig",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "18.10.26 00:00 bis zum 19.10.26 24:00 Uhr.",
-        "20.10.26 00:00 bis zum 21.10.26 24:00 Uhr.",
-        "22.10.26 00:00 bis zum 23.10.26 24:00 Uhr.",
-        "24.10.26 00:00 bis zum 25.10.26 24:00 Uhr.",
+        "19.10.26 00:00 bis zum 20.10.26 24:00 Uhr.",
+        "21.10.26 00:00 bis zum 22.10.26 24:00 Uhr.",
+        "23.10.26 00:00 bis zum 24.10.26 24:00 Uhr.",
+        "25.10.26 00:00 Uhr bis zum 25.10.26 24:00 Uhr.",
         "26.10.26 00:00 bis zum 27.10.26 24:00 Uhr.",
         "28.10.26 00:00 bis zum 29.10.26 24:00 Uhr.",
         "30.10.26 00:00 bis zum 31.10.26 24:00 Uhr.",
@@ -2169,7 +2169,7 @@
       "subtitle": " Würzburg -> Passau",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "18.10.26 21:00 bis zum 19.10.26 05:00 Uhr.",
+        "19.10.26 von 00:00 bis 05:00 Uhr",
         "",
         "A3: Würzburg -> Passau, zwischen 0.2 km hinter AS Nürnberg/Behringersdorf und 4.4 km vor AK Nürnberg",
         "",
@@ -2180,7 +2180,14 @@
       "isBlocked": false,
       "speedLimitKmh": 60,
       "lengthKm": 1.09,
-      "windows": [],
+      "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-10-19",
+          "vonMin": 0,
+          "bisMin": 300
+        }
+      ],
       "ausnahmen": [],
       "coordinate": {
         "lat": 49.47588679982487,
@@ -6555,7 +6562,7 @@
       "subtitle": " Köln -> Oberhausen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "18.10.26 22:00 bis zum 19.10.26 05:00 Uhr.",
+        "19.10.26 von 00:00 bis 05:00 Uhr",
         "19.10.26 22:00 bis zum 20.10.26 05:00 Uhr.",
         "20.10.26 22:00 bis zum 21.10.26 05:00 Uhr.",
         "21.10.26 22:00 bis zum 22.10.26 05:00 Uhr.",
@@ -6579,6 +6586,12 @@
       "speedLimitKmh": null,
       "lengthKm": 0.52,
       "windows": [
+        {
+          "art": "datum",
+          "datum": "2026-10-19",
+          "vonMin": 0,
+          "bisMin": 300
+        },
         {
           "art": "datum",
           "datum": "2026-10-26",
@@ -6626,7 +6639,6 @@
       "subtitle": " Köln -> Oberhausen",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "18.10.26 von 20:00 bis 24:00 Uhr",
         "19.10.26 20:00 bis zum 20.10.26 05:00 Uhr.",
         "20.10.26 20:00 bis zum 21.10.26 05:00 Uhr.",
         "21.10.26 20:00 bis zum 22.10.26 05:00 Uhr.",
@@ -6650,12 +6662,6 @@
       "speedLimitKmh": null,
       "lengthKm": 0.42,
       "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-10-18",
-          "vonMin": 1200,
-          "bisMin": 1440
-        },
         {
           "art": "datum",
           "datum": "2026-10-26",
@@ -8196,7 +8202,7 @@
       ]
     },
     {
-      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-10-18_21-42-00-302.de0",
+      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-10-18_23-46-00-427.de0",
       "ref": "A3",
       "type": "warning",
       "title": "A3 | Limburg-Süd - Idstein",
@@ -17604,7 +17610,6 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "Jeden Tag zwischen dem 08.10.26 und dem 19.10.26 von 18:30 bis 00:00 Uhr.",
         "Jeden Tag zwischen dem 09.10.26 und dem 19.10.26 von 00:00 bis 05:30 Uhr.",
         "",
         "A7: Kassel -> Hannover, zwischen 2.5 km hinter Schwalenberg und 4.4 km vor Harz",
@@ -17617,12 +17622,6 @@
       "speedLimitKmh": 80,
       "lengthKm": 1.19,
       "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-10-19",
-          "vonMin": 1110,
-          "bisMin": 0
-        },
         {
           "art": "datum",
           "datum": "2026-10-19",
@@ -17742,7 +17741,6 @@
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "Jeden Tag zwischen dem 08.10.26 und dem 19.10.26 von 18:30 bis 00:00 Uhr.",
         "Jeden Tag zwischen dem 09.10.26 und dem 19.10.26 von 00:00 bis 05:30 Uhr.",
         "",
         "A7: Kassel -> Hannover, zwischen 1.6 km hinter Harz und 3.3 km vor Ambergau Ost",
@@ -17755,12 +17753,6 @@
       "speedLimitKmh": 80,
       "lengthKm": 0.69,
       "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-10-19",
-          "vonMin": 1110,
-          "bisMin": 0
-        },
         {
           "art": "datum",
           "datum": "2026-10-19",
