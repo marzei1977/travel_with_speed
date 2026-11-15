@@ -546,6 +546,19 @@ Zwei Befunde:
 älteren Fahrten weichen leicht von den Tabellen oben ab, weil dort mit dem
 damals aktuellen statt mit dem Baustellenstand des Fahrttags gerechnet wurde.)
 
+Nachrechnen lässt sich jede Zeile mit `abgleich-fahrt.mjs`; das Skript holt den
+Stand des Fahrttags selbst aus der Git-Historie und nimmt Koeffizienten zum
+Durchprobieren als Schalter:
+
+```bash
+node routenplaner/scripts/abgleich-fahrt.mjs fahrt.gpx            # Stand des Fahrttags
+node routenplaner/scripts/abgleich-fahrt.mjs fahrt.gpx --lkw 9    # anderes LKW-Gewicht
+```
+
+Einzige Ausnahme ist die Fahrt vom 6.9.: ihr Tagesstand stammt aus der Zeit vor
+der Wegpunkt-Korrektur und vor der Erfassung der Wechselanzeigen. Für sie gilt
+`--stand 30da8cd` (drei Tage später, erster Stand mit beidem).
+
 Die Sonntagsfahrten bewegt die Änderung nicht – das LKW-Gewicht ist damit dort
 eingestellt, wo es wirkt.
 

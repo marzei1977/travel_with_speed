@@ -63,6 +63,12 @@ node routenplaner/scripts/dev-server.mjs   # -> http://localhost:8731/routenplan
 # Aufgezeichnete Fahrt gegen die Limits halten (--pause trennt Fahrt von Halt;
 # Halte ohne Aufzeichnungslücke – Rastplatz – werden über Stillstand erkannt)
 node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx --csv /tmp/v.csv [--pause 180]
+
+# Aufgezeichnete Fahrt kilometerweise gegen das Modell: real vs. gerechnet, nach
+# Streckenart, Autobahn × Fahrstreifen und Stunde. Nimmt Routen und Baustellen
+# vom Fahrttag aus der Git-Historie; --lkw/--dichte/--spur3/--anlage zum Probieren.
+# Enthält eine Kopie der Rechenlogik aus index.html – bei Änderungen nachziehen.
+node routenplaner/scripts/abgleich-fahrt.mjs "Strecken GPS/fahrt.gpx" [korridor] [--stand aktuell]
 ```
 
 ## Fehler, die schon einmal gemacht wurden
