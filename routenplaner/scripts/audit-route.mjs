@@ -104,10 +104,15 @@ function fensterGilt(w,min){ return w.bisMin<=w.vonMin ? (min>=w.vonMin||min<w.b
 function aktivUm(item,d){
   const key=datumKey(d);
   if((item.ausnahmen||[]).includes(key)) return false;
+  // Beginn/Ende der Bauphase und Zeiträume über Mitternacht – siehe index.html.
+  const stempel=`${key}T${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  if(item.von && stempel<item.von) return false;
+  if(item.bis && stempel>=item.bis) return false;
   const w=item.windows||[];
   if(!w.length) return true;
   const min=d.getHours()*60+d.getMinutes(), tag=d.getDay();
-  return w.some(x=> x.art==="datum" ? (x.datum===key&&fensterGilt(x,min))
+  return w.some(x=> x.art==="zeitraum" ? (stempel>=x.von&&stempel<x.bis)
+    : x.art==="datum" ? (x.datum===key&&fensterGilt(x,min))
     : x.art==="wochentage" ? (x.tage.includes(tag)&&key>=x.abDatum&&key<=x.bisDatum&&fensterGilt(x,min)) : false);
 }
 const wirkt=(i)=>Boolean(i.speedLimitKmh)||i.isBlocked;

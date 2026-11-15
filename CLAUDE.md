@@ -97,6 +97,17 @@ Diese Fallen sind behoben. Sie beim Ändern nicht wieder aufreißen:
   Gegenfahrbahn mit – das waren 993 falsche Treffer.
 - **Nur Meldungen mit Tempolimit oder Sperrung kosten Zeit.** Grünpflege und
   Wanderbaustellen pauschal einzurechnen überschätzte die Fahrzeit um über eine Stunde.
+- **Vollsperrungen stehen im eigenen API-Dienst `closure`**, nicht unter
+  `roadworks`/`warning`, und `isBlocked` bleibt selbst dort `"false"` – maßgeblich
+  ist `display_type: "CLOSURE"` (`CLOSURE_ENTRY_EXIT` sind nur Rampen). Der Dienst
+  fehlte in Skript und freier Suche; die gesperrte A3 am Offenbacher Kreuz
+  (14.–16.11.2026) kam deshalb nie an. Gesperrte Routen stehen jetzt am Ende,
+  ihre Zeit enthält keine Umleitung.
+- **Meldungen haben Beginn und Ende (`von`/`bis`) und Zeiträume über Mitternacht**
+  ("24.11.26 20:00 bis zum 25.11.26 06:00"). Ohne beides gilt eine Nachtsperrung
+  als dauerhaft aktiv.
+- **`roadworks.json` im Service Worker erst aus dem Netz, nicht aus dem Cache** –
+  sonst zeigt die installierte App den Stand vom vorigen Öffnen.
 - **Overpass weist browserartige User-Agents mit HTTP 406 ab.** Schlichte Kennung nutzen.
 - **Karten erst einblenden, dann zeichnen.** In einem versteckten Container hat
   Leaflet keine Größe und `fitBounds` schrumpft auf einen Punkt.

@@ -103,6 +103,24 @@ function parseIsInHorizon(description) {
   return true;
 }
 
+// Beginn und Ende der Bauphase minutengenau ("Beginn: 14.11.26 um 20:00 Uhr").
+// Sperrungen gelten oft nur eine Nacht oder ein Wochenende; ohne diese Grenzen
+// wäre eine für Samstagabend angekündigte Sperrung schon am Montag davor aktiv.
+// Format "JJJJ-MM-TTTHH:MM" in deutscher Ortszeit, als Text vergleichbar.
+function parsePhase(description) {
+  const text = (description || []).join(" ");
+  const parse = (re) => {
+    const m = text.match(re);
+    if (!m) return null;
+    const [, dd, mm, yy, hh, mi] = m;
+    return `20${yy}-${mm}-${dd}T${hh || "00"}:${mi || "00"}`;
+  };
+  return {
+    von: parse(/Beginn:\s*(\d{2})\.(\d{2})\.(\d{2})(?:\s+um\s+(\d{2}):(\d{2}))?/),
+    bis: parse(/Ende:\s*(\d{2})\.(\d{2})\.(\d{2})(?:\s+um\s+(\d{2}):(\d{2}))?/),
+  };
+}
+
 const WEEKDAYS = {
   sonntag: 0, montag: 1, dienstag: 2, mittwoch: 3,
   donnerstag: 4, freitag: 5, samstag: 6,
@@ -128,6 +146,20 @@ function parseTimeWindows(description) {
       datum: `20${yy}-${mm}-${dd}`,
       vonMin: Number(h1) * 60 + Number(min1),
       bisMin: Number(h2) * 60 + Number(min2),
+    });
+  }
+
+  // Zeitraum über Mitternacht: "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr" – die
+  // übliche Form bei Nachtsperrungen. Wurde früher nicht erkannt, die Meldung
+  // galt dann als dauerhaft aktiv.
+  const spanRe =
+    /(\d{2})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})\s+bis\s+zum\s+(\d{2})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})/g;
+  while ((m = spanRe.exec(text)) !== null) {
+    const [, d1, m1, y1, h1, mi1, d2, m2, y2, h2, mi2] = m;
+    windows.push({
+      art: "zeitraum",
+      von: `20${y1}-${m1}-${d1}T${h1}:${mi1}`,
+      bis: `20${y2}-${m2}-${d2}T${h2}:${mi2}`,
     });
   }
 
@@ -169,11 +201,13 @@ function parseTimeWindows(description) {
 async function fetchItemsForRef(ref, kind) {
   try {
     const data = await fetchJson(`${API_BASE}/${ref}/services/${kind}`);
-    const key = kind === "roadworks" ? "roadworks" : "warning";
-    return (data[key] || [])
+    return (data[kind] || [])
       // Geplante, noch nicht begonnene Maßnahmen ausblenden – die API markiert sie
       // per `future`-Flag bzw. über einen künftigen Beginn im Beschreibungstext.
-      .filter((item) => !item.future && parseIsInHorizon(item.description))
+      // Angekündigte Sperrungen bleiben dagegen drin: wer für das kommende
+      // Wochenende plant, muss sie sehen. Der Browser prüft `von`/`bis` gegen
+      // den Zeitpunkt der Durchfahrt.
+      .filter((item) => (kind === "closure" || !item.future) && parseIsInHorizon(item.description))
       .map((item) => {
         // Die API liefert die tatsächlich betroffene Teilstrecke als GeoJSON
         // LineString (item.geometry) – nur einen einzelnen "coordinate"-Punkt zu
@@ -189,12 +223,20 @@ async function fetchItemsForRef(ref, kind) {
         return {
           id: `${ref}-${kind}-${item.identifier || item.title}`,
           ref,
-          type: kind === "roadworks" ? "roadworks" : "warning",
+          // CLOSURE ist die gesperrte Hauptfahrbahn, CLOSURE_ENTRY_EXIT nur eine
+          // Auf- oder Abfahrt bzw. Rampe im Kreuz – die wird angezeigt, kostet
+          // die durchgehende Strecke aber nichts.
+          type: kind !== "closure" ? kind : item.display_type === "CLOSURE" ? "closure" : "closure-ramp",
           title: item.title || null,
           subtitle: item.subtitle || null,
           description: item.description || [],
-          // Die API liefert isBlocked als String "true"/"false", nicht als Boolean.
-          isBlocked: item.isBlocked === "true" || item.isBlocked === true,
+          // Die API liefert isBlocked als String "true"/"false", nicht als Boolean –
+          // und setzt es selbst bei einer Vollsperrung nicht. Maßgeblich ist dort
+          // der display_type.
+          isBlocked:
+            item.isBlocked === "true" || item.isBlocked === true ||
+            (kind === "closure" && item.display_type === "CLOSURE"),
+          ...parsePhase(item.description),
           speedLimitKmh: parseSpeedLimitFromDescription(item.description),
           lengthKm: parseLengthKmFromDescription(item.description),
           ...parseTimeWindows(item.description),
@@ -295,7 +337,9 @@ async function main() {
 
   const allItems = [];
   for (const ref of refs) {
-    for (const kind of ["roadworks", "warning"]) {
+    // Vollsperrungen führt die API in einem eigenen Dienst `closure`. Der fehlte
+    // hier einmal – die gesperrte A3 am Offenbacher Kreuz kam deshalb nie an.
+    for (const kind of ["roadworks", "warning", "closure"]) {
       allItems.push(...(await fetchItemsForRef(ref, kind)));
       await sleep(DELAY_BETWEEN_REQUESTS_MS);
     }

@@ -241,6 +241,28 @@
   }
   .swap:hover { background: var(--accent-soft); color: var(--accent); }
 
+  /* Standort-Knopf sitzt im Von-Feld, damit er unterwegs mit einem Tippen
+     erreichbar ist und keine eigene Zeile braucht. */
+  .place.has-locate input { padding-right: 2.9rem; }
+  .locate {
+    position: absolute; right: 4px; top: 4px; bottom: 4px; width: 2.5rem;
+    border: none; background: none; color: var(--muted); cursor: pointer;
+    border-radius: calc(var(--r-control) - 4px); display: grid; place-items: center;
+  }
+  .locate:hover, .locate.is-set { color: var(--accent); background: var(--accent-soft); }
+  .locate:disabled { opacity: 0.5; cursor: default; }
+  .locate.is-busy svg { animation: locate-puls 1s ease-in-out infinite; }
+  @keyframes locate-puls { 50% { opacity: 0.25; } }
+
+  .closure-banner {
+    margin: 0.7rem 0 0.2rem; padding: 0.65rem 0.8rem; border-radius: 12px;
+    background: var(--limited-soft); color: var(--danger);
+    font-size: 0.875rem; line-height: 1.4;
+  }
+  .closure-banner strong { display: block; }
+  .result.is-closed .time { color: var(--muted); text-decoration: line-through; }
+  .result .rank.rank-closed { background: var(--danger); color: #fff; }
+
   .suggest {
     position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px);
     background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
@@ -500,9 +522,18 @@
         <div class="ctl">
           <span class="ctl-label">Strecke</span>
           <div class="places">
-            <div class="place">
+            <div class="place has-locate">
               <input type="text" id="from-input" placeholder="Von – Stadt, optional Straße"
                      autocomplete="off" spellcheck="false" />
+              <button type="button" id="locate-btn" class="locate"
+                      title="Aktuellen Standort als Start übernehmen"
+                      aria-label="Aktuellen Standort als Start übernehmen">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+                  <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+                </svg>
+              </button>
               <div class="suggest" id="from-suggest"></div>
             </div>
             <button type="button" id="swap-btn" class="swap" title="Start und Ziel tauschen" aria-label="Start und Ziel tauschen">⇅</button>
@@ -694,6 +725,12 @@
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
   }
 
+  // "JJJJ-MM-TTTHH:MM" in Ortszeit – als Text mit von/bis der Meldungen vergleichbar.
+  function localStamp(d) {
+    const p = (n) => String(n).padStart(2, "0");
+    return `${localDateKey(d)}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
   // ---------------------------------------------------------------------------
   // Baustellen-Zeitfenster
   // ---------------------------------------------------------------------------
@@ -709,12 +746,18 @@
   function isActiveAt(item, date) {
     const key = localDateKey(date);
     if ((item.ausnahmen || []).includes(key)) return false;
+    // Beginn und Ende der Bauphase, minutengenau. Angekündigte Sperrungen stehen
+    // schon Tage vorher in den Daten und dürfen erst ab ihrem Beginn gelten.
+    const stamp = localStamp(date);
+    if (item.von && stamp < item.von) return false;
+    if (item.bis && stamp >= item.bis) return false;
     const wins = item.windows || [];
     if (!wins.length) return true;
 
     const minutes = date.getHours() * 60 + date.getMinutes();
     const day = date.getDay();
     return wins.some((w) => {
+      if (w.art === "zeitraum") return stamp >= w.von && stamp < w.bis;
       if (w.art === "datum") {
         return w.datum === key && windowCoversMinute(w, minutes);
       }
@@ -932,6 +975,23 @@
     return Boolean(item.speedLimitKmh) || item.isBlocked;
   }
 
+  // Gesperrte Hauptfahrbahn (Dienst `closure`, display_type CLOSURE). Gesperrte
+  // Auf- und Abfahrten zählen nicht dazu.
+  function isFullClosure(item) {
+    return item.type === "closure" && item.isBlocked;
+  }
+
+  // "bis So 02:00" – aus dem Ende der Bauphase oder dem gerade laufenden Fenster.
+  function closureUntil(item, date) {
+    const stamp = localStamp(date);
+    const win = (item.windows || []).find((w) => w.art === "zeitraum" && stamp >= w.von && stamp < w.bis);
+    const bis = win?.bis || item.bis;
+    if (!bis) return "";
+    return " bis " + new Date(bis).toLocaleString("de-DE", {
+      weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+    });
+  }
+
   // Anteil eines 1-km-Segments, den eine Baustelle real belegt. Eine Meldung, die
   // laut Beschreibung 0,2 km lang ist, aber (durch die Match-Toleranz) auf ein
   // ganzes Segment trifft, darf nicht den kompletten Kilometer ausbremsen. Umgekehrt
@@ -964,6 +1024,9 @@
     // groß aus wie in der Aufzeichnung.
     let prevSpeed = null;
     const roadworkItems = new Map();
+    // Vollsperrungen, die zum Zeitpunkt der Durchfahrt gelten. Die Route ist dann
+    // so nicht fahrbar – die gerechnete Zeit enthält keine Umleitung.
+    const closures = new Map();
 
     route.segments.forEach((segment, index) => {
       const segKm = segment.distanceMeters / 1000;
@@ -983,6 +1046,7 @@
         isActiveAt(item, segTime)
       );
       allNearby.forEach((item) => roadworkItems.set(item.id, item));
+      allNearby.filter(isFullClosure).forEach((item) => closures.set(item.id, item));
       const affecting = allNearby.filter(hasSpeedImpact);
 
       const baseCap = segmentCapKmh(segment, tolerance);
@@ -1065,20 +1129,27 @@
       trafficLossHours,
       accelLossHours,
       avgSpeed: distKm / timeHours,
+      departure: date,
       arrival: new Date(date.getTime() + timeHours * 3600_000),
       roadworks: [...roadworkItems.values()],
+      closures: [...closures.values()],
     };
   }
 
   function renderRoadworks(items) {
     if (!items.length) return "";
     // Zuerst die, die wirklich Zeit kosten.
-    const sorted = [...items].sort((a, b) => Number(hasSpeedImpact(b)) - Number(hasSpeedImpact(a)));
+    const gewicht = (i) => (isFullClosure(i) ? 2 : hasSpeedImpact(i) ? 1 : 0);
+    const sorted = [...items].sort((a, b) => gewicht(b) - gewicht(a));
     const relevant = items.filter(hasSpeedImpact).length;
 
     const list = sorted
       .map((item) => {
-        const tag = item.isBlocked
+        const tag = isFullClosure(item)
+          ? "⛔ Vollsperrung"
+          : item.type === "closure-ramp"
+          ? "Auf-/Abfahrt gesperrt – nicht eingerechnet"
+          : item.isBlocked
           ? "⚠️ Sperrung"
           : item.speedLimitKmh
           ? `max. ${item.speedLimitKmh} km/h – eingerechnet`
@@ -1100,7 +1171,13 @@
 
   function renderRouteCard(result, isFastest, corridorId, isSelected, referenz) {
     const { route, timeHours, distKm, noneKm, vmsKm, limitedKm, localKm, roadworkKm,
-            trafficLossHours, avgSpeed, arrival, roadworks } = result;
+            trafficLossHours, avgSpeed, arrival, roadworks, closures } = result;
+    const closed = closures.length > 0;
+    const banner = closed
+      ? `<div class="closure-banner">${closures.map((c) =>
+          `<strong>⛔ Vollsperrung ${c.title || c.ref}${closureUntil(c, result.departure)}</strong>`).join("")}
+          So nicht durchgehend fahrbar. Die Fahrzeit enthält keine Umleitung.</div>`
+      : "";
     // Der unbegrenzte Anteil zerfällt in zwei sehr verschiedene Sorten: wirklich
     // freie Strecke und solche unter einer Wechselanzeige, die jederzeit
     // begrenzen kann. Die Leiste trennt beide, sonst verspricht sie zu viel.
@@ -1144,15 +1221,16 @@
       : "";
 
     return `
-      <div class="result ${isFastest ? "" : "secondary"} ${isSelected ? "is-selected" : ""}"
+      <div class="result ${isFastest ? "" : "secondary"} ${isSelected ? "is-selected" : ""} ${closed ? "is-closed" : ""}"
            data-route="${route.id}" title="Klicken, um diese Strecke in der Karte hervorzuheben">
-        ${isFastest ? '<div class="rank">Schnellste</div>' : ""}
+        ${closed ? '<div class="rank rank-closed">Gesperrt</div>' : isFastest ? '<div class="rank">Schnellste</div>' : ""}
         <h3>${route.label.replace(/^via\s+/, "")}</h3>
         <div class="sub">${viaLabel(corridorId, route.id)}</div>
         <div class="time">${fmtHours(timeHours)}</div>
         <div class="arrival">Ankunft ${arrival.toLocaleString("de-DE", {
           weekday: "short", hour: "2-digit", minute: "2-digit",
         })}</div>
+        ${banner}
         <div class="stats">
           ${stats.map(([k, l]) => `<div class="stat"><div class="k">${k}</div><div class="l">${l}</div></div>`).join("")}
         </div>
@@ -1432,7 +1510,9 @@
     const results = corridor.routes
       .filter((r) => r.segments && r.segments.length)
       .map((r) => computeRoute(corridor, r, userSpeed, { date, useTraffic, tolerance }))
-      .sort((a, b) => a.timeHours - b.timeHours);
+      // Gesperrte Routen ans Ende: ihre Zeit ist ohne Umleitung gerechnet und
+      // darf keine fahrbare Route vom ersten Platz verdrängen.
+      .sort((a, b) => (a.closures.length ? 1 : 0) - (b.closures.length ? 1 : 0) || a.timeHours - b.timeHours);
 
     // Zwei feste Referenzzeitpunkte, beide mit Verkehr: sie hängen nicht an der
     // oben gewählten Abfahrt und machen die Routen dadurch untereinander
@@ -1446,7 +1526,7 @@
 
     const highlighted = selectedRouteId || results[0]?.route.id;
     routesEl.innerHTML = results
-      .map((r, i) => renderRouteCard(r, i === 0, corridor.id, selectedRouteId === r.route.id,
+      .map((r, i) => renderRouteCard(r, i === 0 && !r.closures.length, corridor.id, selectedRouteId === r.route.id,
                                      referenzen.get(r.route.id)))
       .join("");
 
@@ -1628,8 +1708,15 @@
   // --- OSRM ---------------------------------------------------------------
   async function osrmRoute(points, { alternatives = false } = {}) {
     const coords = points.map((p) => `${p.lon},${p.lat}`).join(";");
+    // Fahrtrichtung des Startpunkts mitgeben, wenn er vom GPS stammt: auf der
+    // Autobahn liegen die Richtungsfahrbahnen wenige Meter auseinander, und ohne
+    // Richtung snappt der Router gern auf die Gegenfahrbahn und wendet erst an
+    // der nächsten Ausfahrt.
+    const bearings = points.some((p) => p.heading != null)
+      ? "&bearings=" + points.map((p) => (p.heading != null ? `${Math.round(p.heading)},45` : "")).join(";")
+      : "";
     const url = `${OSRM}/${coords}?overview=full&geometries=geojson&steps=true` +
-      (alternatives ? "&alternatives=3" : "");
+      (alternatives ? "&alternatives=3" : "") + bearings;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Router antwortet ${res.status}`);
     const data = await res.json();
@@ -1787,6 +1874,15 @@
         vonMin: +m[4] * 60 + +m[5], bisMin: +m[6] * 60 + +m[7],
       });
     }
+    // Nachtsperrungen: "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr"
+    const spanRe = /(\d{2})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})\s+bis\s+zum\s+(\d{2})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})/g;
+    while ((m = spanRe.exec(text)) !== null) {
+      windows.push({
+        art: "zeitraum",
+        von: `20${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}`,
+        bis: `20${m[8]}-${m[7]}-${m[6]}T${m[9]}:${m[10]}`,
+      });
+    }
     const recRe = /Jeden\s+([A-Za-zÄÖÜäöü,\s und]+?)\s+zwischen\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+und\s+dem\s+(\d{2})\.(\d{2})\.(\d{2})\s+von\s+(\d{2}):(\d{2})\s+bis\s+(\d{2}):(\d{2})/g;
     while ((m = recRe.exec(text)) !== null) {
       const tage = Object.entries(WD_TXT).filter(([n]) => m[1].toLowerCase().includes(n)).map(([, i]) => i);
@@ -1807,6 +1903,17 @@
       }
     }
     return { windows, ausnahmen };
+  }
+  function parsePhaseTxt(desc) {
+    const text = (desc || []).join(" ");
+    const parse = (re) => {
+      const m = text.match(re);
+      return m ? `20${m[3]}-${m[2]}-${m[1]}T${m[4] || "00"}:${m[5] || "00"}` : null;
+    };
+    return {
+      von: parse(/Beginn:\s*(\d{2})\.(\d{2})\.(\d{2})(?:\s+um\s+(\d{2}):(\d{2}))?/),
+      bis: parse(/Ende:\s*(\d{2})\.(\d{2})\.(\d{2})(?:\s+um\s+(\d{2}):(\d{2}))?/),
+    };
   }
   function inHorizonTxt(desc) {
     const text = (desc || []).join(" ");
@@ -1854,14 +1961,16 @@
     const items = [];
     // Nacheinander statt parallel: der Dienst ist öffentlich und kostenlos.
     for (const ref of refs) {
-      for (const kind of ["roadworks", "warning"]) {
+      // `closure` sind die Vollsperrungen – ein eigener Dienst der API.
+      for (const kind of ["roadworks", "warning", "closure"]) {
         try {
           const res = await fetch(`${AUTOBAHN_API}/${ref}/services/${kind}`);
           if (!res.ok) continue;
           const data = await res.json();
-          const list = data[kind === "roadworks" ? "roadworks" : "warning"] || [];
+          const list = data[kind] || [];
           for (const it of list) {
-            if (it.future || !inHorizonTxt(it.description)) continue;
+            // Angekündigte Sperrungen bleiben drin, isActiveAt prüft ihren Beginn.
+            if ((it.future && kind !== "closure") || !inHorizonTxt(it.description)) continue;
             const geom = it.geometry?.coordinates;
             const pts = geom
               ? geom.map(([lon, lat]) => ({ lat, lon }))
@@ -1871,10 +1980,14 @@
             if (!pts.length) continue;
             items.push({
               id: `${ref}-${kind}-${it.identifier || it.title}`,
-              ref, type: kind === "roadworks" ? "roadworks" : "warning",
+              ref,
+              type: kind !== "closure" ? kind : it.display_type === "CLOSURE" ? "closure" : "closure-ramp",
               title: it.title || null, subtitle: it.subtitle || null,
               description: it.description || [],
-              isBlocked: it.isBlocked === "true" || it.isBlocked === true,
+              // Die API setzt isBlocked selbst bei Vollsperrungen nicht.
+              isBlocked: it.isBlocked === "true" || it.isBlocked === true ||
+                (kind === "closure" && it.display_type === "CLOSURE"),
+              ...parsePhaseTxt(it.description),
               speedLimitKmh: parseSpeedLimitTxt(it.description),
               lengthKm: parseLengthTxt(it.description),
               ...parseWindowsTxt(it.description),
@@ -1988,6 +2101,63 @@
     });
   }
 
+  // Aktuellen Standort als Start übernehmen – für die Prüfung unterwegs. Der
+  // Standort wird bei jedem Tippen neu geholt, nie zwischengespeichert: im Auto
+  // ist er nach einer Minute zwei Kilometer alt.
+  function setupLocate() {
+    const btn = document.getElementById("locate-btn");
+    const input = document.getElementById("from-input");
+    const state = document.getElementById("search-state");
+    const say = (t, err) => {
+      state.textContent = t;
+      state.classList.toggle("err", Boolean(err));
+    };
+    if (!("geolocation" in navigator)) {
+      btn.hidden = true;
+      return;
+    }
+    // Wer danach selbst tippt, hat den Standort wieder verworfen.
+    input.addEventListener("input", () => btn.classList.remove("is-set"));
+    btn.addEventListener("click", () => {
+      btn.disabled = true;
+      btn.classList.add("is-busy");
+      say("Standort wird ermittelt …");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude, accuracy, heading, speed } = pos.coords;
+          // Die Richtung taugt nur in Fahrt; im Stand liefert das Gerät Zufall.
+          const faehrt = Number.isFinite(heading) && Number.isFinite(speed) && speed > 8;
+          chosen.from = {
+            lat: latitude, lon: longitude,
+            label: "Aktueller Standort", detail: "",
+            heading: faehrt ? heading : null,
+          };
+          input.value = "Aktueller Standort";
+          document.getElementById("from-suggest").classList.remove("open");
+          btn.disabled = false;
+          btn.classList.remove("is-busy");
+          btn.classList.add("is-set");
+          say(`Standort übernommen (auf ${Math.round(accuracy)} m genau` +
+              `${faehrt ? ", Fahrtrichtung berücksichtigt" : ""}).`);
+          // Steht das Ziel schon, gleich rechnen – unterwegs zählt jedes Tippen.
+          if (document.getElementById("to-input").value.trim()) {
+            document.getElementById("search-btn").click();
+          }
+        },
+        (err) => {
+          btn.disabled = false;
+          btn.classList.remove("is-busy");
+          say(err.code === 1
+            ? "Standortzugriff abgelehnt. Bitte in den Einstellungen des Browsers erlauben."
+            : err.code === 3
+            ? "Standort nicht rechtzeitig ermittelt. Bitte noch einmal tippen."
+            : "Standort derzeit nicht verfügbar.", true);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    });
+  }
+
   // Wer nicht aus der Liste wählt, bekommt trotzdem den besten Treffer.
   async function resolvePlace(which) {
     if (chosen[which]) return chosen[which];
@@ -2000,11 +2170,13 @@
   function setupSearch() {
     setupPlaceInput("from");
     setupPlaceInput("to");
+    setupLocate();
     document.getElementById("swap-btn").addEventListener("click", () => {
       const a = document.getElementById("from-input");
       const b = document.getElementById("to-input");
       [a.value, b.value] = [b.value, a.value];
       [chosen.from, chosen.to] = [chosen.to, chosen.from];
+      document.getElementById("locate-btn").classList.remove("is-set");
     });
     document.getElementById("search-btn").addEventListener("click", async () => {
       const state = document.getElementById("search-state");

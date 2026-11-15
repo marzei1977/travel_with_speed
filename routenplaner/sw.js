@@ -15,7 +15,7 @@
 // Alles Übrige (OSRM, Photon, die Autobahn-API) läuft ausschließlich über das
 // Netz – veraltete Baustellenmeldungen wären schlimmer als gar keine.
 
-const VERSION = "v7";
+const VERSION = "v8";
 const SHELL_CACHE = `linke-spur-shell-${VERSION}`;
 const DATEN_CACHE = `linke-spur-daten-${VERSION}`;
 const KACHEL_CACHE = `linke-spur-kacheln-${VERSION}`;
@@ -91,6 +91,8 @@ self.addEventListener("message", (e) => {
 });
 
 const istDaten = (u) => u.pathname.includes("/data/") && u.pathname.endsWith(".json");
+// Baustellen und Sperrungen ändern sich stündlich, alles andere wöchentlich.
+const istAktuell = (u) => u.pathname.endsWith("/data/roadworks.json");
 const istKachel = (u) => /(^|\.)tile\.openstreetmap\.org$/.test(u.hostname);
 
 // Cache klein halten: älteste Einträge zuerst raus.
@@ -105,7 +107,25 @@ self.addEventListener("fetch", (e) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
 
-  // Daten: sofort aus dem Cache, parallel erneuern.
+  // Baustellen: erst das Netz, der Cache nur ohne Empfang. Aus dem Cache zuerst
+  // hieß: man sah stets den Stand vom vorigen Öffnen der App – eine Sperrung
+  // von heute erschien erst beim zweiten Start.
+  if (istDaten(url) && istAktuell(url)) {
+    e.respondWith((async () => {
+      const cache = await caches.open(DATEN_CACHE);
+      try {
+        const res = await fetch(request, { signal: AbortSignal.timeout(8000) });
+        if (res.ok) { cache.put(request, res.clone()); return res; }
+      } catch {
+        // kein Netz oder zu langsam – unten der letzte bekannte Stand
+      }
+      return (await cache.match(request)) || new Response('{"error":"offline"}',
+        { status: 503, headers: { "Content-Type": "application/json" } });
+    })());
+    return;
+  }
+
+  // Übrige Daten: sofort aus dem Cache, parallel erneuern.
   if (istDaten(url)) {
     e.respondWith((async () => {
       const cache = await caches.open(DATEN_CACHE);
