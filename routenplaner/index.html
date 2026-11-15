@@ -1096,7 +1096,12 @@
       // hinauf, nur herunter.
       if (useTraffic && segment.ref) {
         const freeSpeed = baseSpeed;
-        const t = trafficAt(segment.ref, segment.start.lat, segment.start.lon, dayType);
+        let t = trafficAt(segment.ref, segment.start.lat, segment.start.lon, dayType);
+        // Fahrstreifen je Kilometer aus OSM statt von der Zählstelle: die steht
+        // bis zu 25 km entfernt und kennt nur ihren eigenen Querschnitt. Menge
+        // und LKW-Anteil bleiben von der Zählstelle; sie ist nur Rückfall, wo
+        // das Raster keine Spurzahl hat.
+        if (t && lanes !== null) t = { ...t, lanes };
         baseSpeed = Math.min(baseSpeed, practicalSpeed(userSpeed, t, segTime));
         if (baseSpeed < freeSpeed) {
           trafficLossHours += segKm / baseSpeed - segKm / freeSpeed;

@@ -184,8 +184,8 @@ Stellen, mit der Karte dazwischen. Jetzt trägt jede Ergebniskarte alles:
   Die Spurzahl stammt aus dem OSM-Tag `lanes` und liegt im bundesweiten Raster
   (`speedgrid.json`, Feld `spuren`), gilt also auch für frei gesuchte
   Strecken. Eine Rasterzelle fasst beide Fahrtrichtungen zusammen; wo sie sich
-  unterscheiden, gewinnt die Mehrheit. **Die Fahrzeitrechnung nutzt weiterhin
-  die Fahrstreifenzahl der BASt-Zählstellen**, nicht diese Werte.
+  unterscheiden, gewinnt die Mehrheit. Dieselben Werte gehen in die
+  Fahrzeitrechnung ein (siehe Kalibrierung, „Fahrstreifen je Kilometer").
 - Die **beiden Referenzzeiten** (Werktag Di 08:00, Wochenende So 07:00), beide
   mit Verkehr. Sie hängen nicht an der gewählten Abfahrt und machen die Strecken
   untereinander vergleichbar.
@@ -593,6 +593,47 @@ Was offen bleibt:
   92–96 km/h); das macht je Fahrt höchstens zwei Minuten aus.
 - Aachen → München über Karlsruhe ist keine hinterlegte Route; zugeordnet sind
   nur die Teilstücke, die sich mit Köln → München decken (438 von 653 km).
+
+### Fahrstreifen je Kilometer statt je Zählstelle
+
+Der LKW-Abzug hängt an der Fahrstreifenzahl – zwei Spuren wiegen zwanzigfach
+gegenüber drei. Bisher kam die Zahl von der nächsten BASt-Zählstelle, die bis
+zu 25 km entfernt stehen darf und nur ihren eigenen Querschnitt kennt. Jetzt
+kommt sie je Kilometer aus OSM (`speedgrid.json`, Feld `spuren`); Menge und
+LKW-Anteil liefert weiter die Zählstelle, deren Spurzahl ist nur noch Rückfall.
+
+Wo beide auseinanderliegen, ist meist die Zählstelle zu weit gestreckt worden:
+
+| Abschnitt | Zählstelle sagt | OSM sagt |
+|---|---|---|
+| A31 Emsland, 40 km (Zählstelle Emstunnel) | 3 | 2 |
+| A3 Würzburg – Nürnberg, 20 km (AK Fürth/Erlangen) | 3 | 2 |
+| A8 Albaufstieg, 14 km (Merklingen) | 3 | 2 |
+| A1 Kamen – Münster, 25 km | 3 | 2 |
+| A61, 53 km verteilt | 2 | 3 |
+| A45 Sauerland, 49 km verteilt | 2 | 3 |
+
+Auf den fünf aufgezeichneten Fahrten stimmen beide Quellen fast überall
+überein; die Abweichungen ändern sich um höchstens eine halbe Minute (−1 / −3 /
+0 / −6 / +1), und die Suche über das LKW-Gewicht zeigt dasselbe flache Minimum
+wie zuvor. **Das Gewicht bleibt bei 15.** Die Umstellung ist also an den Fahrten
+weder belegt noch widerlegt – sie ersetzt eine grobe Zuordnung durch eine
+genauere, und sie wirkt dort, wo noch nicht gemessen wurde:
+
+| Montag 8 Uhr, 150 km/h | vorher | jetzt |
+|---|---|---|
+| Köln → München über A3/A9 | 4 h 44 | 4 h 51 |
+| Köln → München über A7/A8 | 4 h 53 | 4 h 54 |
+| Köln → München über A61 | 5 h 10 | 5 h 11 |
+| München → Norddeich über A45/A31 | 7 h 49 | 8 h 02 |
+
+Die A3/A9 verliert ihren Vorsprung vor der A7/A8 fast ganz, weil die A3
+zwischen Würzburg und Nürnberg auf 20 km nur zwei Spuren hat.
+
+Grenzen: Eine Rasterzelle fasst beide Fahrtrichtungen zusammen. Auf Strecken
+mit wechselnden Steigungsstreifen (A45) kann die Spurzahl deshalb für die
+eigene Richtung falsch sein. Und OSM zählt mitunter Verflechtungsstreifen als
+Spur.
 
 ## Annahmen & bekannte Grenzen
 

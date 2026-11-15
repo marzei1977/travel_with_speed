@@ -24,6 +24,26 @@ const lade = async (p) => JSON.parse(await readFile(new URL(p, import.meta.url),
 const routes = await lade("../data/routes.json");
 const roadworks = await lade("../data/roadworks.json");
 const traffic = await lade("../data/traffic.json");
+// Fahrstreifen je Kilometer (OSM) – wie lanesFor() in index.html.
+const speedgrid = await lade("../data/speedgrid.json");
+const laneGrid = new Map();
+for (const [ref, flat] of Object.entries(speedgrid.spuren || {})) {
+  let la = 0, lo = 0;
+  for (let i = 0; i < flat.length; i += 3) { la += flat[i]; lo += flat[i + 1]; laneGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]); }
+}
+function spurenOsm(seg) {
+  if (!seg.ref || !laneGrid.size) return null;
+  const g = speedgrid.grid;
+  const la = Math.round(((seg.start.lat + seg.end.lat) / 2) * g), lo = Math.round(((seg.start.lon + seg.end.lon) / 2) * g);
+  let hit = null, bestD = 99;
+  for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
+    const v = laneGrid.get(`${seg.ref}|${la + d1}|${lo + d2}`);
+    if (v === undefined) continue;
+    const d = Math.abs(d1) + Math.abs(d2);
+    if (d < bestD) { bestD = d; hit = v; }
+  }
+  return hit;
+}
 
 // --- identisch zu index.html -------------------------------------------------
 const HOURLY = [1.2,0.9,0.8,0.8,1.0,1.8,3.5,5.5,5.8,5.5,5.5,5.6,5.6,5.7,6.0,6.5,7.0,7.2,6.3,4.8,3.6,2.8,2.2,1.4];
@@ -148,7 +168,9 @@ for(const route of korridor.routes){
     if(basis0===null && seg.variable) basis=Math.min(basis,anlageGrenze(WUNSCH));
     let nachVerkehr=basis;
     if(seg.ref){
-      const tr=verkehrAn(seg.ref,seg.start.lat,seg.start.lon,typ);
+      let tr=verkehrAn(seg.ref,seg.start.lat,seg.start.lon,typ);
+      const osm=spurenOsm(seg);
+      if(tr&&osm!==null) tr={...tr,spuren:osm};
       nachVerkehr=Math.min(basis,praktisch(WUNSCH,tr,zeit));
     }
     const treffer=roadworks.items.filter(it=>

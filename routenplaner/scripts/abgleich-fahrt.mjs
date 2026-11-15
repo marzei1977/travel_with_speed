@@ -4,7 +4,7 @@
 //
 //   node routenplaner/scripts/abgleich-fahrt.mjs fahrt.gpx [korridor] [--wunsch 150]
 //        [--toleranz 0] [--stand fahrttag|aktuell|<commit>] [--csv datei]
-//        [--lkw 15] [--dichte 4] [--spur3 0.1] [--anlage 0.2]
+//        [--lkw 15] [--dichte 4] [--spur3 0.1] [--anlage 0.2] [--spuren osm|bast]
 //
 // Ohne Korridor wird der genommen, auf dem die meisten Kilometer der Fahrt
 // liegen. Verglichen wird nur, was auf einer hinterlegten Route liegt – der
@@ -34,7 +34,7 @@ const HIER = dirname(fileURLToPath(import.meta.url));
 const REPO = join(HIER, "..", "..");
 
 const args = process.argv.slice(2);
-const SCHALTER = ["--wunsch", "--toleranz", "--stand", "--csv", "--lkw", "--dichte", "--spur3", "--anlage"];
+const SCHALTER = ["--wunsch", "--toleranz", "--stand", "--csv", "--lkw", "--dichte", "--spur3", "--anlage", "--spuren"];
 const opt = {}, frei = [];
 for (let i = 0; i < args.length; i++) {
   if (SCHALTER.includes(args[i])) opt[args[i].slice(2)] = args[++i];
@@ -49,6 +49,9 @@ const zahl = (k, d) => (opt[k] !== undefined ? Number(opt[k]) : d);
 const WUNSCH = zahl("wunsch", 150);
 const TOLERANZ = zahl("toleranz", 0);
 const STAND = opt.stand || "fahrttag";
+// Woher die Fahrstreifenzahl kommt: "osm" = je Kilometer aus dem Raster
+// (speedgrid.json, Feld spuren), "bast" = von der nächsten Zählstelle.
+const SPUREN_QUELLE = opt.spuren || "osm";
 
 // --- Koeffizienten: identisch zu index.html ----------------------------------
 const HOURLY = [1.2,0.9,0.8,0.8,1.0,1.8,3.5,5.5,5.8,5.5,5.5,5.6,5.6,5.7,6.0,6.5,7.0,7.2,6.3,4.8,3.6,2.8,2.2,1.4];
@@ -124,6 +127,27 @@ if (STAND === "aktuell") {
   }
 }
 const traffic = await ladeDatei("traffic.json");
+// Fahrstreifen je Kilometer – immer der aktuelle Stand, Spuren ändern sich kaum.
+const speedgrid = await ladeDatei("speedgrid.json");
+const laneGrid = new Map();
+for (const [ref, flat] of Object.entries(speedgrid.spuren || {})) {
+  let la = 0, lo = 0;
+  for (let i = 0; i < flat.length; i += 3) { la += flat[i]; lo += flat[i + 1]; laneGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]); }
+}
+// identisch zu lanesFor() in index.html
+function spurenOsm(seg) {
+  if (!seg.ref || !laneGrid.size) return null;
+  const g = speedgrid.grid;
+  const la = Math.round(((seg.start.lat + seg.end.lat) / 2) * g), lo = Math.round(((seg.start.lon + seg.end.lon) / 2) * g);
+  let hit = null, bestD = 99;
+  for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
+    const v = laneGrid.get(`${seg.ref}|${la + d1}|${lo + d2}`);
+    if (v === undefined) continue;
+    const d = Math.abs(d1) + Math.abs(d2);
+    if (d < bestD) { bestD = d; hit = v; }
+  }
+  return hit;
+}
 
 // --- Modell: identisch zu index.html -----------------------------------------
 const tIdx = new Map();
@@ -257,7 +281,9 @@ for (const r of fahrbar) {
   let basis = basis0 === null ? WUNSCH : Math.min(WUNSCH, basis0);
   const anlage = basis0 === null && Boolean(seg.variable);
   if (anlage) basis = Math.min(basis, ANLAGE_ANTEIL * ANLAGE_TEMPO + (1 - ANLAGE_ANTEIL) * WUNSCH);
-  const tr = verkehrAn(seg.ref, seg.start.lat, seg.start.lon, tagTyp(r.zeit));
+  let tr = verkehrAn(seg.ref, seg.start.lat, seg.start.lon, tagTyp(r.zeit));
+  const osm = SPUREN_QUELLE === "osm" ? spurenOsm(seg) : null;
+  if (tr && osm !== null) tr = { ...tr, spuren: osm };
   const nachVerkehr = Math.min(basis, praktisch(WUNSCH, tr, r.zeit));
   const treffer = roadworks.items.filter((it) =>
     it.affects.some((a) => a.corridorId === korridor.id && a.routeId === m.routeId && a.segmentIndex === m.i)
@@ -299,14 +325,14 @@ const gruppen = (schluessel) => {
 };
 
 console.log(`${korridor.name}   ${abfahrt.toLocaleString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`);
-console.log(`Wunsch ${WUNSCH} km/h, Toleranz +${TOLERANZ}, LKW-Gewicht ${LKW_GEWICHT}, Dichte ${DICHTE_GEWICHT}`);
+console.log(`Wunsch ${WUNSCH} km/h, Toleranz +${TOLERANZ}, LKW-Gewicht ${LKW_GEWICHT}, Dichte ${DICHTE_GEWICHT}, Fahrstreifen aus ${SPUREN_QUELLE === "osm" ? "OSM" : "BASt"}`);
 console.log(`Routen und Baustellen: ${standText}`);
 console.log(`Zugeordnet: ${zeilen.length} von ${fahrt.length} km der Fahrt (Rest: Stadt, Halt oder keine hinterlegte Route)`);
 console.log("\nAbweichung: + heißt Modell zu langsam, − zu schnell\n");
 zeile("GESAMT", zeilen);
 console.log("\nNach Streckenart");
 for (const [k, a] of gruppen((z) => z.klasse)) zeile(k, a);
-console.log("\nUnbegrenzt ohne Anzeige, nach Autobahn und Fahrstreifen der Zählstelle");
+console.log(`\nUnbegrenzt ohne Anzeige, nach Autobahn und Fahrstreifen (${SPUREN_QUELLE === "osm" ? "OSM je Kilometer" : "BASt-Zählstelle"})`);
 for (const [k, a] of gruppen((z) => z.klasse === "unbegrenzt" ? `${z.ab}, ${z.spuren || "?"} Spuren` : null)) if (k) zeile(k, a);
 console.log("\nNach Stunde");
 for (const [k, a] of gruppen((z) => `${z.uhr.slice(0, 2)} Uhr`)) zeile(k, a);
