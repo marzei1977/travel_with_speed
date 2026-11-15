@@ -359,7 +359,8 @@ daraus (gewichteter Fehler 8,4 → 6,3 km/h):
    Referenzfahrten bleiben also gültig.
 2. **Die Fahrstreifen-Spreizung wurde verstärkt**: der LKW-Entlastungsfaktor geht
    von 1,0 / 0,45 / 0,25 auf **2,0 / 0,1 / 0,05**, das LKW-Gewicht von 50 auf 60.
-   *(Das LKW-Gewicht ist inzwischen auf 9 gesenkt – siehe Werktagsfahrten.)*
+   *(Das LKW-Gewicht steht inzwischen auf 15 – siehe Werktagsfahrten und
+   „Fünf Fahrten“.)*
    Auf zwei Spuren wiegt der Schwerverkehr damit doppelt, ab drei Spuren fast
    nichts mehr. Das entspricht der Erfahrung, dass sich auf der A61 links kaum
    überholen lässt, und deckt sich mit den BASt-Daten: 2,11 Fahrstreifen bei
@@ -485,7 +486,7 @@ Was sonst noch auffiel, aber nicht geändert wurde:
   Minuten zu optimistisch. Der Anlagen-Anteil von 20 % ist ein Tagesmittel.
 - Die Zählstelle Rohrbrunn (A3 Spessart) steht mit zwei Fahrstreifen in den Daten;
   gefahren wurden dort 155–179 km/h. Vermutlich ist der Ausbau neuer als der
-  Datenstand – nicht geprüft.
+  Datenstand. *(Bestätigt und korrigiert, siehe „Fünf Fahrten“.)*
 - An Limits lag das Tempo im Mittel 3–5 km/h darüber, wie schon auf der ersten
   Aufzeichnung.
 - Wunschtempo 150 bestätigt: Median auf freien Abschnitten 149 und 153 (Sonntag 152).
@@ -501,6 +502,71 @@ A61-Abschnitt selbst nur zu rund einem Drittel unbegrenzt ist – sie kompensier
 das über einen langen, fast durchgehend unbegrenzten A8-Abschnitt und weniger
 Stadtanteil. Erst das Verkehrsaufkommen dreht die Reihenfolge um, seit der
 Werktagskorrektur aber nur noch um wenige Minuten.
+
+### Fünf Fahrten: Rohrbrunn hatte drei Spuren, das LKW-Gewicht steigt auf 15
+
+Zwei weitere Aufzeichnungen: München → Köln am Dienstag, 10.11.2026 (16:44 Uhr,
+über A8/A7/A3, 597 km, 5 h 03 Fahrzeit) und Aachen → München am Sonntag,
+15.11.2026 (12:35 Uhr, über A4/A3/A5/A8 – Karlsruhe und Stuttgart –, 653 km,
+5 h 24). Alle fünf Fahrten wurden kilometerweise gegen das Modell gerechnet,
+jeder Kilometer zur tatsächlichen Uhrzeit, Wunschtempo 150, Toleranz 0.
+
+**Erst die Methode, weil sie das Ergebnis kippt:** gerechnet wird mit dem
+Baustellenstand *des Fahrttags* (`git show <commit>:routenplaner/data/roadworks.json`,
+zusammen mit der `routes.json` desselben Commits, weil die Meldungen über
+Segmentnummern zugeordnet sind). Mit dem Stand von fünf Tagen später traf das
+Modell die Dienstagsfahrt scheinbar auf die Minute – dort standen 46 km
+Baustelle auf der Strecke, am Fahrttag waren es 9. Der richtige Stand zeigt
+8 Minuten Fehler.
+
+Zwei Befunde:
+
+1. **Die Zählstelle Rohrbrunn (A3 Spessart) steht mit zwei Fahrstreifen in den
+   BASt-Daten, die Strecke hat drei.** Die Nachbarn Weibersbrunn und
+   Würzburg-West führen drei. Auf vier Fahrten wurden dort 173, 154, 181 und
+   174 km/h gefahren, gerechnet waren 140, 118, 119 und 127 – jedes Mal 1,5 bis
+   3 Minuten zu langsam. `fetch-traffic.mjs` korrigiert die Zahl jetzt über
+   `FS_KORREKTUR`.
+2. **Dieser Fehler hatte ein zu kleines LKW-Gewicht verdeckt.** Die 9 trafen die
+   beiden Montagsfahrten nur, weil Rohrbrunn 2–3 Minuten zu viel abzog. Ohne
+   diesen Ausgleich liegt das Modell an allen drei Werktagsfahrten zu
+   optimistisch. Rastersuche über Dichteterm, LKW-Gewicht und Drei-Spur-Faktor:
+   das Minimum liegt bei LKW-Gewicht 13 bis 16 und ist flach, die beiden anderen
+   Größen bringen nichts Belastbares und bleiben. Gewählt ist **15**.
+
+| zugeordnete Autobahn-km | real | LKW 9, Rohrbrunn 2 Spuren | LKW 9, Rohrbrunn 3 | **LKW 15, Rohrbrunn 3** |
+|---|---|---|---|---|
+| Aachen → München, So 6.9. (564 km) | 4 h 17 | −1 | −2 | **−1** |
+| München → Wiesbaden, Mo 12.10. vorm. (418 km) | 3 h 11 | −5 | −7 | **−2** |
+| Wiesbaden → München, Mo 12.10. nachm. (418 km) | 3 h 09 | −1 | −3 | **0** |
+| München → Köln, Di 10.11. (574 km) | 4 h 28 | −8 | −9 | **−6** |
+| Aachen → München, So 15.11. (438 km) | 3 h 24 | +1 | +1 | **+1** |
+
+(Abweichung in Minuten, negativ = Modell zu schnell. Die Werte für die drei
+älteren Fahrten weichen leicht von den Tabellen oben ab, weil dort mit dem
+damals aktuellen statt mit dem Baustellenstand des Fahrttags gerechnet wurde.)
+
+Die Sonntagsfahrten bewegt die Änderung nicht – das LKW-Gewicht ist damit dort
+eingestellt, wo es wirkt.
+
+Was offen bleibt:
+
+- **A8 München → Ulm im Feierabendverkehr** (Di ab 16:45): gefahren 131 km/h,
+  gerechnet 146, gut vier Minuten zu optimistisch. Am Montagvormittag dasselbe
+  Bild (135 gegen 147), am Montagabend nach 19 Uhr stimmt es (148 gegen 148).
+  Drei Spuren, hoher PKW-Anteil – der Dichteterm erfasst das nicht, und zwei
+  Fahrten reichen nicht, um ihn daran umzustellen. Gleiche Art Fehler wie
+  Frankfurt unter Wechselanzeige.
+- **Die A61 fällt wieder deutlich zurück**, und zwar rein rechnerisch: zwei
+  Spuren, viel Schwerverkehr, also wirkt das höhere Gewicht dort voll. Köln →
+  München, Montag 8 Uhr: A3/A9 4 h 44, A7/A8 4 h 53, A61 5 h 11 (vorher 4 h 46,
+  4 h 51, 4 h 54). Das Modell rechnet auf den freien A61-Abschnitten werktags
+  jetzt im Mittel 108 km/h statt 124. Gemessen ist das nicht – **die
+  Werktagsfahrt über die A61 fehlt weiterhin** und ist jetzt wichtiger als vorher.
+- In Baustellen wird schneller gefahren als gerechnet (real 95–106, Modell
+  92–96 km/h); das macht je Fahrt höchstens zwei Minuten aus.
+- Aachen → München über Karlsruhe ist keine hinterlegte Route; zugeordnet sind
+  nur die Teilstücke, die sich mit Köln → München decken (438 von 653 km).
 
 ## Annahmen & bekannte Grenzen
 
@@ -532,9 +598,9 @@ Werktagskorrektur aber nur noch um wenige Minuten.
 - **Die Untergrenze von 90 km/h greift kaum noch.** Mit dem an Sonntagsdaten
   eingestellten LKW-Gewicht 60 bestimmte sie an einem Werktagvormittag bei 38 %
   der Zählstellen das Tempo statt der Rechnung. Zwei Werktagsfahrten haben das
-  widerlegt (siehe Kalibrierung); mit LKW-Gewicht 9 liegt keine Zählstelle mehr
-  auf der Grenze. Belegt ist der neue Wert nur für A7 und A3 – **eine
-  Werktagsfahrt über die A61** fehlt noch.
+  widerlegt (siehe Kalibrierung); mit LKW-Gewicht 15 liegt an einem
+  Werktagvormittag eine von 807 Zählstellen auf der Grenze. Belegt ist der Wert
+  nur für A7, A3 und A8 – **eine Werktagsfahrt über die A61** fehlt noch.
 - **Fehlendes `maxspeed`-Tag auf einer erkannten Autobahn**: OSM taggt nicht jeden
   Abschnitt lückenlos. In diesem Fall wird die Richtgeschwindigkeit (130 km/h)
   angenommen – in der UI als "begrenzt/Baustelle"-Farbe sichtbar, da nicht

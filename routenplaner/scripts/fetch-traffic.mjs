@@ -71,6 +71,14 @@ const DAY_TYPES = [
   { key: "mittel", kfz: "DTV_Kfz_MobisSo", sv: "DTV_SV_MobisSo" },
 ];
 
+// Fahrstreifenzahlen, die in der BASt-Auswertung veraltet sind. Die Zahl steuert
+// den LKW-Abzug (zwei Spuren wiegen zwanzigfach gegenüber drei), ein falscher
+// Wert kostet deshalb gleich mehrere Minuten.
+//  - Rohrbrunn (A3 Spessart): steht mit 2 in den Daten, die Nachbarn Weibersbrunn
+//    und Würzburg-West mit 3. Auf vier aufgezeichneten Fahrten wurden dort
+//    154–181 km/h gefahren, gerechnet waren 118–140.
+const FS_KORREKTUR = { "A3|Rohrbrunn (O)": 3 };
+
 function buildStation(row) {
   const lat = num(row["Koor_WGS84_N"]);
   const lon = num(row["Koor_WGS84_E"]);
@@ -96,7 +104,7 @@ function buildStation(row) {
     if (!Object.keys(tage).length) continue;
     hasAny = true;
     station[ri.toLowerCase()] = {
-      fs: Math.round(lanes),
+      fs: FS_KORREKTUR[`${station.ref}|${station.name}`] ?? Math.round(lanes),
       // Fernziel benennt die Fahrtrichtung dieser Zählrichtung, z.B. "Köln".
       ziel: (row[`Fernziel_${ri}`] || "").trim(),
       tage,

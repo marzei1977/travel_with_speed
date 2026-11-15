@@ -805,8 +805,13 @@
   // War 60 – an einer Sonntagsfahrt eingestellt, an der kaum LKW fuhren. Am
   // Werktag (12.10.2026, München ⇄ Wiesbaden) drückte das jede zweispurige
   // Strecke auf die Untergrenze 90; gefahren wurden dort 131 km/h, genauso viel
-  // wie am Sonntag. Mit 9 treffen beide Werktagsfahrten auf ±3 Minuten.
-  const TRAFFIC_TRUCK_WEIGHT = 9.0;
+  // wie am Sonntag. Mit 9 trafen beide Werktagsfahrten auf ±3 Minuten – aber
+  // nur, weil die Zählstelle Rohrbrunn (A3 Spessart) fälschlich mit zwei
+  // Fahrstreifen in den Daten stand und dort 30–60 km/h zu wenig gerechnet
+  // wurden; das glich ein zu kleines Gewicht aus. Seit Rohrbrunn mit drei
+  // Spuren geführt wird, liegt das Minimum über drei Werktagsfahrten
+  // (12.10. hin und zurück, 10.11.2026) bei 13–16.
+  const TRAFFIC_TRUCK_WEIGHT = 15.0;
   // Die Spreizung zwischen zwei und drei Fahrstreifen war zu klein: gemessen
   // wurden auf frei fließenden, unbegrenzten Abschnitten 122 km/h auf der A61
   // (2,1 Spuren, 20 % Schwerverkehr) gegen 159 km/h auf der A8, das Modell

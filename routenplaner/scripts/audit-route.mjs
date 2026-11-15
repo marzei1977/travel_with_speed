@@ -30,8 +30,9 @@ const HOURLY = [1.2,0.9,0.8,0.8,1.0,1.8,3.5,5.5,5.8,5.5,5.5,5.6,5.6,5.7,6.0,6.5,
 const HOURLY_MEAN = HOURLY.reduce((a,b)=>a+b,0)/24;
 const HOURLY_SV = [3.0,2.8,2.8,2.9,3.3,4.0,4.8,5.2,5.2,5.1,5.1,5.0,4.9,5.0,5.0,5.0,4.9,4.6,4.2,3.9,3.7,3.6,3.4,3.2];
 const HOURLY_SV_MEAN = HOURLY_SV.reduce((a,b)=>a+b,0)/24;
-// LKW_GEWICHT war 60 (Sonntag kalibriert) – Werktagsfahrten belegen 9, siehe index.html.
-const DICHTE_GEWICHT = 4.0, LKW_GEWICHT = 9.0, BLOCKIERT_FALLBACK = 60;
+// LKW_GEWICHT war 60 (Sonntag kalibriert), dann 9; drei Werktagsfahrten belegen
+// 15, seit Rohrbrunn mit drei Fahrstreifen geführt wird – siehe index.html.
+const DICHTE_GEWICHT = 4.0, LKW_GEWICHT = 15.0, BLOCKIERT_FALLBACK = 60;
 // Spreizung zwischen zwei und drei Fahrstreifen – siehe index.html.
 const ENTLASTUNG_2 = 2.0, ENTLASTUNG_3 = 0.1, ENTLASTUNG_4 = 0.05;
 // Der Bremsbetrag skaliert mit dem Wunschtempo (an 185 km/h kalibriert).
