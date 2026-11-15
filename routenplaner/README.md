@@ -173,6 +173,19 @@ Stellen, mit der Karte dazwischen. Jetzt trägt jede Ergebniskarte alles:
   unbegrenzt, unbegrenzt unter Wechselanzeige (schraffiert), begrenzt, Ort. Die
   Trennung lohnt sich, weil hinter beiden Grüntönen ein sehr verschiedenes
   Fahrgefühl steckt.
+- **Fahrstreifen**: Anteil der Strecke mit drei oder mehr Spuren je Richtung
+  und – die eigentlich gesuchte Sorte – Anteil **dreispurig und unbegrenzt**.
+  Darunter ein zweites, blaues Band: ab 3 Spuren unbegrenzt, ab 3 Spuren
+  begrenzt, 2 Spuren. Auf drei Spuren bleibt die linke meist frei; das zeigt
+  die Minutenrechnung allein nicht. München → Köln: A9/A3 90 % dreispurig
+  (73 % dreispurig und unbegrenzt), A8/A7 68 % (53 %), A61-Route 53 % (32 %).
+  Über **„Reihenfolge nach"** lassen sich die Ergebnisse statt nach Fahrzeit
+  nach einem der beiden Anteile ordnen; „Schnellste" bleibt an der schnellsten.
+  Die Spurzahl stammt aus dem OSM-Tag `lanes` und liegt im bundesweiten Raster
+  (`speedgrid.json`, Feld `spuren`), gilt also auch für frei gesuchte
+  Strecken. Eine Rasterzelle fasst beide Fahrtrichtungen zusammen; wo sie sich
+  unterscheiden, gewinnt die Mehrheit. **Die Fahrzeitrechnung nutzt weiterhin
+  die Fahrstreifenzahl der BASt-Zählstellen**, nicht diese Werte.
 - Die **beiden Referenzzeiten** (Werktag Di 08:00, Wochenende So 07:00), beide
   mit Verkehr. Sie hängen nicht an der gewählten Abfahrt und machen die Strecken
   untereinander vergleichbar.

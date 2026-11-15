@@ -89,9 +89,26 @@ async function main() {
   // Bedarf. Wie beim Tempolimit gewinnt die Mehrheit der Knoten, damit nicht
   // eine einzelne Auffahrt die Hauptfahrbahn übertönt.
   const varVotes = new Map();
+  // Dritte Auszählung: Fahrstreifen je Richtung (OSM-Tag lanes; die
+  // Richtungsfahrbahnen sind getrennte Einbahn-Wege, der Wert gilt also je
+  // Richtung). Ab drei Spuren bleibt die linke meist frei – das ist für diesen
+  // Planer fast so wichtig wie das Limit selbst. Die Zelle fasst beide
+  // Richtungen zusammen; wo sie sich unterscheiden (Steigungsstreifen), gewinnt
+  // die Mehrheit der Knoten. Gezählt wird vor der maxspeed-Prüfung, damit auch
+  // Abschnitte ohne Limit-Tag ihre Spurzahl bekommen.
+  const laneVotes = new Map();
   for (const way of ways) {
     const ref = normalizeRef(way.tags?.ref);
     if (!ref) continue;
+    const spuren = parseInt(way.tags?.lanes, 10);
+    if (Number.isFinite(spuren) && spuren >= 1 && spuren <= 8) {
+      for (const node of way.geometry || []) {
+        const key = `${ref}|${Math.round(node.lat * GRID)}|${Math.round(node.lon * GRID)}`;
+        let lc = laneVotes.get(key);
+        if (!lc) laneVotes.set(key, (lc = new Map()));
+        lc.set(spuren, (lc.get(spuren) || 0) + 1);
+      }
+    }
     const ms = parseMaxspeed(way.tags);
     if (ms === null) continue;
     const hatAnlage = Boolean(way.tags?.["maxspeed:variable"]);
@@ -164,12 +181,52 @@ async function main() {
   }
   console.log(`  ${anlagenZellen} Rasterzellen mit Streckenbeeinflussungsanlage`);
 
+  // Fahrstreifen im selben 3er-Format wie die Limits, aber als eigenes Feld –
+  // aus demselben Grund wie bei den Anlagen.
+  const spurenNachRef = new Map();
+  for (const [key, lc] of laneVotes) {
+    let best = null;
+    let bestCount = -1;
+    // Bei Gleichstand gewinnt die kleinere Zahl: lieber eine dreispurige
+    // Strecke übersehen als eine zweispurige dafür halten.
+    for (const [n, count] of [...lc].sort((a, b) => a[0] - b[0])) {
+      if (count > bestCount) {
+        bestCount = count;
+        best = n;
+      }
+    }
+    const [ref, la, lo] = key.split("|");
+    const list = spurenNachRef.get(ref) || [];
+    list.push([Number(la), Number(lo), best]);
+    spurenNachRef.set(ref, list);
+  }
+  const spuren = {};
+  let spurZellen = 0;
+  for (const [ref, list] of spurenNachRef) {
+    list.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const flat = [];
+    let pLa = 0;
+    let pLo = 0;
+    for (const [la, lo, n] of list) {
+      flat.push(la - pLa, lo - pLo, n);
+      pLa = la;
+      pLo = lo;
+    }
+    spuren[ref] = flat;
+    spurZellen += list.length;
+  }
+  console.log(`  ${spurZellen} Rasterzellen mit Fahrstreifenzahl`);
+  // Ohne Spurdaten wäre die Auswertung "dreispurig" überall null – dann lieber
+  // die alte Datei behalten als eine halbe schreiben.
+  if (spurZellen < 10000) throw new Error(`Nur ${spurZellen} Zellen mit Fahrstreifen – Abbruch, alte Datei bleibt.`);
+
   const output = {
-    quelle: "OpenStreetMap (Overpass API), highway=motorway mit maxspeed",
+    quelle: "OpenStreetMap (Overpass API), highway=motorway mit maxspeed und lanes",
     updatedAt: new Date().toISOString(),
     grid: GRID,
     refs,
     anlagen,
+    spuren,
   };
 
   await writeFile(

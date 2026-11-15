@@ -394,6 +394,16 @@
   }
   .bar-key .i-limited { background: var(--limited); }
   .bar-key .i-local { background: var(--muted); opacity: .4; }
+  /* Zweites Band: Fahrstreifen. Blau statt Grün, damit es nicht mit dem
+     Limit-Band verwechselt wird; kräftig = ab drei Spuren und unbegrenzt,
+     blass = ab drei Spuren mit Limit, grau = zweispurig. */
+  .bar.bar-lanes { margin-top: 0.9rem; }
+  .bar .seg-l3free { background: var(--accent); }
+  .bar .seg-l3 { background: var(--accent); opacity: .4; }
+  .bar .seg-l2 { background: var(--muted); opacity: .75; }
+  .bar-key .i-l3free { background: var(--accent); }
+  .bar-key .i-l3 { background: var(--accent); opacity: .4; }
+  .bar-key .i-l2 { background: var(--muted); opacity: .75; }
 
   /* Meldungen */
   .roadworks { margin-top: 1.1rem; border-top: 1px solid var(--hairline); padding-top: 0.9rem; }
@@ -574,6 +584,15 @@
           <div class="row-2">
             <input type="datetime-local" id="depart-input" />
             <button type="button" id="now-btn" class="btn-plain">jetzt</button>
+          </div>
+        </div>
+
+        <div class="ctl">
+          <span class="ctl-label">Reihenfolge nach</span>
+          <div class="segmented" id="order-group">
+            <input type="radio" name="order" id="ord-zeit" value="zeit" checked /><label for="ord-zeit">Fahrzeit</label>
+            <input type="radio" name="order" id="ord-frei3" value="frei3" /><label for="ord-frei3">3 Spuren + frei</label>
+            <input type="radio" name="order" id="ord-spur3" value="spur3" /><label for="ord-spur3">3 Spuren</label>
           </div>
         </div>
 
@@ -1015,6 +1034,13 @@
     // – frei sind sie ja im Grundsatz –, verdienen aber eine eigene Zahl: dort
     // kann eine Anlage jederzeit begrenzen, und das Modell rechnet auch so.
     let vmsKm = 0;
+    // Fahrstreifen: ab drei Spuren je Richtung bleibt die linke meist frei.
+    // lanes3NoneKm ist die Sorte, auf die es ankommt – dreispurig *und*
+    // unbegrenzt. Gezählt nach dem dauerhaften Charakter des Kilometers,
+    // Baustellen bleiben hier außen vor (die stehen im Limit-Band).
+    let lanes3Km = 0;
+    let lanes3NoneKm = 0;
+    let lanes2Km = 0;
     let trafficLossHours = 0;
     let accelLossHours = 0;
     // Bezug für den Beschleunigungszuschlag ist das *langsamste* Tempo des vorigen
@@ -1031,6 +1057,13 @@
     route.segments.forEach((segment, index) => {
       const segKm = segment.distanceMeters / 1000;
       distKm += segKm;
+      const lanes = lanesFor(segment);
+      if (lanes !== null) {
+        if (lanes >= 3) {
+          lanes3Km += segKm;
+          if (segment.maxspeedTag === "none") lanes3NoneKm += segKm;
+        } else lanes2Km += segKm;
+      }
 
       // Entscheidend: nicht die Abfahrtszeit, sondern der Zeitpunkt, zu dem man
       // diesen Abschnitt tatsächlich erreicht. Auf 600 km liegen mehrere Stunden
@@ -1123,6 +1156,9 @@
       distKm,
       noneKm,
       vmsKm,
+      lanes3Km,
+      lanes3NoneKm,
+      lanes2Km,
       limitedKm,
       localKm,
       roadworkKm,
@@ -1170,7 +1206,7 @@
   }
 
   function renderRouteCard(result, isFastest, corridorId, isSelected, referenz) {
-    const { route, timeHours, distKm, noneKm, vmsKm, limitedKm, localKm, roadworkKm,
+    const { route, timeHours, distKm, noneKm, vmsKm, lanes3Km, lanes3NoneKm, lanes2Km, limitedKm, localKm, roadworkKm,
             trafficLossHours, avgSpeed, arrival, roadworks, closures } = result;
     const closed = closures.length > 0;
     const banner = closed
@@ -1195,6 +1231,15 @@
       [`${avgSpeed.toFixed(0)} km/h`, "im Schnitt"],
       [anteil(noneKm), "unbegrenzt"],
     ];
+    // Fahrstreifen nur ausweisen, wenn das Raster sie kennt.
+    const lanesKnown = lanes3Km + lanes2Km >= 0.5 * (distKm - localKm);
+    if (lanesKnown) {
+      stats.push([anteil(lanes3Km), "ab 3 Spuren"]);
+      stats.push([anteil(lanes3NoneKm), "3 Spuren + unbegrenzt"]);
+    }
+    const l3freeP = (lanes3NoneKm / distKm) * 100;
+    const l3P = ((lanes3Km - lanes3NoneKm) / distKm) * 100;
+    const l2P = (lanes2Km / distKm) * 100;
     if (vmsKm >= 0.5) stats.push([anteil(vmsKm), "Wechselanzeige"]);
     if (roadworkKm >= 0.5) stats.push([anteil(roadworkKm), "Baustelle"]);
     if (trafficLossHours >= 1 / 60) stats.push([`${Math.round(trafficLossHours * 60)} min`, "durch Verkehr"]);
@@ -1246,6 +1291,17 @@
           <span><i class="i-limited"></i> begrenzt</span>
           <span><i class="i-local"></i> Ort</span>
         </div>
+        ${lanesKnown ? `
+        <div class="bar bar-lanes">
+          <div class="seg-l3free" style="width:${l3freeP}%"></div>
+          <div class="seg-l3" style="width:${l3P}%"></div>
+          <div class="seg-l2" style="width:${l2P}%"></div>
+        </div>
+        <div class="bar-key">
+          <span><i class="i-l3free"></i> ab 3 Spuren, unbegrenzt</span>
+          <span><i class="i-l3"></i> ab 3 Spuren, begrenzt</span>
+          <span><i class="i-l2"></i> 2 Spuren</span>
+        </div>` : ""}
         ${ref}
         ${renderRoadworks(roadworks)}
       </div>`;
@@ -1514,6 +1570,17 @@
       // darf keine fahrbare Route vom ersten Platz verdrängen.
       .sort((a, b) => (a.closures.length ? 1 : 0) - (b.closures.length ? 1 : 0) || a.timeHours - b.timeHours);
 
+    // "Schnellste" bleibt die schnellste, auch wenn anders sortiert wird.
+    const fastestId = results[0] && !results[0].closures.length ? results[0].route.id : null;
+    // Wahlweise nach dem Anteil dreispuriger Strecke ordnen: dort lässt sich die
+    // linke Spur nutzen, was die Minutenrechnung allein nicht zeigt. Bei
+    // Gleichstand entscheidet weiter die Fahrzeit (die Sortierung ist stabil).
+    const order = document.querySelector('input[name="order"]:checked')?.value || "zeit";
+    if (order !== "zeit") {
+      const share = (r) => (order === "frei3" ? r.lanes3NoneKm : r.lanes3Km) / r.distKm;
+      results.sort((a, b) => (a.closures.length ? 1 : 0) - (b.closures.length ? 1 : 0) || share(b) - share(a));
+    }
+
     // Zwei feste Referenzzeitpunkte, beide mit Verkehr: sie hängen nicht an der
     // oben gewählten Abfahrt und machen die Routen dadurch untereinander
     // vergleichbar. Früher stand das in einer eigenen Tabelle unter der Karte.
@@ -1526,7 +1593,7 @@
 
     const highlighted = selectedRouteId || results[0]?.route.id;
     routesEl.innerHTML = results
-      .map((r, i) => renderRouteCard(r, i === 0 && !r.closures.length, corridor.id, selectedRouteId === r.route.id,
+      .map((r) => renderRouteCard(r, r.route.id === fastestId, corridor.id, selectedRouteId === r.route.id,
                                      referenzen.get(r.route.id)))
       .join("");
 
@@ -1597,6 +1664,8 @@
       localStorage.setItem(TOLERANCE_STORAGE_KEY, String(toleranceValue()));
       render();
     });
+    // Reihenfolge der Ergebnisse (Fahrzeit / Anteil dreispurig).
+    document.getElementById("order-group").addEventListener("change", render);
   }
 
   function setupSpeedInput() {
@@ -1624,6 +1693,7 @@
   let junctionsData = null;
   let speedGridData = null;
   let speedGrid = null;     // "ref|la|lo" -> Limit (0 = unbegrenzt)
+  let laneGrid = null;      // "ref|la|lo" -> Fahrstreifen je Richtung
   let freeCorridor = null;  // Ergebnis der letzten freien Suche
   let freeRoadworks = [];
 
@@ -1645,6 +1715,43 @@
         speedGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]);
       }
     }
+    // Fahrstreifen: gleiches Format, eigenes Feld. Fehlt es (alte Datei im
+    // Cache), bleibt laneGrid leer und die Spur-Auswertung wird ausgeblendet.
+    laneGrid = new Map();
+    for (const [ref, flat] of Object.entries(speedGridData.spuren || {})) {
+      let la = 0;
+      let lo = 0;
+      for (let i = 0; i < flat.length; i += 3) {
+        la += flat[i];
+        lo += flat[i + 1];
+        laneGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]);
+      }
+    }
+  }
+
+  // Fahrstreifen je Richtung für einen Routenkilometer, null = unbekannt. Gilt
+  // für hinterlegte wie für frei gesuchte Strecken; das Ergebnis wird am
+  // Segment gemerkt, weil jede Neuberechnung alle Kilometer wieder durchläuft.
+  function lanesFor(segment) {
+    if (segment._lanes !== undefined) return segment._lanes;
+    let hit = null;
+    if (segment.ref && laneGrid && laneGrid.size) {
+      const g = speedGridData.grid;
+      const lat = (segment.start.lat + segment.end.lat) / 2;
+      const lon = (segment.start.lon + segment.end.lon) / 2;
+      const la = Math.round(lat * g);
+      const lo = Math.round(lon * g);
+      let bestD = 99;
+      for (let d1 = -1; d1 <= 1 && bestD > 0; d1++) {
+        for (let d2 = -1; d2 <= 1; d2++) {
+          const v = laneGrid.get(`${segment.ref}|${la + d1}|${lo + d2}`);
+          if (v === undefined) continue;
+          const d = Math.abs(d1) + Math.abs(d2);
+          if (d < bestD) { bestD = d; hit = v; }
+        }
+      }
+    }
+    return (segment._lanes = hit);
   }
 
   // 0 im Raster bedeutet unbegrenzt; hier als "none" zurückgegeben, damit die

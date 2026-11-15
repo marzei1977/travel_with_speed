@@ -153,6 +153,11 @@ Verkehr und Beschleunigen doppelt ab.
 - Frankfurt im Feierabendverkehr unter Wechselanzeige rechnet das Modell zu
   optimistisch (140 statt 124 km/h).
 - Schwächster Einzelwert: der Anlagen-Anteil 20 %.
+- Fahrstreifen gibt es jetzt zweimal: je Kilometer aus OSM (`speedgrid.json`,
+  Feld `spuren`, für Anzeige und Reihenfolge) und je Zählstelle von der BASt
+  (für den LKW-Abzug in der Fahrzeit). Naheliegender nächster Schritt: die
+  Fahrzeit auf die OSM-Werte umstellen – das verschiebt aber den LKW-Abzug auf
+  jedem Kilometer und braucht eine neue Kalibrierung mit `abgleich-fahrt.mjs`.
 - Vorschlag Stufe 2 und 4 aus der Rechenweg-Übersicht: Kalibrierpunkt je
   aufgezeichneter Fahrt, Koeffizienten laufend nachziehen.
   Übersicht: https://claude.ai/code/artifact/8d4bb3e5-16dd-4019-a5f8-0c0f6008a9b9
