@@ -277,6 +277,21 @@
   .suggest .s-main { font-size: 0.9375rem; }
   .suggest .s-sub { font-size: 0.75rem; color: var(--muted); }
 
+  /* Lieblingsstrecken als Chips unter der Suche, Lieblingsorte in der
+     Vorschlagsliste der Felder. */
+  .favs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+  .fav-chip { display: inline-flex; align-items: stretch; background: var(--accent-soft); border-radius: 999px; overflow: hidden; }
+  .fav-chip button, .fav-add {
+    font: inherit; font-size: 0.8125rem; border: none; background: none; cursor: pointer;
+    color: var(--accent); padding: 0.4rem 0.7rem; white-space: nowrap;
+  }
+  .fav-chip .fav-x { padding: 0.4rem 0.6rem 0.4rem 0.2rem; color: var(--muted); }
+  .fav-chip button:hover { filter: brightness(0.85); }
+  .fav-add { background: var(--surface-sunken); color: var(--muted); border-radius: 999px; }
+  .fav-add:hover { background: var(--accent-soft); color: var(--accent); }
+  .suggest .fav-row { display: flex; }
+  .suggest .fav-row .fav-del { width: auto; flex: none; color: var(--muted); padding: 0 0.9rem; font-size: 1.1rem; }
+
   .places-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center; }
   .places-actions select { flex: 1; min-width: 0; }
   .btn-primary {
@@ -557,6 +572,7 @@
             <button type="button" id="search-btn" class="btn-primary">Routen suchen</button>
             <select id="corridor-select" title="Gespeicherte Strecken"></select>
           </div>
+          <div class="favs" id="favs"></div>
           <div class="search-state" id="search-state"></div>
         </div>
 
@@ -2270,6 +2286,127 @@
     });
   }
 
+  // --- Lieblingsorte und Lieblingsstrecken -----------------------------------
+  // Liegen nur auf diesem Gerät (localStorage), kein Konto. Ein Ort ist ein
+  // benannter Punkt ("Zuhause"), eine Strecke ein Paar aus Start und Ziel. Orte
+  // erscheinen in der Vorschlagsliste, sobald ein Feld den Fokus bekommt;
+  // Strecken als Chips unter der Suche – ein Tipp füllt beide Felder und rechnet.
+  const FAV_STORAGE_KEY = "routenplaner:favoriten";
+  let favs = { orte: [], strecken: [] };
+  function loadFavs() {
+    try {
+      const f = JSON.parse(localStorage.getItem(FAV_STORAGE_KEY) || "null");
+      if (f) favs = { orte: f.orte || [], strecken: f.strecken || [] };
+    } catch { /* kaputter Eintrag: mit leerer Liste weiter */ }
+  }
+  function saveFavs() {
+    try { localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify(favs)); } catch { /* Speicher voll */ }
+  }
+  // Namen vergibt der Nutzer selbst – nie ungeprüft ins HTML.
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // Nur was zum Wiederfinden nötig ist; die Fahrtrichtung eines Standorts etwa
+  // gilt nur für den Moment.
+  const slimPlace = (pl) => ({ label: pl.label, detail: pl.detail || "", lat: pl.lat, lon: pl.lon });
+
+  function setPlace(which, pl, text) {
+    chosen[which] = { ...pl };
+    document.getElementById(`${which}-input`).value = text || pl.label;
+    if (which === "from") document.getElementById("locate-btn").classList.remove("is-set");
+  }
+
+  function showFavPlaces(which) {
+    const input = document.getElementById(`${which}-input`);
+    const box = document.getElementById(`${which}-suggest`);
+    if (!favs.orte.length || input.value.trim().length >= 3) return;
+    box.innerHTML = favs.orte
+      .map((o, i) => `<div class="fav-row">
+          <button type="button" data-fav="${i}">
+            <span class="s-main">★ ${esc(o.name)}</span>
+            <span class="s-sub">${esc(o.label)}${o.detail ? " · " + esc(o.detail.split(" · ")[0]) : ""}</span></button>
+          <button type="button" class="fav-del" data-del="${i}" title="Ort löschen"
+                  aria-label="Ort ${esc(o.name)} löschen">×</button></div>`)
+      .join("");
+    box.querySelectorAll("[data-fav]").forEach((b) => b.addEventListener("click", () => {
+      const o = favs.orte[+b.dataset.fav];
+      setPlace(which, { label: o.name, detail: "", lat: o.lat, lon: o.lon }, o.name);
+      box.classList.remove("open");
+    }));
+    box.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => {
+      const o = favs.orte[+b.dataset.del];
+      if (!confirm(`Ort "${o.name}" löschen?`)) return;
+      favs.orte.splice(+b.dataset.del, 1);
+      saveFavs();
+      box.classList.remove("open");
+    }));
+    box.classList.add("open");
+  }
+
+  function renderFavs() {
+    const el = document.getElementById("favs");
+    el.innerHTML = favs.strecken
+      .map((f, i) => `<span class="fav-chip">
+          <button type="button" data-go="${i}" title="Diese Strecke rechnen">★ ${esc(f.name)}</button>
+          <button type="button" class="fav-x" data-rm="${i}" title="Strecke löschen"
+                  aria-label="Strecke ${esc(f.name)} löschen">×</button></span>`)
+      .join("") +
+      `<button type="button" class="fav-add" id="fav-route">☆ Strecke merken</button>
+       <button type="button" class="fav-add" id="fav-from">☆ Start merken</button>
+       <button type="button" class="fav-add" id="fav-to">☆ Ziel merken</button>`;
+
+    const state = document.getElementById("search-state");
+    const say = (t, err) => { state.textContent = t; state.classList.toggle("err", Boolean(err)); };
+
+    el.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => {
+      const f = favs.strecken[+b.dataset.go];
+      setPlace("from", f.von);
+      setPlace("to", f.nach);
+      searchRoutes(chosen.from, chosen.to);
+    }));
+    el.querySelectorAll("[data-rm]").forEach((b) => b.addEventListener("click", () => {
+      const f = favs.strecken[+b.dataset.rm];
+      if (!confirm(`Strecke "${f.name}" löschen?`)) return;
+      favs.strecken.splice(+b.dataset.rm, 1);
+      saveFavs(); renderFavs();
+    }));
+    document.getElementById("fav-route").addEventListener("click", async () => {
+      try {
+        const from = await resolvePlace("from");
+        const to = await resolvePlace("to");
+        if (!from || !to) return say("Erst Start und Ziel angeben, dann merken.", true);
+        const name = prompt("Name der Strecke", `${from.label} → ${to.label}`);
+        if (!name || !name.trim()) return;
+        favs.strecken.push({ name: name.trim(), von: slimPlace(from), nach: slimPlace(to) });
+        saveFavs(); renderFavs();
+        say(`Strecke "${name.trim()}" gemerkt.`);
+      } catch { say("Ortssuche nicht erreichbar – Strecke nicht gemerkt.", true); }
+    });
+    for (const which of ["from", "to"]) {
+      document.getElementById(`fav-${which}`).addEventListener("click", async () => {
+        try {
+          const pl = await resolvePlace(which);
+          if (!pl) return say(`Erst ${which === "from" ? "einen Start" : "ein Ziel"} angeben, dann merken.`, true);
+          const name = prompt("Name des Orts, z. B. Zuhause", pl.label);
+          if (!name || !name.trim()) return;
+          favs.orte.push({ name: name.trim(), ...slimPlace(pl) });
+          saveFavs();
+          say(`Ort "${name.trim()}" gemerkt – erscheint beim Antippen eines leeren Felds.`);
+        } catch { say("Ortssuche nicht erreichbar – Ort nicht gemerkt.", true); }
+      });
+    }
+  }
+
+  function setupFavs() {
+    loadFavs();
+    renderFavs();
+    for (const which of ["from", "to"]) {
+      const input = document.getElementById(`${which}-input`);
+      input.addEventListener("focus", () => showFavPlaces(which));
+      // Nach dem Leeren des Felds wieder die eigenen Orte anbieten. Läuft nach
+      // dem Listener aus setupPlaceInput, der die Liste bei kurzer Eingabe schließt.
+      input.addEventListener("input", () => showFavPlaces(which));
+    }
+  }
+
   // Wer nicht aus der Liste wählt, bekommt trotzdem den besten Treffer.
   async function resolvePlace(which) {
     if (chosen[which]) return chosen[which];
@@ -2283,6 +2420,7 @@
     setupPlaceInput("from");
     setupPlaceInput("to");
     setupLocate();
+    setupFavs();
     document.getElementById("swap-btn").addEventListener("click", () => {
       const a = document.getElementById("from-input");
       const b = document.getElementById("to-input");
