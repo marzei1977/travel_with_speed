@@ -36,9 +36,11 @@ eine bewusste Wahl verlangt.
   einem Lieblingsort beginnt.
 - Voraussetzungen: Xcode (fehlt bisher), Apple-Entwicklerkonto (99 $/Jahr).
 
-### 3. Grafische Auswertung – *in der Web-App umgesetzt*
+### 3. Grafische Auswertung – *teilweise vorhanden, Ausbau offen*
 
-- Karte der Fahrt, nach Tempo eingefärbt (gab es schon).
+- Karte der Fahrt, nach Tempo eingefärbt, Kennzahlen, Kilometertabelle und
+  Vergleich gespeicherter Fahrten: gibt es schon (`routenplaner/fahrt/`).
+- Noch offen:
 - Tempoprofil über die Strecke mit Limits und Halten.
 - „Vorhergesagt gegen gefahren" je Autobahn und Streckenart – im Browser, ohne
   Baustellen (die des Fahrttags kennt nur `abgleich-fahrt.mjs`).
@@ -73,7 +75,8 @@ eine bewusste Wahl verlangt.
 ## Reihenfolge
 
 1. Lieblingsorte in der Web-App (Baustein 1) – erledigt
-2. Auswertung ausbauen (Baustein 3) – erledigt
+2. Auswertung ausbauen (Baustein 3) – offen: Tempoprofil, Vorhersage gegen
+   gefahren, Verlauf je Strecke
 3. Capacitor-Hülle auf dem eigenen iPhone, Hintergrund-Aufzeichnung (Baustein 2)
 4. Empfangsdienst und Datenspende (Baustein 4), zuerst nur mit eigenen Fahrten
 5. TestFlight, dann Store (Baustein 5)
