@@ -15,7 +15,7 @@
 // Alles Übrige (OSRM, Photon, die Autobahn-API) läuft ausschließlich über das
 // Netz – veraltete Baustellenmeldungen wären schlimmer als gar keine.
 
-const VERSION = "v8";
+const VERSION = "v9";
 const SHELL_CACHE = `linke-spur-shell-${VERSION}`;
 const DATEN_CACHE = `linke-spur-daten-${VERSION}`;
 const KACHEL_CACHE = `linke-spur-kacheln-${VERSION}`;
@@ -29,6 +29,8 @@ const SHELL = [
   "./aufzeichnen/",
   "./aufzeichnen/index.html",
   "./manifest.webmanifest",
+  // Rechenkern für den Modellvergleich in der Fahrtauswertung.
+  "./modell.js",
   // Die Korridordefinitionen liegen neben data/ und wurden deshalb leicht
   // übersehen – ohne sie kennt die Seite offline keine einzige Strecke.
   "./config/corridors.json",

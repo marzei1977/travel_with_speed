@@ -32,6 +32,11 @@ die bessere Antwort als eigene Abfragen.
 - `routenplaner/fahrt/index.html` – Auswertung hochgeladener GPX-Aufzeichnungen;
   nimmt über `?aufzeichnung=<id>` auch eine selbst aufgezeichnete Fahrt aus
   IndexedDB entgegen
+- `routenplaner/modell.js` – Rechenkern (Verkehrsabzug, Wechselanzeige,
+  Beschleunigen, Fahrstreifen) für Browser und Node. Genutzt von `fahrt/` und
+  `abgleich-fahrt.mjs`. **`index.html` und `audit-route.mjs` haben noch eine
+  eigene Kopie** – Koeffizienten an allen drei Stellen ändern, bis die beiden
+  ebenfalls umgezogen sind
 - `routenplaner/aufzeichnen/index.html` – eigener GPS-Tracker. Punkte liegen in
   IndexedDB (`linke-spur`, Stores `fahrten` und `bloecke`), minütlich in Blöcken
   geschrieben. **Web-Apps bekommen keinen Standort im Hintergrund** – deshalb
@@ -67,7 +72,6 @@ node routenplaner/scripts/vergleich-fahrt.mjs fahrt.gpx --csv /tmp/v.csv [--paus
 # Aufgezeichnete Fahrt kilometerweise gegen das Modell: real vs. gerechnet, nach
 # Streckenart, Autobahn × Fahrstreifen und Stunde. Nimmt Routen und Baustellen
 # vom Fahrttag aus der Git-Historie; --lkw/--dichte/--spur3/--anlage zum Probieren.
-# Enthält eine Kopie der Rechenlogik aus index.html – bei Änderungen nachziehen.
 node routenplaner/scripts/abgleich-fahrt.mjs "Strecken GPS/fahrt.gpx" [korridor] [--stand aktuell]
 ```
 

@@ -18,8 +18,9 @@
 //    (letzter Commit vor der Abfahrt) und dazu die routes.json desselben
 //    Commits – die Meldungen sind über Segmentnummern zugeordnet und passen nur
 //    zu ihrer eigenen Routendatei.
-//  - Die Rechenlogik unten ist eine Kopie aus index.html (wie in
-//    audit-route.mjs). Wer dort etwas ändert, muss es hier nachziehen.
+//  - Der Rechenkern kommt aus ../modell.js (dieselbe Datei wie in der
+//    Fahrtauswertung im Browser). index.html und audit-route.mjs tragen ihn noch
+//    als eigene Kopie – wer dort etwas ändert, muss modell.js nachziehen.
 //
 // Die Schalter --lkw, --dichte, --spur3 und --anlage überschreiben einzelne
 // Koeffizienten, um Alternativen durchzurechnen, ohne den Code anzufassen.
@@ -29,6 +30,7 @@ import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const REPO = join(HIER, "..", "..");
@@ -53,25 +55,20 @@ const STAND = opt.stand || "fahrttag";
 // (speedgrid.json, Feld spuren), "bast" = von der nächsten Zählstelle.
 const SPUREN_QUELLE = opt.spuren || "osm";
 
-// --- Koeffizienten: identisch zu index.html ----------------------------------
-const HOURLY = [1.2,0.9,0.8,0.8,1.0,1.8,3.5,5.5,5.8,5.5,5.5,5.6,5.6,5.7,6.0,6.5,7.0,7.2,6.3,4.8,3.6,2.8,2.2,1.4];
-const HOURLY_MEAN = HOURLY.reduce((a, b) => a + b, 0) / 24;
-const HOURLY_SV = [3.0,2.8,2.8,2.9,3.3,4.0,4.8,5.2,5.2,5.1,5.1,5.0,4.9,5.0,5.0,5.0,4.9,4.6,4.2,3.9,3.7,3.6,3.4,3.2];
-const HOURLY_SV_MEAN = HOURLY_SV.reduce((a, b) => a + b, 0) / 24;
-const DICHTE_GEWICHT = zahl("dichte", 4.0), LKW_GEWICHT = zahl("lkw", 15.0), BLOCKIERT_FALLBACK = 60;
-const ENTLASTUNG_2 = 2.0, ENTLASTUNG_3 = zahl("spur3", 0.1), ENTLASTUNG_4 = 0.05;
-const REFERENZ_TEMPO = 185;
-const ANLAGE_ANTEIL = zahl("anlage", 0.2), ANLAGE_TEMPO = 120;
-const BESCHL_FAKTOR = 0.7, BESCHL_MIN = 15;
+// --- Rechenkern: gemeinsam mit der Fahrtauswertung im Browser -----------------
+// modell.js ist die eine Quelle für Verkehrsabzug, Wechselanzeige und
+// Beschleunigen; hier kommen nur die Baustellen dazu.
+const M = createRequire(import.meta.url)("../modell.js");
+const KOEFF = {
+  ...M.K,
+  DICHTE: zahl("dichte", M.K.DICHTE),
+  LKW: zahl("lkw", M.K.LKW),
+  ENTLASTUNG_3: zahl("spur3", M.K.ENTLASTUNG_3),
+  ANLAGE_ANTEIL: zahl("anlage", M.K.ANLAGE_ANTEIL),
+};
+const DICHTE_GEWICHT = KOEFF.DICHTE, LKW_GEWICHT = KOEFF.LKW, BLOCKIERT_FALLBACK = 60;
+const { tagTyp, distKm } = M;
 
-const welle = (tag, std) => (tag === 5 && std >= 14 && std <= 19) ? 1.25 : (tag === 0 && std >= 15 && std <= 20) ? 1.20 : 1.0;
-const tagTyp = (d) => d.getDay() === 0 ? "sonntag" : d.getDay() === 6 ? "samstag" : "werktag";
-const rad = (d) => (d * Math.PI) / 180;
-function distKm(aLat, aLon, bLat, bLon) {
-  const dLat = rad(bLat - aLat), dLon = rad(bLon - aLon);
-  const s = Math.sin(dLat / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLon / 2) ** 2;
-  return 2 * 6371 * Math.asin(Math.sqrt(s));
-}
 
 // --- Fahrt auswerten lassen --------------------------------------------------
 // vergleich-fahrt.mjs trennt Fahrt von Halt und liefert je Kilometer Autobahn,
@@ -129,62 +126,10 @@ if (STAND === "aktuell") {
 const traffic = await ladeDatei("traffic.json");
 // Fahrstreifen je Kilometer – immer der aktuelle Stand, Spuren ändern sich kaum.
 const speedgrid = await ladeDatei("speedgrid.json");
-const laneGrid = new Map();
-for (const [ref, flat] of Object.entries(speedgrid.spuren || {})) {
-  let la = 0, lo = 0;
-  for (let i = 0; i < flat.length; i += 3) { la += flat[i]; lo += flat[i + 1]; laneGrid.set(`${ref}|${la}|${lo}`, flat[i + 2]); }
-}
-// identisch zu lanesFor() in index.html
-function spurenOsm(seg) {
-  if (!seg.ref || !laneGrid.size) return null;
-  const g = speedgrid.grid;
-  const la = Math.round(((seg.start.lat + seg.end.lat) / 2) * g), lo = Math.round(((seg.start.lon + seg.end.lon) / 2) * g);
-  let hit = null, bestD = 99;
-  for (let d1 = -1; d1 <= 1; d1++) for (let d2 = -1; d2 <= 1; d2++) {
-    const v = laneGrid.get(`${seg.ref}|${la + d1}|${lo + d2}`);
-    if (v === undefined) continue;
-    const d = Math.abs(d1) + Math.abs(d2);
-    if (d < bestD) { bestD = d; hit = v; }
-  }
-  return hit;
-}
-
-// --- Modell: identisch zu index.html -----------------------------------------
-const tIdx = new Map();
-for (const s of traffic.stationen) {
-  const k = `${s.ref}|${Math.round(s.lat * 4)}|${Math.round(s.lon * 4)}`;
-  if (!tIdx.has(k)) tIdx.set(k, []);
-  tIdx.get(k).push(s);
-}
-function verkehrAn(ref, lat, lon, typ) {
-  let best = null, bd = Infinity;
-  const gi = Math.round(lat * 4), gj = Math.round(lon * 4);
-  for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++)
-    for (const s of tIdx.get(`${ref}|${gi + di}|${gj + dj}`) || []) {
-      const d = distKm(lat, lon, s.lat, s.lon);
-      if (d < bd) { bd = d; best = s; }
-    }
-  if (!best || bd > 25) return null;
-  const dirs = ["ri1", "ri2"].map((k) => best[k]).filter(Boolean);
-  if (!dirs.length) return null;
-  let kfz = 0, sv = 0, n = 0, spuren = Infinity;
-  for (const d of dirs) {
-    const t = d.tage[typ] || d.tage.mittel;
-    if (!t) continue;
-    kfz += t[0]; sv += t[1]; n++; spuren = Math.min(spuren, d.fs || 2);
-  }
-  return n ? { kfz: kfz / n, sv: sv / n, spuren: Math.max(1, spuren) } : null;
-}
-function praktisch(wunsch, t, d) {
-  if (!t) return wunsch;
-  const h = d.getHours();
-  const kfzStd = (t.kfz / 24) * (HOURLY[h] / HOURLY_MEAN) * welle(d.getDay(), h);
-  const svStd = (t.sv / 24) * (HOURLY_SV[h] / HOURLY_SV_MEAN);
-  const proSpur = kfzStd / t.spuren, svProSpur = svStd / t.spuren;
-  const entlastung = t.spuren < 2.5 ? ENTLASTUNG_2 : t.spuren < 3.5 ? ENTLASTUNG_3 : ENTLASTUNG_4;
-  const abzug = Math.pow(proSpur / 1000, 1.6) * DICHTE_GEWICHT + (svProSpur / 100) * LKW_GEWICHT * entlastung;
-  return Math.max(90, wunsch - abzug * (wunsch / REFERENZ_TEMPO));
-}
+const spurenAn = M.spurIndex(speedgrid);
+const spurenOsm = (seg) => spurenAn(seg.ref, (seg.start.lat + seg.end.lat) / 2, (seg.start.lon + seg.end.lon) / 2);
+const verkehrAn = M.verkehrsIndex(traffic.stationen);
+const praktisch = (wunsch, t, d) => M.praktisch(wunsch, t, d, KOEFF);
 function grenze(seg, tol) {
   if (seg.maxspeedTag === "none") return null;
   if (typeof seg.maxspeedTag === "number") return seg.maxspeedTag + tol;
@@ -280,7 +225,7 @@ for (const r of fahrbar) {
   const basis0 = grenze(seg, TOLERANZ);
   let basis = basis0 === null ? WUNSCH : Math.min(WUNSCH, basis0);
   const anlage = basis0 === null && Boolean(seg.variable);
-  if (anlage) basis = Math.min(basis, ANLAGE_ANTEIL * ANLAGE_TEMPO + (1 - ANLAGE_ANTEIL) * WUNSCH);
+  if (anlage) basis = Math.min(basis, M.anlageGrenze(WUNSCH, KOEFF));
   let tr = verkehrAn(seg.ref, seg.start.lat, seg.start.lon, tagTyp(r.zeit));
   const osm = SPUREN_QUELLE === "osm" ? spurenOsm(seg) : null;
   if (tr && osm !== null) tr = { ...tr, spuren: osm };
@@ -300,8 +245,7 @@ for (const r of fahrbar) {
     std = 1 / nachVerkehr;
   }
   // Beschleunigen nur über lückenlos aufeinanderfolgende Kilometer.
-  const dv = vorTempo && r.km - vorKm === 1 ? tempo - vorTempo : 0;
-  const zuschlag = dv >= BESCHL_MIN ? (BESCHL_FAKTOR * dv * dv) / tempo / 3600 : 0;
+  const zuschlag = vorTempo && r.km - vorKm === 1 ? M.beschlZuschlagStd(vorTempo, tempo, KOEFF) : 0;
   vorTempo = weiterAus; vorKm = r.km;
   zeilen.push({
     ...r, modell: tempo, modellStd: std + zuschlag, realStd: 1 / r.v, bwLimit,

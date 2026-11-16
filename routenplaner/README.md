@@ -227,6 +227,28 @@ Wie aufgezeichnet wird:
 Die Übergabe an die Auswertung läuft über `fahrt/?aufzeichnung=<id>`; die
 Auswerteseite liest die Punkte direkt aus IndexedDB.
 
+## Was die Fahrtauswertung zeigt
+
+`fahrt/` wertet eine GPX-Datei oder eine hier aufgezeichnete Fahrt aus:
+
+- **Streckenverlauf** auf der Karte, je Kilometer nach Tempo eingefärbt.
+- **Tempoprofil**: gefahrenes Tempo, Modell und Limit über die Strecke, Halte
+  als senkrechte Marken. Zeiger oder Pfeiltasten zeigen je Kilometer alle Werte.
+- **Vorhersage gegen gefahren**: Der Rechenkern des Planers (`modell.js`)
+  rechnet jeden Autobahnkilometer zur tatsächlichen Uhrzeit nach – Limit,
+  Wechselanzeige, Verkehr, Fahrstreifen, Beschleunigen – und stellt die
+  Abweichung nach Streckenart und nach Autobahn × Fahrstreifen dar. **Ohne
+  Baustellen**: die des Fahrttags kennt der Browser nicht, wo eine stand, ist
+  das Modell hier zu schnell. Für die Dienstagsfahrt vom 10.11. ergibt das −8
+  Minuten, der genaue Abgleich mit Baustellen (`abgleich-fahrt.mjs`) −6.
+- **Verlauf**: gespeicherte Fahrten mit gleichem Start und Ziel (je auf 8 km)
+  stehen als eine Strecke untereinander – Wochentag, Abfahrt, Fahrzeit, Schnitt.
+- Kennzahlen für den Planer, Kilometertabelle und der Vergleich zweier Fahrten
+  wie bisher.
+
+`modell.js` ist dieselbe Datei, die `abgleich-fahrt.mjs` lädt. `index.html` und
+`audit-route.mjs` tragen die Logik noch als eigene Kopie.
+
 ## Als App aufs Telefon (PWA)
 
 Die Seite ist eine installierbare Web-App. Auf dem iPhone: in Safari öffnen,

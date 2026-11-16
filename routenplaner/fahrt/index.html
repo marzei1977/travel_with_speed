@@ -121,6 +121,57 @@
   }
   .btn-primary:hover { filter: brightness(1.08); }
   .vergleich { margin-top: 1rem; }
+
+  /* Tempoprofil und Modellvergleich. Serienfarben aus der geprüften Palette
+     (Blau/Orange, je Modus eigene Stufe); Text bleibt in Textfarben. */
+  :root { --s1: #2a78d6; --s2: #eb6834; }
+  @media (prefers-color-scheme: dark) { :root { --s1: #3987e5; --s2: #d95926; } }
+  .profil { position: relative; }
+  .profil svg { display: block; width: 100%; height: auto; touch-action: pan-y; outline: none; }
+  .profil svg:focus-visible { box-shadow: 0 0 0 2px var(--accent); border-radius: 8px; }
+  .profil .gitter { stroke: var(--hairline); stroke-width: 1; }
+  .profil .achse { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .profil .linie { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .profil .l-real { stroke: var(--s1); }
+  .profil .l-modell { stroke: var(--s2); }
+  .profil .l-limit { stroke: var(--muted); stroke-width: 1.5; }
+  .profil .halt { stroke: var(--muted); stroke-width: 1; }
+  .profil .halt-text { fill: var(--muted); font-size: 10.5px; }
+  .profil .faden { stroke: var(--muted); stroke-width: 1; }
+  .profil .punkt { stroke: var(--surface); stroke-width: 2; }
+  .tipp {
+    position: absolute; pointer-events: none; z-index: 5; min-width: 150px;
+    background: var(--surface); border-radius: 10px; box-shadow: var(--shadow);
+    border: 1px solid var(--hairline); padding: .5rem .65rem; font-size: .8rem;
+  }
+  .tipp .kopf { color: var(--muted); font-size: .72rem; margin-bottom: .25rem; }
+  .tipp .reihe { display: flex; align-items: center; gap: .45rem; }
+  .tipp .reihe i { width: 12px; height: 2px; border-radius: 1px; flex: none; }
+  .tipp .reihe b { font-variant-numeric: tabular-nums; min-width: 2.2em; text-align: right; }
+  .tipp .reihe span { color: var(--muted); }
+  .legend i.k-real { background: var(--s1); } .legend i.k-modell { background: var(--s2); }
+  .legend i.k-limit { background: var(--muted); }
+  .wunsch { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: .875rem; }
+  .wunsch input {
+    font: inherit; width: 5.5rem; background: var(--surface-sunken); border: none; color: var(--text);
+    border-radius: var(--r-control); padding: .45rem .6rem; font-variant-numeric: tabular-nums;
+  }
+  .fazit { font-size: .9375rem; margin: 0 0 .4rem; }
+  .abw { display: inline-flex; align-items: center; gap: .5rem; justify-content: flex-end; }
+  .abw .skala { position: relative; width: 96px; height: 10px; flex: none; }
+  .abw .skala::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); opacity: .5; }
+  .abw .skala i { position: absolute; top: 1px; height: 8px; border-radius: 2px; }
+  .abw .skala i.plus { left: calc(50% + 1px); background: var(--s1); border-radius: 0 4px 4px 0; }
+  .abw .skala i.minus { right: calc(50% + 1px); background: var(--s2); border-radius: 4px 0 0 4px; }
+  .abw b { min-width: 3.6em; text-align: right; font-weight: 600; }
+  .balken { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: var(--s1); vertical-align: middle; margin-right: .5rem; }
+  /* Schmale Anzeige: Skala kürzen, damit die Zahl daneben nicht aus der Karte läuft. */
+  @media (max-width: 620px) {
+    .abw .skala { width: 48px; }
+    #modell-inhalt th, #modell-inhalt td { padding-left: .35rem; padding-right: .35rem; }
+  }
+  h3.zw { font-size: .8125rem; margin: 1.2rem 0 .4rem; color: var(--muted); font-weight: 600; }
+  .verlauf h3 { font-size: .9375rem; margin: 1.4rem 0 .5rem; }
   .vergleich table { font-size: .82rem; }
   footer { color: var(--muted); font-size: .8125rem; margin-top: 2.5rem; text-align: center; }
   footer a { color: var(--muted); }
@@ -146,6 +197,7 @@
     <div class="card hidden" id="karte-gespeichert">
       <h2 class="card-title">Gespeicherte Fahrten</h2>
       <div id="liste"></div>
+      <div class="verlauf" id="verlauf"></div>
       <div class="vergleich" id="vergleich"></div>
     </div>
 
@@ -153,6 +205,21 @@
       <h2 class="card-title">Streckenverlauf <span id="karte-titel" class="t"></span></h2>
       <div id="map"></div>
       <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="card hidden" id="karte-profil">
+      <h2 class="card-title">Tempoprofil</h2>
+      <div class="profil" id="profil"></div>
+      <div class="legend" id="profil-legende"></div>
+    </div>
+
+    <div class="card hidden" id="karte-modell">
+      <h2 class="card-title">Vorhersage gegen gefahren</h2>
+      <div class="wunsch">
+        <label for="wunsch-input">Wunschtempo, mit dem der Planer gerechnet hätte</label>
+        <input type="number" id="wunsch-input" min="80" max="260" step="5" /> km/h
+      </div>
+      <div id="modell-inhalt"></div>
     </div>
 
     <div class="card hidden" id="karte-zahlen">
@@ -178,6 +245,8 @@
      stammen unverändert von unpkg (Version 1.9.4), geprüft gegen die SRI-Hashes
      der vorherigen CDN-Einbindung. -->
 <script src="../vendor/leaflet/leaflet.js"></script>
+<!-- Rechenkern des Planers – dieselbe Datei nutzt scripts/abgleich-fahrt.mjs. -->
+<script src="../modell.js"></script>
 <script>
   // Farbskala nach gefahrenem Tempo. Oberhalb von 180 wird gelb gezeichnet, damit
   // Spitzen sich vom Grün abheben und nicht mit "schnell, aber üblich" verschwimmen.
@@ -213,12 +282,21 @@
   const fmtH = (h) => `${Math.floor(h)} h ${String(Math.round((h % 1) * 60)).padStart(2, "0")} min`;
 
   let gitter = null, gitterAufl = 200, anlagen = null;
+  // Für den Modellvergleich: Zählstellen und Fahrstreifen je Kilometer.
+  let quellen = { verkehrAn: null, spurenAn: null };
   async function ladeRaster() {
+    if (gitter) return;
     try {
+      // Verkehrsdaten getrennt laden: fehlen sie, läuft die Auswertung trotzdem,
+      // nur der Modellvergleich bleibt aus.
+      fetch("../data/traffic.json").then((r) => (r.ok ? r.json() : null)).then((t) => {
+        if (t) { quellen.verkehrAn = LinkeSpurModell.verkehrsIndex(t.stationen); zeigeModell(); }
+      }).catch(() => {});
       const res = await fetch("../data/speedgrid.json");
       if (!res.ok) return;
       const g = await res.json();
       gitterAufl = g.grid;
+      quellen.spurenAn = LinkeSpurModell.spurIndex(g);
       gitter = new Map();
       for (const [ref, flat] of Object.entries(g.refs)) {
         let la = 0, lo = 0;
@@ -366,7 +444,8 @@
         restS += dS * anteil;
         const tr = limitAn(punkte[i].lat, punkte[i].lon);
         out.push({ km: ++km, kmh: 3600 / restS, ref: tr?.ref ?? null,
-                   ms: tr ? tr.ms : null, anlage: Boolean(tr?.anlage), t: punkte[i].t, spur });
+                   ms: tr ? tr.ms : null, anlage: Boolean(tr?.anlage), t: punkte[i].t, spur,
+                   lat: punkte[i].lat, lon: punkte[i].lon });
         dM -= 1000 - restM; dS -= dS * anteil;
         restM = 0; restS = 0;
         spur = [punkte[i]];
@@ -470,14 +549,233 @@
   function zeigeTabelle(kms) {
     document.getElementById("tabelle").innerHTML =
       `<thead><tr><th>km</th><th>Autobahn</th><th>Limit</th><th class="n">gefahren</th>
-       <th class="n">Abstand</th><th class="n">Uhrzeit</th></tr></thead><tbody>` +
+       <th class="n">Modell</th><th class="n">Abstand</th><th class="n">Uhrzeit</th></tr></thead><tbody>` +
       kms.map((k) => `<tr>
         <td class="n">${k.km}</td>
         <td>${k.ref ?? '<span class="t">–</span>'}</td>
         <td>${!k.ref ? "" : k.ms === 0 ? "unbegrenzt" : k.ms}</td>
         <td class="n" style="color:${farbeFuer(k.kmh)};font-weight:650">${k.kmh.toFixed(0)}</td>
+        <td class="n t">${k.modell ? k.modell.toFixed(0) : ""}</td>
         <td class="n">${k.ref && k.ms > 0 ? (k.kmh - k.ms >= 0 ? "+" : "") + (k.kmh - k.ms).toFixed(0) : ""}</td>
         <td class="n t">${k.t.toTimeString().slice(0, 5)}</td></tr>`).join("") + "</tbody>";
+  }
+
+  // ===========================================================================
+  // Modellvergleich und Tempoprofil
+  // ===========================================================================
+  //
+  // Für jeden Autobahnkilometer rechnet der Kern des Planers (modell.js) nach,
+  // welches Tempo er zur tatsächlichen Uhrzeit angesetzt hätte: Limit,
+  // Wechselanzeige, Verkehr, Fahrstreifen, Beschleunigen. Baustellen fehlen –
+  // die des Fahrttags kennt der Browser nicht. Wo eine stand, ist das Modell
+  // hier also zu schnell; den genauen Abgleich macht scripts/abgleich-fahrt.mjs.
+
+  const WUNSCH_KEY = "routenplaner:wunschgeschwindigkeit";
+  let aktuelleKms = null;
+  const wunschTempo = () => Number(document.getElementById("wunsch-input").value) || 150;
+
+  function rechneModell(kms, wunsch) {
+    let vor = null, vorKm = -9;
+    for (const k of kms) {
+      k.modell = null; k.modellStd = null; k.spuren = null;
+      // Stand und Schritttempo sind Halt oder Stau am Rastplatz – daran lässt
+      // sich das Modell nicht messen (wie in abgleich-fahrt.mjs).
+      if (!k.ref || k.ms === null || k.kmh < 25 || !quellen.verkehrAn) { vor = null; continue; }
+      const r = LinkeSpurModell.tempoFuerKm({
+        ref: k.ref, lat: k.lat, lon: k.lon, limit: k.ms === 0 ? null : k.ms,
+        anlage: k.anlage, zeit: k.t, wunsch,
+      }, quellen);
+      const zuschlag = vor && k.km - vorKm === 1 ? LinkeSpurModell.beschlZuschlagStd(vor, r.tempo) : 0;
+      k.modell = r.tempo; k.modellStd = 1 / r.tempo + zuschlag; k.spuren = r.spuren;
+      vor = r.tempo; vorKm = k.km;
+    }
+  }
+
+  // Halte: zwischen zwei Kilometern liegt deutlich mehr Zeit, als der Kilometer
+  // selbst gedauert hat.
+  function findeHalte(kms) {
+    const halte = [];
+    for (let i = 1; i < kms.length; i++) {
+      const luecke = (kms[i].t - kms[i - 1].t) / 1000 - 3600 / kms[i].kmh;
+      if (luecke > 180) halte.push({ nachKm: kms[i - 1].km, min: Math.round(luecke / 60) });
+    }
+    return halte;
+  }
+
+  const el = (name, attrs = {}, text) => {
+    const e = document.createElementNS("http://www.w3.org/2000/svg", name);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text !== undefined) e.textContent = text;
+    return e;
+  };
+
+  function zeichneProfil(kms) {
+    const box = document.getElementById("profil");
+    box.textContent = "";
+    const B = Math.max(320, box.clientWidth || 800), H = 280;
+    const R = { l: 38, r: 10, o: 22, u: 26 };
+    const n = kms.length;
+    const hatModell = kms.some((k) => k.modell);
+    const spitze = Math.max(...kms.map((k) => Math.max(k.kmh, k.modell || 0, k.ms || 0)));
+    const yMax = Math.min(280, Math.ceil((spitze + 5) / 50) * 50);
+    const x = (km) => R.l + ((km - 1) / Math.max(1, n - 1)) * (B - R.l - R.r);
+    const y = (v) => H - R.u - (Math.min(v, yMax) / yMax) * (H - R.o - R.u);
+
+    const svg = el("svg", { viewBox: `0 0 ${B} ${H}`, role: "img", tabindex: "0",
+      "aria-label": "Tempoprofil: gefahrenes Tempo, Modell und Limit je Kilometer. Pfeiltasten wandern durch die Kilometer; alle Werte stehen auch in der Tabelle unten." });
+    for (let v = 0; v <= yMax; v += 50) {
+      svg.append(el("line", { class: "gitter", x1: R.l, x2: B - R.r, y1: y(v), y2: y(v) }));
+      svg.append(el("text", { class: "achse", x: R.l - 6, y: y(v) + 4, "text-anchor": "end" }, String(v)));
+    }
+    const schritt = n > 500 ? 100 : n > 200 ? 50 : n > 80 ? 20 : 10;
+    for (let km = schritt; km <= n; km += schritt)
+      svg.append(el("text", { class: "achse", x: x(km), y: H - 8, "text-anchor": "middle" }, `${km}`));
+    svg.append(el("text", { class: "achse", x: B - R.r, y: H - 8, "text-anchor": "end" }, n % schritt > schritt * 0.4 ? "km" : ""));
+    svg.append(el("text", { class: "achse", x: R.l - 6, y: 12, "text-anchor": "end" }, "km/h"));
+
+    const halte = findeHalte(kms);
+    const haltNach = new Set(halte.map((h) => h.nachKm));
+    // Pfad mit Lücken: an Halten und dort, wo eine Reihe keinen Wert hat.
+    const pfad = (wert, stufen) => {
+      let d = "", offen = false;
+      for (const k of kms) {
+        const v = wert(k);
+        if (v === null || v === undefined) { offen = false; continue; }
+        const px = x(k.km).toFixed(1), py = y(v).toFixed(1);
+        if (!offen) d += `M${px} ${py}`;
+        else d += stufen ? `H${px}V${py}` : `L${px} ${py}`;
+        offen = !haltNach.has(k.km);
+      }
+      return d;
+    };
+    svg.append(el("path", { class: "linie l-limit", d: pfad((k) => (k.ref && k.ms > 0 ? k.ms : null), true) }));
+    if (hatModell) svg.append(el("path", { class: "linie l-modell", d: pfad((k) => k.modell) }));
+    svg.append(el("path", { class: "linie l-real", d: pfad((k) => k.kmh) }));
+    let letzteX = -99;
+    for (const h of halte) {
+      const hx = x(h.nachKm + 0.5);
+      svg.append(el("line", { class: "halt", x1: hx, x2: hx, y1: R.o, y2: H - R.u }));
+      // Beschriftung nur, wo sie nicht in die vorige läuft.
+      if (hx - letzteX > 70) {
+        const rechts = hx > B - 90;
+        svg.append(el("text", { class: "halt-text", x: hx + (rechts ? -4 : 4), y: R.o + 9,
+          "text-anchor": rechts ? "end" : "start" }, `Halt ${h.min} min`));
+        letzteX = hx;
+      }
+    }
+
+    // Fadenkreuz: der Zeiger muss keine Linie treffen, nur einen Kilometer.
+    const faden = el("line", { class: "faden", y1: R.o, y2: H - R.u, visibility: "hidden" });
+    const pReal = el("circle", { class: "punkt", r: 5, fill: "var(--s1)", visibility: "hidden" });
+    const pMod = el("circle", { class: "punkt", r: 5, fill: "var(--s2)", visibility: "hidden" });
+    svg.append(faden, pMod, pReal);
+    const tipp = document.createElement("div");
+    tipp.className = "tipp"; tipp.hidden = true;
+    box.append(svg, tipp);
+
+    let idx = -1;
+    const reihe = (farbe, wert, text) => {
+      const r = document.createElement("div"); r.className = "reihe";
+      const i = document.createElement("i"); i.style.background = farbe;
+      const b = document.createElement("b"); b.textContent = wert;
+      const sp = document.createElement("span"); sp.textContent = text;
+      r.append(i, b, sp); return r;
+    };
+    const zeige = (i) => {
+      idx = Math.max(0, Math.min(n - 1, i));
+      const k = kms[idx], px = x(k.km), ma = B / (box.clientWidth || B);
+      faden.setAttribute("x1", px); faden.setAttribute("x2", px); faden.setAttribute("visibility", "visible");
+      pReal.setAttribute("cx", px); pReal.setAttribute("cy", y(k.kmh)); pReal.setAttribute("visibility", "visible");
+      if (k.modell) { pMod.setAttribute("cx", px); pMod.setAttribute("cy", y(k.modell)); }
+      pMod.setAttribute("visibility", k.modell ? "visible" : "hidden");
+      tipp.textContent = "";
+      const kopf = document.createElement("div"); kopf.className = "kopf";
+      kopf.textContent = `km ${k.km}${k.ref ? " · " + k.ref : ""} · ${k.t.toTimeString().slice(0, 5)}`;
+      tipp.append(kopf, reihe("var(--s1)", k.kmh.toFixed(0), "gefahren"));
+      if (k.modell) tipp.append(reihe("var(--s2)", k.modell.toFixed(0), "Modell"));
+      if (k.ref) tipp.append(reihe("var(--muted)", k.ms > 0 ? String(k.ms) : "–",
+        k.ms > 0 ? "Limit" : k.anlage ? "unbegrenzt, Wechselanzeige" : "unbegrenzt"));
+      if (k.spuren) tipp.append(reihe("transparent", String(k.spuren), "Fahrstreifen"));
+      tipp.hidden = false;
+      const links = px / ma;
+      tipp.style.top = "8px";
+      tipp.style.left = links > box.clientWidth / 2 ? `${links - tipp.offsetWidth - 12}px` : `${links + 12}px`;
+    };
+    const weg = () => {
+      idx = -1; tipp.hidden = true;
+      for (const e of [faden, pReal, pMod]) e.setAttribute("visibility", "hidden");
+    };
+    svg.addEventListener("pointermove", (ev) => {
+      const r = svg.getBoundingClientRect();
+      const sx = ((ev.clientX - r.left) / r.width) * B;
+      zeige(Math.round(((sx - R.l) / (B - R.l - R.r)) * (n - 1)));
+    });
+    svg.addEventListener("pointerleave", weg);
+    svg.addEventListener("blur", weg);
+    svg.addEventListener("keydown", (ev) => {
+      const schritte = { ArrowRight: 1, ArrowLeft: -1, PageDown: 10, PageUp: -10 };
+      if (ev.key === "Home") { ev.preventDefault(); zeige(0); }
+      else if (ev.key === "End") { ev.preventDefault(); zeige(n - 1); }
+      else if (schritte[ev.key]) { ev.preventDefault(); zeige((idx < 0 ? 0 : idx) + schritte[ev.key]); }
+      else if (ev.key === "Escape") weg();
+    });
+
+    document.getElementById("profil-legende").innerHTML =
+      '<span><i class="k-real"></i>gefahren</span>' +
+      (hatModell ? '<span><i class="k-modell"></i>Modell (ohne Baustellen)</span>' : "") +
+      '<span><i class="k-limit"></i>Limit</span>';
+  }
+
+  function zeigeModell() {
+    if (!aktuelleKms) return;
+    const kms = aktuelleKms;
+    rechneModell(kms, wunschTempo());
+    document.getElementById("karte-profil").classList.remove("hidden");
+    zeichneProfil(kms);
+    zeigeTabelle(kms);
+
+    const mit = kms.filter((k) => k.modell);
+    const karte = document.getElementById("karte-modell");
+    if (mit.length < 10) { karte.classList.add("hidden"); return; }
+    karte.classList.remove("hidden");
+    const summe = (a) => {
+      const real = a.reduce((s, k) => s + 1 / k.kmh, 0), mod = a.reduce((s, k) => s + k.modellStd, 0);
+      return { km: a.length, real, mod, d: (mod - real) * 60 };
+    };
+    const g = summe(mit);
+    const gruppen = (schluessel) => {
+      const m = new Map();
+      for (const k of mit) { const s = schluessel(k); if (!s) continue; if (!m.has(s)) m.set(s, []); m.get(s).push(k); }
+      return [...m].map(([name, a]) => ({ name, ...summe(a) })).filter((x) => x.km >= 5);
+    };
+    const art = (k) => k.ms > 0 ? "Limit" : k.anlage ? "unbegrenzt unter Wechselanzeige" : "unbegrenzt";
+    const nachArt = gruppen(art);
+    const nachAb = gruppen((k) => `${k.ref}${k.spuren ? ", " + k.spuren + " Spuren" : ""}`);
+    const groesste = Math.max(1, ...[...nachArt, ...nachAb].map((x) => Math.abs(x.d)));
+    const balken = (d) => {
+      const w = Math.max(2, (Math.abs(d) / groesste) * 46);
+      return `<span class="abw"><span class="skala"><i class="${d >= 0 ? "plus" : "minus"}" style="width:${(w / 0.96).toFixed(0)}%;max-width:48%"></i></span>
+              <b>${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}</b></span>`;
+    };
+    const tabelle = (titel, zeilen) => `<h3 class="zw">${titel}</h3>
+      <div class="table-scroll" style="max-height:none"><table><thead><tr><th>Abschnitt</th><th class="n">km</th>
+        <th class="n">gefahren</th><th class="n">Modell</th><th class="n">Abw. min</th></tr></thead><tbody>` +
+      zeilen.map((z) => `<tr><td>${z.name}</td><td class="n">${z.km}</td>
+        <td class="n">${(z.km / z.real).toFixed(0)}</td><td class="n">${(z.km / z.mod).toFixed(0)}</td>
+        <td class="n">${balken(z.d)}</td></tr>`).join("") + "</tbody></table></div>";
+    const richtung = Math.abs(g.d) < 0.5 ? "genau getroffen"
+      : g.d < 0 ? `<b>${Math.abs(g.d).toFixed(0)} min zu schnell</b> gerechnet`
+      : `<b>${g.d.toFixed(0)} min zu langsam</b> gerechnet`;
+    document.getElementById("modell-inhalt").innerHTML = `
+      <p class="fazit">Auf <b>${g.km} Autobahnkilometern</b> gefahren <b>${fmtH(g.real)}</b>,
+        Modell <b>${fmtH(g.mod)}</b> – ${richtung}.</p>
+      <p class="leiser">Gerechnet je Kilometer zur tatsächlichen Uhrzeit, mit Limit, Wechselanzeige,
+        Verkehr und Fahrstreifen – aber <b>ohne Baustellen</b>: die des Fahrttags kennt die Seite nicht.
+        Wo eine stand, ist das Modell hier zu schnell.</p>
+      ${tabelle("Nach Streckenart", nachArt)}
+      ${tabelle("Nach Autobahn und Fahrstreifen", nachAb)}
+      <div class="legend"><span><i class="k-real"></i>+ Modell langsamer als gefahren</span>
+        <span><i class="k-modell"></i>− Modell schneller als gefahren</span></div>`;
   }
 
   // ===========================================================================
@@ -530,7 +828,7 @@
       km: Math.round(gesM / 1000),
       dauerH: fahrH,
       kms: kms.map((k) => ({
-        km: k.km, v: Math.round(k.kmh), ref: k.ref, ms: k.ms,
+        km: k.km, v: Math.round(k.kmh), ref: k.ref, ms: k.ms, a: k.anlage ? 1 : 0,
         t: k.t.toISOString(), g: duenneAus(k.spur),
       })),
     };
@@ -539,8 +837,9 @@
   // Datensatz zurück in die Form bringen, die Karte und Tabelle erwarten.
   function alsKms(f) {
     return f.kms.map((k) => ({
-      km: k.km, kmh: k.v, ref: k.ref, ms: k.ms,
+      km: k.km, kmh: k.v, ref: k.ref, ms: k.ms, anlage: Boolean(k.a),
       t: new Date(k.t), spur: k.g.map(([lat, lon]) => ({ lat, lon })),
+      lat: k.g[k.g.length - 1][0], lon: k.g[k.g.length - 1][1],
     }));
   }
 
@@ -570,7 +869,8 @@
       const kms = alsKms(f);
       zeichne(kms);
       document.getElementById("karte-titel").textContent = `– ${f.name}`;
-      zeigeTabelle(kms);
+      aktuelleKms = kms;
+      ladeRaster().then(zeigeModell);
       zeigeGespeicherte();
       document.getElementById("karte-karte").scrollIntoView({ behavior: "smooth", block: "start" });
     }));
@@ -579,12 +879,52 @@
       if (!f || !confirm(`"${f.name}" löschen?`)) return;
       fahrten = fahrten.filter((x) => x.id !== b.dataset.weg);
       if (aktiveFahrt === b.dataset.weg) aktiveFahrt = null;
-      sichere(); zeigeGespeicherte(); zeigeVergleich();
+      sichere(); zeigeGespeicherte(); zeigeVerlauf(); zeigeVergleich();
     }));
     box.querySelectorAll("[data-vgl]").forEach((b) => b.addEventListener("change", () => {
       const f = fahrten.find((x) => x.id === b.dataset.vgl);
       if (f) { f.vergleich = b.checked; sichere(); zeigeVergleich(); }
     }));
+  }
+
+  // Verlauf: Fahrten mit gleichem Start und Ziel (je auf 8 km genau) gehören
+  // zur selben Strecke. So zeigt sich, wie dieselbe Fahrt je nach Wochentag und
+  // Uhrzeit ausfällt – ab zwei Fahrten je Strecke.
+  function zeigeVerlauf() {
+    const box = document.getElementById("verlauf");
+    const ende = (f, letzter) => {
+      const k = f.kms[letzter ? f.kms.length - 1 : 0];
+      const p = k.g[letzter ? k.g.length - 1 : 0];
+      return { lat: p[0], lon: p[1] };
+    };
+    const strecken = [];
+    for (const f of fahrten) {
+      if (!f.kms?.length) continue;
+      const a = ende(f, false), b = ende(f, true);
+      let s = strecken.find((x) => distM(x.a, a) < 8000 && distM(x.b, b) < 8000);
+      if (!s) strecken.push((s = { a, b, fahrten: [] }));
+      s.fahrten.push(f);
+    }
+    const mehrfach = strecken.filter((s) => s.fahrten.length >= 2);
+    if (!mehrfach.length) { box.textContent = ""; return; }
+    const TAGE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+    box.innerHTML = mehrfach.map((s) => {
+      const zeilen = s.fahrten.slice().sort((x, y) => new Date(x.start) - new Date(y.start)).map((f) => {
+        const h = f.kms.reduce((sum, k) => sum + 1 / Math.max(k.v, 1), 0);
+        const frei = f.kms.filter((k) => k.ref && k.ms === 0);
+        const fh = frei.reduce((sum, k) => sum + 1 / Math.max(k.v, 1), 0);
+        return { f, d: new Date(f.start), h, v: f.kms.length / h, frei: frei.length >= 10 ? frei.length / fh : null };
+      });
+      const vMax = Math.max(...zeilen.map((z) => z.v));
+      return `<h3>Verlauf: ${zeilen.length} Fahrten auf derselben Strecke (rund ${s.fahrten[0].km} km)</h3>
+        <div class="table-scroll" style="max-height:none"><table><thead><tr><th>Fahrt</th><th>Tag</th>
+          <th class="n">Abfahrt</th><th class="n">Fahrzeit</th><th>Ø km/h</th><th class="n">Ø unbegrenzt</th></tr></thead><tbody>` +
+        zeilen.map((z) => `<tr><td>${z.f.name}</td>
+          <td>${TAGE[z.d.getDay()]} ${z.d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}</td>
+          <td class="n">${z.d.toTimeString().slice(0, 5)}</td><td class="n">${fmtH(z.h)}</td>
+          <td><span class="balken" style="width:${((z.v / vMax) * 90).toFixed(0)}px"></span>${z.v.toFixed(0)}</td>
+          <td class="n">${z.frei ? z.frei.toFixed(0) : "–"}</td></tr>`).join("") + "</tbody></table></div>";
+    }).join("");
   }
 
   // Fahrten über die Position zuordnen, nicht über den Kilometerzähler: zwei
@@ -686,6 +1026,8 @@
       zeichne(kms);
       zeigeZahlen(kms, punkte, fahrH, reiseH);
       document.getElementById("karte-titel").textContent = "";
+      aktuelleKms = kms;
+      zeigeModell();
       const vorschlag = `${new Date(punkte[0].t).toLocaleDateString("de-DE")} – ${kms.length} km`;
       document.getElementById("speichern").innerHTML =
         `<input type="text" id="fahrt-name" value="${vorschlag}" />
@@ -694,7 +1036,7 @@
         const name = document.getElementById("fahrt-name").value.trim() || vorschlag;
         fahrten.push(alsDatensatz(name, kms, punkte, fahrH));
         if (sichere()) {
-          zeigeGespeicherte(); zeigeVergleich();
+          zeigeGespeicherte(); zeigeVerlauf(); zeigeVergleich();
           sage(`"${name}" gespeichert – ${fahrten.length} Fahrt(en) vorhanden.`);
         }
       });
@@ -751,7 +1093,21 @@
     drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
   ladeFahrten();
   zeigeGespeicherte();
+  zeigeVerlauf();
   zeigeVergleich();
+
+  // Wunschtempo: Vorgabe aus dem Planer, hier verstellbar ohne ihn zu ändern.
+  {
+    const feld = document.getElementById("wunsch-input");
+    feld.value = Number(localStorage.getItem(WUNSCH_KEY)) || 150;
+    feld.addEventListener("input", zeigeModell);
+    // Das Profil richtet sich nach der Breite der Karte.
+    let warte = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(warte);
+      warte = setTimeout(() => { if (aktuelleKms) zeichneProfil(aktuelleKms); }, 150);
+    });
+  }
 
   const ausId = new URLSearchParams(location.search).get("aufzeichnung");
   if (ausId) {
