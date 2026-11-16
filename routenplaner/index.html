@@ -663,8 +663,8 @@
     </div>
 
     <footer>
-      <a href="aufzeichnen/">Fahrt aufzeichnen →</a> &nbsp;·&nbsp;
-      <a href="fahrt/">Gefahrene Strecke auswerten →</a><br><br>
+      <a href="aufzeichnen/index.html">Fahrt aufzeichnen →</a> &nbsp;·&nbsp;
+      <a href="fahrt/index.html">Gefahrene Strecke auswerten →</a><br><br>
       OpenStreetMap · OSRM · <a href="https://verkehr.autobahn.de" target="_blank" rel="noopener">Autobahn GmbH</a> ·
       <a href="https://www.bast.de" target="_blank" rel="noopener">BASt</a> — <a href="README.md">Annahmen &amp; Grenzen</a>
       <div id="offline-box" class="offline-box" hidden>
@@ -679,6 +679,7 @@
      stammen unverändert von unpkg (Version 1.9.4), geprüft gegen die SRI-Hashes
      der vorherigen CDN-Einbindung. -->
 <script src="./vendor/leaflet/leaflet.js"></script>
+<script src="./plattform.js"></script>
 <script>
   const SPEED_STORAGE_KEY = "routenplaner:wunschgeschwindigkeit";
   const CORRIDOR_STORAGE_KEY = "routenplaner:korridor";
@@ -2567,16 +2568,18 @@
 
   async function load() {
     try {
+      // In der nativen Hülle zuerst die Live-Daten, ohne Netz die eingepackten.
+      const basis = await window.LinkeSpurPlattform.datenBasis();
       const [routesRes, roadworksRes, trafficRes, configRes, gridRes, junctionsRes] =
         await Promise.all([
-          fetch("data/routes.json", { cache: "no-store" }),
-          fetch("data/roadworks.json", { cache: "no-store" }),
-          fetch("data/traffic.json", { cache: "no-store" }),
+          fetch(basis + "data/routes.json", { cache: "no-store" }),
+          fetch(basis + "data/roadworks.json", { cache: "no-store" }),
+          fetch(basis + "data/traffic.json", { cache: "no-store" }),
           // Nur für Wegpunkt-Namen und den Maps-Export – die Berechnung braucht sie nicht.
           fetch("config/corridors.json", { cache: "no-store" }),
           // Bundesweite Grundlagen für frei gewählte Strecken.
-          fetch("data/speedgrid.json"),
-          fetch("data/junctions.json"),
+          fetch(basis + "data/speedgrid.json"),
+          fetch(basis + "data/junctions.json"),
         ]);
       if (!routesRes.ok) throw new Error("HTTP " + routesRes.status + " (routes.json)");
       routesData = await routesRes.json();

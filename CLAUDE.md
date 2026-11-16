@@ -41,6 +41,13 @@ die bessere Antwort als eigene Abfragen.
   IndexedDB (`linke-spur`, Stores `fahrten` und `bloecke`), minütlich in Blöcken
   geschrieben. **Web-Apps bekommen keinen Standort im Hintergrund** – deshalb
   Wake Lock und der Hinweis, den Bildschirm anzulassen
+- `routenplaner/plattform.js` – einzige Stelle, die zwischen Browser und nativer
+  Hülle unterscheidet: Ortung (Browser `watchPosition`, Hülle Hintergrund-Plugin)
+  und Datenquelle (Hülle: Live-Seite, ohne Netz das Eingepackte)
+- `app/` – Capacitor-Hülle fürs iPhone (`app/README.md`). **Angelegt, mangels
+  Xcode nie gebaut.** Die Hülle liefert für Adressen ohne Dateiname immer die
+  Startseite – **Seitenlinks deshalb immer mit `index.html`**. Nach Änderungen
+  an der Web-App `npx cap sync ios`
 - `routenplaner/sw.js` + `manifest.webmanifest` – installierbare Web-App (PWA).
   **Beim Ändern von `sw.js` die `VERSION` hochzählen**, sonst behalten bestehende
   Installationen ihren alten Cache. Alles, was die Seiten laden, muss entweder in
@@ -166,8 +173,10 @@ Verkehr und Beschleunigen doppelt ab.
 - Vorschlag Stufe 2 und 4 aus der Rechenweg-Übersicht: Kalibrierpunkt je
   aufgezeichneter Fahrt, Koeffizienten laufend nachziehen.
   Übersicht: https://claude.ai/code/artifact/8d4bb3e5-16dd-4019-a5f8-0c0f6008a9b9
-- App-Store-Weg, falls gewünscht: Capacitor → Xcode aufs eigene iPhone (kostenlos)
-  → TestFlight (99 $/Jahr). Hintergrund-Ortung gibt es nur nativ.
+- App-Store-Weg: Plan in `APP-PLAN.md` (Bausteine, Recht und Dienste, Name und
+  Store-Texte). Nächster Schritt: Xcode installieren, `app/` bauen, auf einer
+  Fahrt die Hintergrund-Aufzeichnung prüfen. Vor einem Verkauf: Lizenz der
+  Autobahn-GmbH-Daten klären, OSRM-Demo, OSM-Kacheln und Photon ersetzen.
 - Overpass antwortet abends oft mit 504; die Skripte überschreiben dann nichts,
   `fetch-route-speedlimits` behält bei Teilausfall die alten Segmente.
 - GitHub Actions drosselt die Cronjobs: Baustellen kommen real alle 3–6 h.

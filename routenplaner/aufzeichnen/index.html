@@ -111,7 +111,7 @@
 <body>
   <div class="wrap">
     <header>
-      <a class="back" href="../">← Linke Spur</a>
+      <a class="back" href="../index.html">← Linke Spur</a>
       <h1>Fahrt aufzeichnen</h1>
       <p>Zeichnet die Strecke direkt hier auf – ohne fremde App und ohne Dateien hin- und
          herzuschieben. Am Ziel geht es mit einem Tippen in die Auswertung.</p>
@@ -142,11 +142,14 @@
     </div>
 
     <p class="fuss">
-      <a href="../fahrt/">Stattdessen eine GPX-Datei auswerten →</a><br><br>
+      <a href="../fahrt/index.html">Stattdessen eine GPX-Datei auswerten →</a><br><br>
       Die Aufzeichnung bleibt auf diesem Gerät. Nichts wird hochgeladen.
     </p>
   </div>
 
+<!-- Seitenlinks nennen index.html ausdrücklich: die native Hülle liefert für
+     Verzeichnis-Adressen sonst immer die Startseite aus. -->
+<script src="../plattform.js"></script>
 <script>
   // --- Kleine Helfer ---------------------------------------------------------
   const $ = (id) => document.getElementById(id);
@@ -234,7 +237,9 @@
   const BLOCK_MS = 60_000;
 
   let lauf = null;          // { id, start, punkte, letzter, meter, blockNr, blockPunkte, blockBis }
-  let watchId = null;
+  let ortungStop = null;
+  const PLATTFORM = window.LinkeSpurPlattform;
+  const HINTERGRUND = PLATTFORM.ortung.hintergrund;
   let wakeLock = null;
   let ticker = null;
 
@@ -310,18 +315,23 @@
   }
 
   function ortungsFehler(err) {
-    if (err.code === err.PERMISSION_DENIED) {
+    if (err.abgelehnt) {
       zeigeStatus("aus", "Zugriff auf den Standort abgelehnt");
-      hinweis("Ohne Standortfreigabe kann nichts aufgezeichnet werden. In den " +
-              "Einstellungen freigeben und die Seite neu laden.", true);
+      hinweis(HINTERGRUND
+        ? "Ohne Standortfreigabe kann nichts aufgezeichnet werden. " +
+          "<a href=\"#\" id=\"zu-einstellungen\">Einstellungen öffnen</a> und den Standort " +
+          "auf „Immer“ oder „Beim Verwenden der App“ stellen."
+        : "Ohne Standortfreigabe kann nichts aufgezeichnet werden. In den " +
+          "Einstellungen freigeben und die Seite neu laden.", true);
+      $("zu-einstellungen")?.addEventListener("click", (e) => { e.preventDefault(); PLATTFORM.ortung.einstellungen(); });
       beenden(false);
       return;
     }
-    zeigeStatus("warn", err.code === err.TIMEOUT ? "wartet auf Satelliten …" : "kein Signal", true);
+    zeigeStatus("warn", err.wartet ? "wartet auf Satelliten …" : "kein Signal", true);
   }
 
   async function starten() {
-    if (!("geolocation" in navigator)) {
+    if (!PLATTFORM.ortung.verfuegbar) {
       hinweis("Dieses Gerät liefert dem Browser keine Position.", true);
       return;
     }
@@ -335,22 +345,34 @@
     $("tempo").classList.remove("wartet");
     zeigeStatus("warn", "sucht Satelliten …", true);
 
-    const wach = await wakeLockHolen();
-    hinweis(wach
+    // In der nativen Hülle läuft die Ortung im Hintergrund weiter – der
+    // Bildschirm darf aus, Wake Lock und Warnung entfallen.
+    const wach = HINTERGRUND ? false : await wakeLockHolen();
+    hinweis(HINTERGRUND
+      ? "Die Aufzeichnung läuft weiter, wenn du den Bildschirm sperrst oder die App " +
+        "wechselst. Am Ziel hier auf <b>Beenden</b> tippen."
+      : wach
       ? "Der Bildschirm bleibt an, solange aufgezeichnet wird. <b>Sperrst du ihn " +
         "oder wechselst die App, entsteht eine Lücke</b> – Safari und Chrome geben " +
         "Web-Apps keinen Standort im Hintergrund. Am besten am Ladekabel."
       : "<b>Bildschirm bitte anlassen.</b> Sperrst du ihn oder wechselst die App, " +
         "entsteht eine Lücke – Web-Apps bekommen im Hintergrund keinen Standort.");
 
-    watchId = navigator.geolocation.watchPosition(neuerPunkt, ortungsFehler, {
-      enableHighAccuracy: true, maximumAge: 0, timeout: 20_000,
-    });
     ticker = setInterval(() => aktualisiereAnzeige(null), 1000);
+    try {
+      // Punkte können eintreffen, bevor starten() zurückkehrt; lauf steht schon.
+      const stop = await PLATTFORM.ortung.starten(
+        (pos) => { if (lauf) neuerPunkt(pos); }, ortungsFehler);
+      if (lauf) ortungStop = stop; else stop();   // inzwischen schon beendet
+    } catch (e) {
+      zeigeStatus("aus", "Ortung ließ sich nicht starten");
+      hinweis("Die Ortung ließ sich nicht starten: " + xmlSicher(e?.message || e), true);
+      beenden(false);
+    }
   }
 
   async function beenden(sichern = true) {
-    if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if (ortungStop) { ortungStop(); ortungStop = null; }
     if (ticker) { clearInterval(ticker); ticker = null; }
     if (wakeLock) { try { await wakeLock.release(); } catch {} wakeLock = null; }
     $("start").hidden = false;
@@ -380,7 +402,7 @@
   // Wake Lock geht beim Wegwechseln verloren und muss zurückgeholt werden.
   // Gleichzeitig ist das der Moment, in dem eine Lücke entstanden ist.
   document.addEventListener("visibilitychange", async () => {
-    if (!lauf) return;
+    if (!lauf || HINTERGRUND) return;
     if (document.visibilityState === "visible") {
       if (!wakeLock) await wakeLockHolen();
     } else {
@@ -440,7 +462,7 @@
            <button class="btn-zweit" data-tun="weg">Löschen</button>
          </div>`;
       li.querySelector('[data-tun="auswerten"]').onclick = () => {
-        location.href = `../fahrt/?aufzeichnung=${encodeURIComponent(f.id)}`;
+        location.href = `../fahrt/index.html?aufzeichnung=${encodeURIComponent(f.id)}`;
       };
       li.querySelector('[data-tun="gpx"]').onclick = () => gpxSichern(f);
       li.querySelector('[data-tun="weg"]').onclick = async () => {
