@@ -1,4 +1,4 @@
-# Linke Spur
+# Freie Bahn
 
 *Die Ankunftszeit für Leute, die zügig fahren.*
 

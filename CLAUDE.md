@@ -1,4 +1,9 @@
-# Linke Spur (Autobahn-Routenplaner)
+# Freie Bahn (Autobahn-Routenplaner)
+
+Hieß bis 17.11.2026 „Linke Spur". Technische Kennungen tragen den alten Namen
+weiter und **bleiben so**, sonst verlieren bestehende Installationen ihre Daten:
+IndexedDB `linke-spur`, die Cache-Namen in `sw.js`, `window.LinkeSpurModell`,
+`window.LinkeSpurPlattform`, der Projektordner.
 
 Statische Webseite (GitHub Pages), die Routen nach **echten Tempolimits** statt nach
 Durchschnittstempo bewertet. Zielgruppe ist ein Fahrer, der unbegrenzte Abschnitte
@@ -187,4 +192,9 @@ Verkehr und Beschleunigen doppelt ab.
 - Vor jedem Push `git pull --rebase origin main`: der Bot committet alle 30 Minuten
   in `data/`, die Stände laufen sonst auseinander.
 - Antworten auf Deutsch.
-- Node ist installiert, Xcode nicht. `gh` ist angemeldet und als Git-Credential-Helper eingerichtet.
+- **Der Projektordner liegt in iCloud (`Documents`).** Bei knappem Speicher lagert
+  iCloud Dateien aus (`ls -lO` zeigt `dataless`), auch in `.git` und
+  `node_modules`; dann hängen `git status`, `npx cap sync` und der
+  Vorschau-Server minutenlang. Abhilfe: `app/node_modules` löschen und neu
+  installieren, den Rest einmal durchlesen (`find . -type f | xargs cat >/dev/null`).
+- Node und Xcode sind installiert. `gh` ist angemeldet und als Git-Credential-Helper eingerichtet.

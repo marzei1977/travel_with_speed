@@ -1,4 +1,4 @@
-# Linke Spur als App – Plan
+# Freie Bahn als App – Plan
 
 Stand: 16.11.2026. Ziel ist eine App im App Store, in der Nutzer ihre
 Lieblingsstrecken speichern, Fahrten mitschneiden und auswerten und – wenn sie
@@ -133,17 +133,17 @@ sein als andere.
 
 | Name | Wirkung | Einschätzung |
 |---|---|---|
-| **Freie Bahn** | Redewendung, sofort verstanden, positiv | Empfehlung. Sagt, worum es geht (freie Strecke), ohne Tempo zu nennen. Sehr gebräuchlich, deshalb Marke zuerst prüfen. |
+| **Freie Bahn** | Redewendung, sofort verstanden, positiv | **Gewählt am 17.11.2026.** Sagt, worum es geht (freie Strecke), ohne Tempo zu nennen. Sehr gebräuchlich, deshalb Marke zuerst prüfen. |
 | **Bahnfrei** | dasselbe als ein Wort, eigenständiger | Ausweichname, falls „Freie Bahn" vergeben ist. |
 | **Dreispurig** | trocken, Kennerwort | Unverwechselbar und greift ein echtes Merkmal der App auf. Erklärt sich Neulingen weniger. |
 | **Läuft.** | locker, umgangssprachlich | Sympathisch, aber schwer zu finden und zu schützen. |
 | **Durchzug** | Autofahrerwort für Kraft aus dem Drehzahlkeller | Cool für Kenner, für alle anderen ein Luftzug. |
-| **Linke Spur** | der heutige Name, frech | Steht für die Überholspur und damit für Tempo. Mit sachlichem Untertitel vertretbar, aber der Name mit dem größten Prüfrisiko. |
+| **Linke Spur** | der frühere Name, frech | Steht für die Überholspur und damit für Tempo. Mit sachlichem Untertitel vertretbar, aber der Name mit dem größten Prüfrisiko. |
 
 Nicht verwenden: alles mit Vollgas, Rasen, Bleifuß, Lichthupe, Tempo-Zahlen im
 Namen. „Tempomat" ist eine Marke von Mercedes-Benz.
 
-### Texte für den Store (Entwurf, Name „Freie Bahn")
+### Texte für den Store (Entwurf)
 
 **Untertitel** (höchstens 30 Zeichen): `Ankunftszeit, die stimmt`
 

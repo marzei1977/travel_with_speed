@@ -11,8 +11,8 @@
 <link rel="icon" href="../icons/icon-192.png" type="image/png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Linke Spur" />
-<title>Fahrt aufzeichnen – Linke Spur</title>
+<meta name="apple-mobile-web-app-title" content="Freie Bahn" />
+<title>Fahrt aufzeichnen – Freie Bahn</title>
 <style>
   :root {
     color-scheme: light dark;
@@ -111,7 +111,7 @@
 <body>
   <div class="wrap">
     <header>
-      <a class="back" href="../index.html">← Linke Spur</a>
+      <a class="back" href="../index.html">← Freie Bahn</a>
       <h1>Fahrt aufzeichnen</h1>
       <p>Zeichnet die Strecke direkt hier auf – ohne fremde App und ohne Dateien hin- und
          herzuschieben. Am Ziel geht es mit einem Tippen in die Auswertung.</p>
@@ -419,7 +419,7 @@
 
   function alsGpx(punkte, name) {
     const kopf = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-      '<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Linke Spur">\n' +
+      '<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Freie Bahn">\n' +
       `\t<trk>\n\t\t<name>${xmlSicher(name)}</name>\n\t\t<trkseg>\n`;
     const leib = punkte.map((p) =>
       `\t\t\t<trkpt lat="${p.lat}" lon="${p.lon}">\n` +

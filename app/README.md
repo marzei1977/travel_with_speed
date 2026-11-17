@@ -1,4 +1,4 @@
-# Linke Spur als iPhone-App (Capacitor)
+# Freie Bahn als iPhone-App (Capacitor)
 
 Native Hülle um die Web-App in `../routenplaner`. Sie bringt genau eines mit,
 das der Browser nicht kann: **Ortung im Hintergrund** – die Aufzeichnung läuft
@@ -10,7 +10,7 @@ ob die App auf dem iPhone startet und im Hintergrund aufzeichnet, ist offen.
 
 ## Aufbau
 
-- `capacitor.config.json` – Kennung `de.linkespur.app`, Web-Inhalt aus `../routenplaner`
+- `capacitor.config.json` – Kennung `de.freiebahn.app`, Web-Inhalt aus `../routenplaner`
 - `ios/` – das Xcode-Projekt. `ios/App/App/Info.plist` enthält die Texte der
   Standortabfrage und den Hintergrundmodus `location`
 - Plugin: `@capacitor-community/background-geolocation`
@@ -60,4 +60,5 @@ bei jedem Start frisch von der Live-Seite und nimmt die eingepackten nur ohne Ne
   ist dann alles bis zur letzten vollen Minute; die Fahrt steht als
   „unvollständig beendet" in der Liste.
 - Start und Stopp nur per Knopf. Automatischer Start an einem Lieblingsort fehlt.
-- Name und Kennung sind vorläufig (siehe `../APP-PLAN.md`, „Name und Auftritt im Store").
+- Die Kennung `de.freiebahn.app` lässt sich nach der ersten Einreichung im Store
+  nicht mehr ändern. Die Markenrecherche zum Namen steht noch aus.

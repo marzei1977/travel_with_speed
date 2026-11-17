@@ -46,7 +46,7 @@
       if (nativ) {
         const id = await ortungsPlugin().addWatcher({
           // Mit backgroundMessage läuft die Ortung bei gesperrtem Bildschirm weiter.
-          backgroundTitle: "Linke Spur zeichnet auf",
+          backgroundTitle: "Freie Bahn zeichnet auf",
           backgroundMessage: "Die Fahrt wird mitgeschrieben, bis du sie beendest.",
           requestPermissions: true,
           stale: false,
