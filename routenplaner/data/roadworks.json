@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T21:25:02.487Z",
+  "updatedAt": "2026-11-25T04:23:21.626Z",
   "items": [
     {
       "id": "A9-roadworks-2026-060522--vi-bs.2026-11-24_19-00-00-000.devi-zus.2026-11-23_19-00-00-000_008.de3",
@@ -9,7 +9,7 @@
       "subtitle": " Nürnberg -> München",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A9: Nürnberg -> München, zwischen 2.6 km hinter AS Ingolstadt-Süd und 1.9 km vor AS Neuburg a.d.Donau",
         "",
@@ -24,9 +24,10 @@
       "lengthKm": 0.2,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -1309,73 +1310,6 @@
       ]
     },
     {
-      "id": "A9-warning-INRIX--vi-avl.2026-11-24_19-55-00-000_005.de0",
-      "ref": "A9",
-      "type": "warning",
-      "title": "A9 | Ingolstadt-Ost - Neuburg a.d.Donau",
-      "subtitle": " Nürnberg -> München",
-      "description": [
-        "Beginn: 24.11.26 um 20:55 Uhr",
-        "",
-        "Angespannte Verkehrslage, seit 24.11.2026, 19:55",
-        "A9: Nürnberg -> München, zwischen 2.2 km hinter AS Ingolstadt-Ost und 3.4 km vor AS Neuburg a.d.Donau",
-        "",
-        "Ereignismeldung:",
-        "- Im Stillstand",
-        "- Durchschnittsgeschwindigkeit: 10 km/h",
-        "- Reisezeitverlust: 9 Minuten (abnehmend)"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-24T20:55",
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.7512682925602,
-        "lon": 11.457614672599467
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 498,
-          "distanceMeters": 1434
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 499,
-          "distanceMeters": 442
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 500,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 501,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 502,
-          "distanceMeters": 211
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 503,
-          "distanceMeters": 1211
-        }
-      ]
-    },
-    {
       "id": "A9-closure-2023-005180--vi-fbm.2026-11-03_16-00-00-000.devi-zus.2025-08-04_07-00-00-000_002.f.de2",
       "ref": "A9",
       "type": "closure-ramp",
@@ -1569,7 +1503,7 @@
       "subtitle": " Passau -> Nürnberg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A3: Passau -> Nürnberg, zwischen 2.8 km hinter Ludergraben und 4.6 km vor AS Nürnberg-Mögeldorf",
         "",
@@ -1584,9 +1518,10 @@
       "lengthKm": 0.4,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -1959,7 +1894,7 @@
       "subtitle": " Würzburg -> Nürnberg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A3: Würzburg -> Nürnberg, zwischen 0.5 km hinter AS Höchstadt-Ost und 0.9 km vor Kleinauweiher",
         "",
@@ -1974,9 +1909,10 @@
       "lengthKm": 10.5,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -3060,150 +2996,6 @@
           "routeId": "a8-a7",
           "segmentIndex": 192,
           "distanceMeters": 1054
-        }
-      ]
-    },
-    {
-      "id": "A3-roadworks-2026-059794--vi-bs.2026-11-24_20-00-00-000.devi-zus.2026-11-24_20-00-00-000.de3",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 | Kelsterbach - Mönchhof-Dreieck",
-      "subtitle": " Frankfurt -> Köln",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A3: Frankfurt -> Köln, zwischen 0.4 km hinter AS Kelsterbach und 1.5 km vor AD Mönchhof-Dreieck",
-        "",
-        "Länge: 2.46 km | Maximale Durchfahrtsbreite: 10.5 m",
-        "",
-        "TSF A3 Rollwegbrücken Wartung"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 2.46,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.04480232024449,
-        "lon": 8.539039710582186
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 399,
-          "distanceMeters": 727
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 400,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 401,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 402,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 403,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a3",
-          "segmentIndex": 404,
-          "distanceMeters": 816
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 416,
-          "distanceMeters": 914
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 417,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 418,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 419,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 420,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a8-a7",
-          "segmentIndex": 421,
-          "distanceMeters": 627
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 399,
-          "distanceMeters": 727
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 400,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 401,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 402,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 403,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 404,
-          "distanceMeters": 816
         }
       ]
     },
@@ -7310,138 +7102,6 @@
       ]
     },
     {
-      "id": "A3-roadworks-2026-059226--vi-bs.2026-11-24_19-00-00-000_002.de0",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 | Duisburg-Wedau - Kaiserberg",
-      "subtitle": " Köln -> Oberhausen",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A3: Köln -> Oberhausen, zwischen 1.7 km hinter AS Duisburg-Wedau und 2.7 km vor AK Kaiserberg",
-        "",
-        "Länge: 0.2 km | Maximale Durchfahrtsbreite: 7.5 m",
-        "",
-        "A3 von Duisburg-Wedau (AS) nach Kaiserberg (AK) Beschilderungsarbeiten"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.2,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.423722520175744,
-        "lon": 6.799281831791808
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 641,
-          "distanceMeters": 1190
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 642,
-          "distanceMeters": 239
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 643,
-          "distanceMeters": 26
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 644,
-          "distanceMeters": 560
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 645,
-          "distanceMeters": 1469
-        }
-      ]
-    },
-    {
-      "id": "A3-roadworks-2026-059228--vi-bs.2026-11-24_19-00-00-000_001.de0",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 | Duisburg-Wedau - Kaiserberg",
-      "subtitle": " Köln -> Oberhausen",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A3: Köln -> Oberhausen, zwischen 1.7 km hinter AS Duisburg-Wedau und 2.7 km vor AK Kaiserberg",
-        "",
-        "Länge: 0.2 km | Maximale Durchfahrtsbreite: 7.5 m",
-        "",
-        "A3 von Duisburg-Wedau (AS) nach Kaiserberg (AK) Beschilderungsarbeiten"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.2,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.423722520175744,
-        "lon": 6.799281831791808
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 641,
-          "distanceMeters": 1190
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 642,
-          "distanceMeters": 239
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 643,
-          "distanceMeters": 26
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 644,
-          "distanceMeters": 560
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 645,
-          "distanceMeters": 1469
-        }
-      ]
-    },
-    {
       "id": "A3-roadworks-2023-000334--vi-bs.2024-01-01_00-00-00-000.devi-zus.2024-01-01_00-00-00-000_005.de1",
       "ref": "A3",
       "type": "roadworks",
@@ -7882,198 +7542,6 @@
           "routeId": "a8-a7",
           "segmentIndex": 47,
           "distanceMeters": 697
-        }
-      ]
-    },
-    {
-      "id": "A3-roadworks-2026-056797--vi-bs.2026-11-23_22-00-00-000.devi-zus.2026-11-23_22-00-00-000.de3",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 Mängelbeseitigung PTS Fraport",
-      "subtitle": " AK Frankfurter Kreuz (aus Richtung Frankfurt am Main-Flughafen)",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 22:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "Auffahrt auf die A3: AK Frankfurter Kreuz (aus Richtung Frankfurt am Main-Flughafen)",
-        "",
-        "Länge: 0.07 km | Maximale Durchfahrtsbreite: 3.25 m",
-        "",
-        "A3 Mängelbeseitigung PTS Fraport"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.07,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T22:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.05298520181947,
-        "lon": 8.59019513266536
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 179,
-          "distanceMeters": 1495
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 180,
-          "distanceMeters": 520
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 181,
-          "distanceMeters": 52
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 182,
-          "distanceMeters": 420
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 183,
-          "distanceMeters": 1417
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 179,
-          "distanceMeters": 1495
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 180,
-          "distanceMeters": 520
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 181,
-          "distanceMeters": 52
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 182,
-          "distanceMeters": 420
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 183,
-          "distanceMeters": 1417
-        }
-      ]
-    },
-    {
-      "id": "A3-roadworks-2026-056797--vi-bs.2026-11-23_22-00-00-000.devi-zus.2026-11-23_22-00-00-000.de1",
-      "ref": "A3",
-      "type": "roadworks",
-      "title": "A3 Mängelbeseitigung PTS Fraport",
-      "subtitle": " AK Frankfurter Kreuz (aus Richtung Frankfurt am Main-Flughafen)",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 22:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "Auffahrt auf die A3: AK Frankfurter Kreuz (aus Richtung Frankfurt am Main-Flughafen)",
-        "",
-        "Länge: 0.07 km | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A3 Mängelbeseitigung PTS Fraport"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.07,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T22:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.05298520181947,
-        "lon": 8.59019513266536
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 179,
-          "distanceMeters": 1495
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 180,
-          "distanceMeters": 520
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 181,
-          "distanceMeters": 52
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 182,
-          "distanceMeters": 420
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a3",
-          "segmentIndex": 183,
-          "distanceMeters": 1417
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 179,
-          "distanceMeters": 1495
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 180,
-          "distanceMeters": 520
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 181,
-          "distanceMeters": 52
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 182,
-          "distanceMeters": 420
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 183,
-          "distanceMeters": 1417
         }
       ]
     },
@@ -8832,7 +8300,7 @@
       ]
     },
     {
-      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-11-24_21-19-00-667.de0",
+      "id": "A3-warning-NLW_2026_002954--vi-hind.2026-11-25_04-02-00-627.de0",
       "ref": "A3",
       "type": "warning",
       "title": "A3 | Limburg-Süd - Idstein",
@@ -9074,6 +8542,573 @@
           "routeId": "a8-a7",
           "segmentIndex": 136,
           "distanceMeters": 992
+        }
+      ]
+    },
+    {
+      "id": "A3-warning-INRIX--vi-avl.2026-11-25_02-46-00-000_003.de0",
+      "ref": "A3",
+      "type": "warning",
+      "title": "A3 | Siebengebirge - Siegburg",
+      "subtitle": " Frankfurt -> Köln",
+      "description": [
+        "Beginn: 25.11.26 um 03:46 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 25.11.2026, 02:46",
+        "A3: Frankfurt -> Köln, zwischen 3.5 km hinter AS Siebengebirge und 3.7 km vor Siegburg",
+        "",
+        "Ereignismeldung:",
+        "- Im Stillstand",
+        "- Reisezeitverlust: 35 Minuten (zunehmend)"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T03:46",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.71102996793279,
+        "lon": 7.244972526877064
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 534,
+          "distanceMeters": 555
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 535,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 536,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 537,
+          "distanceMeters": 10
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 538,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 539,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 540,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 541,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 542,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 543,
+          "distanceMeters": 8
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 544,
+          "distanceMeters": 438
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 545,
+          "distanceMeters": 1414
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 551,
+          "distanceMeters": 743
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 552,
+          "distanceMeters": 5
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 553,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 554,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 555,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 556,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 557,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 558,
+          "distanceMeters": 4
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 559,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 560,
+          "distanceMeters": 22
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 561,
+          "distanceMeters": 253
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 562,
+          "distanceMeters": 1228
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 534,
+          "distanceMeters": 555
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 535,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 536,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 537,
+          "distanceMeters": 10
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 538,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 539,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 540,
+          "distanceMeters": 6
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 541,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 542,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 543,
+          "distanceMeters": 8
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 544,
+          "distanceMeters": 438
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 545,
+          "distanceMeters": 1414
+        }
+      ]
+    },
+    {
+      "id": "A3-warning-INRIX--vi-fbm.2026-11-25_02-56-45-000.de0",
+      "ref": "A3",
+      "type": "warning",
+      "title": "A3 | Bonn/Siegburg - Lohmar",
+      "subtitle": " Frankfurt -> Köln",
+      "description": [
+        "Beginn: 25.11.26 um 05:03 Uhr",
+        "",
+        "Fahrbahnmanagement, seit 25.11.2026, 04:03",
+        "A3: Frankfurt -> Köln, zwischen 0.3 km hinter AK Bonn/Siegburg und AS Lohmar",
+        "",
+        "Ereignismeldung:",
+        "- Vollsperrung",
+        "- Unfall",
+        "- Einsatzfahrzeuge durchlassen",
+        "- Lkw beteiligt",
+        "- Beide Fahrtrichtungen betroffen"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T05:03",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.7783425020524,
+        "lon": 7.242248763625319
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 541,
+          "distanceMeters": 1462
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 542,
+          "distanceMeters": 465
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 543,
+          "distanceMeters": 4
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 544,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 545,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 546,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 547,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 548,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 549,
+          "distanceMeters": 25
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a3",
+          "segmentIndex": 550,
+          "distanceMeters": 857
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 559,
+          "distanceMeters": 652
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 560,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 561,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 562,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 563,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 564,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 565,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 566,
+          "distanceMeters": 5
+        },
+        {
+          "corridorId": "muenchen-koeln",
+          "routeId": "a8-a7",
+          "segmentIndex": 567,
+          "distanceMeters": 679
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 541,
+          "distanceMeters": 1462
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 542,
+          "distanceMeters": 465
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 543,
+          "distanceMeters": 4
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 544,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 545,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 546,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 547,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 548,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 549,
+          "distanceMeters": 25
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a3-a1-a31",
+          "segmentIndex": 550,
+          "distanceMeters": 857
+        }
+      ]
+    },
+    {
+      "id": "A3-warning-INRIX--vi-avl.2026-11-25_03-04-00-000_014.de0",
+      "ref": "A3",
+      "type": "warning",
+      "title": "A3 | Verkehrsmeldung",
+      "subtitle": " Köln -> Frankfurt",
+      "description": [
+        "Beginn: 25.11.26 um 04:04 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 25.11.2026, 03:04",
+        "Von A3: Köln -> Frankfurt, 3.4 km vor AK Bonn/Siegburg, aus Richtung Siegburg; in A3: AK Bonn/Siegburg auf die A560 in Richtung Hennef; nach A560: Hennef -> Sankt Augustin, 1.0 km vor AS Niederpleis, aus Richtung Bonn/Siegburg",
+        "",
+        "Ereignismeldung:",
+        "- Im Stillstand",
+        "- Reisezeitverlust: 65 Minuten (abnehmend)"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T04:04",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.80326457196165,
+        "lon": 7.224390345884498
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 30,
+          "distanceMeters": 821
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 31,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 32,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 33,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 34,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 35,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a3",
+          "segmentIndex": 36,
+          "distanceMeters": 705
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 30,
+          "distanceMeters": 821
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 31,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 32,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 33,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 34,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 35,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 36,
+          "distanceMeters": 705
         }
       ]
     },
@@ -11625,6 +11660,84 @@
       ]
     },
     {
+      "id": "A4-warning-INRIX--vi-avl.2026-11-25_03-55-00-000_006.de0",
+      "ref": "A4",
+      "type": "warning",
+      "title": "A4 | Friedewald - Kirchheimer Dreieck",
+      "subtitle": " Erfurt -> Kirchheimer Dreieck",
+      "description": [
+        "Beginn: 25.11.26 um 04:55 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 25.11.2026, 03:55",
+        "A4: Erfurt -> Kirchheimer Dreieck, zwischen 7.1 km hinter AS Friedewald und 9.7 km vor AD Kirchheimer Dreieck",
+        "",
+        "Ereignismeldung:",
+        "- Im Stillstand",
+        "- Reisezeitverlust: 72 Minuten (zunehmend)"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T04:55",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.86270046692577,
+        "lon": 9.776027583715049
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 451,
+          "distanceMeters": 756
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 452,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 453,
+          "distanceMeters": 10
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 454,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 455,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 456,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 457,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 458,
+          "distanceMeters": 597
+        }
+      ]
+    },
+    {
       "id": "A8-roadworks-2026-030571--vi-bs.2026-06-29_00-00-00-000.devi-zus.2026-06-19_09-00-00-000_005.de1",
       "ref": "A8",
       "type": "roadworks",
@@ -12309,108 +12422,6 @@
       ]
     },
     {
-      "id": "A8-roadworks-2023-001297--vi-fbm.2026-11-23_09-00-00-000.devi-zus.2023-09-03_05-00-00-000.f_001.de34",
-      "ref": "A8",
-      "type": "roadworks",
-      "title": "A8 | Heckengäu - Leonberg",
-      "subtitle": " Karlsruhe -> Stuttgart",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 22:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A8: Karlsruhe -> Stuttgart, zwischen 2.5 km hinter Heckengäu und 0.9 km vor AD Leonberg",
-        "",
-        "Länge: 7.14 km | Maximale Durchfahrtsbreite: 7 m",
-        "",
-        "A81 Sanierung Engelbergtunnel"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 7.14,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T22:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.812966454574756,
-        "lon": 8.918262029460832
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 364,
-          "distanceMeters": 639
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 365,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 366,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 367,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 368,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 369,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 370,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 371,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 372,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 373,
-          "distanceMeters": 232
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 374,
-          "distanceMeters": 1221
-        }
-      ]
-    },
-    {
       "id": "A8-roadworks-2026-037510--vi-bs.2026-09-14_07-30-00-000.devi-zus.2026-08-05_07-30-00-000_003.de13",
       "ref": "A8",
       "type": "roadworks",
@@ -12735,188 +12746,6 @@
           "routeId": "a61",
           "segmentIndex": 188,
           "distanceMeters": 978
-        }
-      ]
-    },
-    {
-      "id": "A8-roadworks-2026-052874--vi-bs.2026-11-24_21-00-00-000.devi-zus.2026-10-19_20-00-00-000_020.de75",
-      "ref": "A8",
-      "type": "roadworks",
-      "title": "A8 | Limbach - Knöringen",
-      "subtitle": " Stuttgart -> München",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 von 21:00 bis 23:00 Uhr",
-        "",
-        "A8: Stuttgart -> München, zwischen 1.6 km hinter Limbach und 0.6 km vor Knöringen",
-        "",
-        "Länge: 0.62 km | Max. 60 km/h | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "PSV - Sanierung Brandschäden Plattentausch"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": 60,
-      "lengthKm": 0.62,
-      "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-11-24",
-          "vonMin": 1260,
-          "bisMin": 1380
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.43026244947891,
-        "lon": 10.372661754829844
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 497,
-          "distanceMeters": 623
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 498,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 499,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 500,
-          "distanceMeters": 757
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 494,
-          "distanceMeters": 1271
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 495,
-          "distanceMeters": 280
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 496,
-          "distanceMeters": 11
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 497,
-          "distanceMeters": 103
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 498,
-          "distanceMeters": 1103
-        }
-      ]
-    },
-    {
-      "id": "A8-roadworks-2026-052874--vi-bs.2026-11-24_21-00-00-000.devi-zus.2026-10-19_20-00-00-000_020.de73",
-      "ref": "A8",
-      "type": "roadworks",
-      "title": "A8 | Edenbergen - Neusäß",
-      "subtitle": " Stuttgart -> München",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 von 22:00 bis 24:00 Uhr",
-        "",
-        "A8: Stuttgart -> München, zwischen 0.9 km hinter Edenbergen und 1.2 km vor AS Neusäß",
-        "",
-        "Länge: 0.52 km | Max. 60 km/h | Maximale Durchfahrtsbreite: 7 m",
-        "",
-        "PSV - Sanierung Brandschäden Plattentausch"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": 60,
-      "lengthKm": 0.52,
-      "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-11-24",
-          "vonMin": 1320,
-          "bisMin": 1440
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 48.41906564045876,
-        "lon": 10.815640810766006
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 531,
-          "distanceMeters": 645
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 532,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 533,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 534,
-          "distanceMeters": 836
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 528,
-          "distanceMeters": 1299
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 529,
-          "distanceMeters": 300
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 530,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 531,
-          "distanceMeters": 181
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 532,
-          "distanceMeters": 1181
         }
       ]
     },
@@ -14505,7 +14334,6 @@
       "subtitle": " München -> Stuttgart",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 von 22:00 bis 23:00 Uhr",
         "25.11.26 von 22:00 bis 23:00 Uhr",
         "",
         "A8: München -> Stuttgart, zwischen 4.2 km hinter AD München-Eschenried und 3.8 km vor Fuchsberg",
@@ -14520,12 +14348,6 @@
       "speedLimitKmh": null,
       "lengthKm": 1,
       "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-11-24",
-          "vonMin": 1320,
-          "bisMin": 1380
-        },
         {
           "art": "datum",
           "datum": "2026-11-25",
@@ -14766,7 +14588,6 @@
       "subtitle": " München -> Stuttgart",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 von 22:00 bis 23:00 Uhr",
         "25.11.26 von 22:00 bis 23:00 Uhr",
         "",
         "A8: München -> Stuttgart, zwischen 4.2 km hinter AD München-Eschenried und 4.1 km vor Fuchsberg",
@@ -14781,12 +14602,6 @@
       "speedLimitKmh": null,
       "lengthKm": 0.7,
       "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-11-24",
-          "vonMin": 1320,
-          "bisMin": 1380
-        },
         {
           "art": "datum",
           "datum": "2026-11-25",
@@ -16399,7 +16214,7 @@
       "subtitle": " Stuttgart -> München",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "(Ende der Gesamtmaßnahme: 25.11.26)",
         "",
         "A8: Stuttgart -> München, zwischen Gruibingen und 0.6 km vor Gruibingen",
@@ -16415,9 +16230,10 @@
       "lengthKm": null,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -16466,7 +16282,7 @@
       "subtitle": " Stuttgart -> München",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "(Ende der Gesamtmaßnahme: 25.11.26)",
         "",
         "A8: Stuttgart -> München, zwischen 0.5 km hinter Am Kornberg und 0.1 km vor Gruibingen",
@@ -16482,9 +16298,10 @@
       "lengthKm": null,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -18690,6 +18507,68 @@
       ]
     },
     {
+      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de5",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Wolfsgraben-Ost - Marktbreit",
+      "subtitle": " Würzburg -> Ulm",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 05.10.26 um 00:00 Uhr",
+        "Ende: 20.01.30 um 00:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 02.05.33)",
+        "",
+        "A7: Würzburg -> Ulm, zwischen 2.8 km hinter Wolfsgraben-Ost und 1.9 km vor AS Marktbreit",
+        "",
+        "Länge: 1.5 km | Maximale Durchfahrtsbreite: 5.5 m",
+        "",
+        "A7 Brückenneubau Talbrücke Marktbreit Bw 682"
+      ],
+      "isBlocked": false,
+      "von": "2026-10-05T00:00",
+      "bis": "2030-01-20T00:00",
+      "speedLimitKmh": null,
+      "lengthKm": 1.5,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 49.67683971183888,
+        "lon": 10.12487300416418
+      },
+      "affects": [
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 322,
+          "distanceMeters": 621
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 323,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 324,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 325,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "koeln-muenchen",
+          "routeId": "a8-a7",
+          "segmentIndex": 326,
+          "distanceMeters": 874
+        }
+      ]
+    },
+    {
       "id": "A7-roadworks-2026-060026--vi-bs.2026-11-23_07-00-00-000.devi-zus.2026-11-23_07-00-00-000_004.de3",
       "ref": "A7",
       "type": "roadworks",
@@ -19398,68 +19277,6 @@
       ]
     },
     {
-      "id": "A7-roadworks-2024-052623--vi-bs.2026-10-05_00-00-00-000.devi-zus.2025-08-17_00-00-00-000.f.de5",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Wolfsgraben-Ost - Marktbreit",
-      "subtitle": " Würzburg -> Ulm",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 05.10.26 um 00:00 Uhr",
-        "Ende: 20.01.30 um 00:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 02.05.33)",
-        "",
-        "A7: Würzburg -> Ulm, zwischen 2.8 km hinter Wolfsgraben-Ost und 1.9 km vor AS Marktbreit",
-        "",
-        "Länge: 1.5 km | Maximale Durchfahrtsbreite: 5.5 m",
-        "",
-        "A7 Brückenneubau Talbrücke Marktbreit Bw 682"
-      ],
-      "isBlocked": false,
-      "von": "2026-10-05T00:00",
-      "bis": "2030-01-20T00:00",
-      "speedLimitKmh": null,
-      "lengthKm": 1.5,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.67683971183888,
-        "lon": 10.12487300416418
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 322,
-          "distanceMeters": 621
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 323,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 324,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 325,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a8-a7",
-          "segmentIndex": 326,
-          "distanceMeters": 874
-        }
-      ]
-    },
-    {
       "id": "A7-roadworks-2025-051907--vi-bs.2025-10-07_00-00-00-000_005.de0",
       "ref": "A7",
       "type": "roadworks",
@@ -20079,6 +19896,98 @@
       ]
     },
     {
+      "id": "A7-roadworks-2023-001187--vi-bs.2023-10-28_00-00-00-000.devi-zus.2023-10-28_00-00-00-000.f_001.de1",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Elfershausen - Bad Kissingen/Oberthulba",
+      "subtitle": " Würzburg -> Fulda",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 28.10.23 um 00:00 Uhr",
+        "Ende: 30.09.27 um 23:45 Uhr",
+        "(Ende der Gesamtmaßnahme: 30.09.27)",
+        "",
+        "A7: Würzburg -> Fulda, zwischen 3.9 km hinter Elfershausen und 0.5 km vor AS Bad Kissingen/Oberthulba",
+        "",
+        "Länge: 1 km | Maximale Durchfahrtsbreite: 6 m",
+        "",
+        "A7 Brückenneubau Thulbabrücke"
+      ],
+      "isBlocked": false,
+      "von": "2023-10-28T00:00",
+      "bis": "2027-09-30T23:45",
+      "speedLimitKmh": null,
+      "lengthKm": 1,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.1861206373944,
+        "lon": 9.947746069382154
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 320,
+          "distanceMeters": 1171
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 321,
+          "distanceMeters": 171
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 322,
+          "distanceMeters": 10
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 323,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 324,
+          "distanceMeters": 824
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 337,
+          "distanceMeters": 911
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 338,
+          "distanceMeters": 5
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 339,
+          "distanceMeters": 11
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 340,
+          "distanceMeters": 85
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 341,
+          "distanceMeters": 1082
+        }
+      ]
+    },
+    {
       "id": "A7-roadworks-2025-050233--vi-bs.2026-09-14_00-00-00-000.devi-zus.2026-07-13_00-00-00-000.de1",
       "ref": "A7",
       "type": "roadworks",
@@ -20233,98 +20142,6 @@
           "routeId": "a8-a7",
           "segmentIndex": 347,
           "distanceMeters": 731
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2023-001187--vi-bs.2023-10-28_00-00-00-000.devi-zus.2023-10-28_00-00-00-000.f_001.de1",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Elfershausen - Bad Kissingen/Oberthulba",
-      "subtitle": " Würzburg -> Fulda",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 28.10.23 um 00:00 Uhr",
-        "Ende: 30.09.27 um 23:45 Uhr",
-        "(Ende der Gesamtmaßnahme: 30.09.27)",
-        "",
-        "A7: Würzburg -> Fulda, zwischen 3.9 km hinter Elfershausen und 0.5 km vor AS Bad Kissingen/Oberthulba",
-        "",
-        "Länge: 1 km | Maximale Durchfahrtsbreite: 6 m",
-        "",
-        "A7 Brückenneubau Thulbabrücke"
-      ],
-      "isBlocked": false,
-      "von": "2023-10-28T00:00",
-      "bis": "2027-09-30T23:45",
-      "speedLimitKmh": null,
-      "lengthKm": 1,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.1861206373944,
-        "lon": 9.947746069382154
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 320,
-          "distanceMeters": 1171
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 321,
-          "distanceMeters": 171
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 322,
-          "distanceMeters": 10
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 323,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 324,
-          "distanceMeters": 824
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 337,
-          "distanceMeters": 911
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 338,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 339,
-          "distanceMeters": 11
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 340,
-          "distanceMeters": 85
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 341,
-          "distanceMeters": 1082
         }
       ]
     },
@@ -21019,6 +20836,390 @@
       ]
     },
     {
+      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de169",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
+      "subtitle": " Fulda -> Kassel",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 18.11.26 um 22:00 Uhr",
+        "Ende: 28.02.27 um 22:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 03.04.29)",
+        "",
+        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
+        "",
+        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
+        "",
+        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-18T22:00",
+      "bis": "2027-02-28T22:00",
+      "speedLimitKmh": 80,
+      "lengthKm": 2.96,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.81916140252675,
+        "lon": 9.565183232902402
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 408,
+          "distanceMeters": 1014
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 409,
+          "distanceMeters": 44
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 410,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 411,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 412,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 413,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 414,
+          "distanceMeters": 955
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 425,
+          "distanceMeters": 761
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 426,
+          "distanceMeters": 19
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 427,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 428,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 429,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 430,
+          "distanceMeters": 218
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 431,
+          "distanceMeters": 1214
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 468,
+          "distanceMeters": 425
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 469,
+          "distanceMeters": 1421
+        }
+      ]
+    },
+    {
+      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de157",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
+      "subtitle": " Fulda -> Kassel",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 18.11.26 um 22:00 Uhr",
+        "Ende: 28.02.27 um 22:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 03.04.29)",
+        "",
+        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
+        "",
+        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
+        "",
+        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-18T22:00",
+      "bis": "2027-02-28T22:00",
+      "speedLimitKmh": 80,
+      "lengthKm": 2.96,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.81916140252675,
+        "lon": 9.565183232902402
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 408,
+          "distanceMeters": 1014
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 409,
+          "distanceMeters": 44
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 410,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 411,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 412,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 413,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 414,
+          "distanceMeters": 955
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 425,
+          "distanceMeters": 761
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 426,
+          "distanceMeters": 19
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 427,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 428,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 429,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 430,
+          "distanceMeters": 218
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 431,
+          "distanceMeters": 1214
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 468,
+          "distanceMeters": 425
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 469,
+          "distanceMeters": 1421
+        }
+      ]
+    },
+    {
+      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de153",
+      "ref": "A7",
+      "type": "roadworks",
+      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
+      "subtitle": " Fulda -> Kassel",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 18.11.26 um 22:00 Uhr",
+        "Ende: 28.02.27 um 22:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 03.04.29)",
+        "",
+        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
+        "",
+        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
+        "",
+        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-18T22:00",
+      "bis": "2027-02-28T22:00",
+      "speedLimitKmh": 80,
+      "lengthKm": 2.96,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 50.81916140252675,
+        "lon": 9.565183232902402
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 408,
+          "distanceMeters": 1014
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 409,
+          "distanceMeters": 44
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 410,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 411,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 412,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 413,
+          "distanceMeters": 3
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a3-a7",
+          "segmentIndex": 414,
+          "distanceMeters": 955
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 425,
+          "distanceMeters": 761
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 426,
+          "distanceMeters": 19
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 427,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 428,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 429,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 430,
+          "distanceMeters": 218
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a8-a7",
+          "segmentIndex": 431,
+          "distanceMeters": 1214
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 468,
+          "distanceMeters": 425
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a71-a7",
+          "segmentIndex": 469,
+          "distanceMeters": 1421
+        }
+      ]
+    },
+    {
       "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de165",
       "ref": "A7",
       "type": "roadworks",
@@ -21660,390 +21861,6 @@
     },
     {
       "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de177",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
-      "subtitle": " Fulda -> Kassel",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 18.11.26 um 22:00 Uhr",
-        "Ende: 28.02.27 um 22:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 03.04.29)",
-        "",
-        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
-        "",
-        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
-        "",
-        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-18T22:00",
-      "bis": "2027-02-28T22:00",
-      "speedLimitKmh": 80,
-      "lengthKm": 2.96,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.81916140252675,
-        "lon": 9.565183232902402
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 408,
-          "distanceMeters": 1014
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 409,
-          "distanceMeters": 44
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 410,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 411,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 412,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 413,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 414,
-          "distanceMeters": 955
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 425,
-          "distanceMeters": 761
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 426,
-          "distanceMeters": 19
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 427,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 428,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 429,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 430,
-          "distanceMeters": 218
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 431,
-          "distanceMeters": 1214
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 468,
-          "distanceMeters": 425
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 469,
-          "distanceMeters": 1421
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de169",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
-      "subtitle": " Fulda -> Kassel",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 18.11.26 um 22:00 Uhr",
-        "Ende: 28.02.27 um 22:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 03.04.29)",
-        "",
-        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
-        "",
-        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
-        "",
-        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-18T22:00",
-      "bis": "2027-02-28T22:00",
-      "speedLimitKmh": 80,
-      "lengthKm": 2.96,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.81916140252675,
-        "lon": 9.565183232902402
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 408,
-          "distanceMeters": 1014
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 409,
-          "distanceMeters": 44
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 410,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 411,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 412,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 413,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 414,
-          "distanceMeters": 955
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 425,
-          "distanceMeters": 761
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 426,
-          "distanceMeters": 19
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 427,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 428,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 429,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 430,
-          "distanceMeters": 218
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 431,
-          "distanceMeters": 1214
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 468,
-          "distanceMeters": 425
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 469,
-          "distanceMeters": 1421
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de157",
-      "ref": "A7",
-      "type": "roadworks",
-      "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
-      "subtitle": " Fulda -> Kassel",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 18.11.26 um 22:00 Uhr",
-        "Ende: 28.02.27 um 22:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 03.04.29)",
-        "",
-        "A7: Fulda -> Kassel, zwischen 2.9 km hinter AD Hattenbacher Dreieck und 9.2 km vor AS Bad Hersfeld-West",
-        "",
-        "Länge: 2.96 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 4 m",
-        "",
-        "A7 von Hattenbacher Dreieck (AD) nach Kirchheim (AS) Erneuerung des Oberbaus"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-18T22:00",
-      "bis": "2027-02-28T22:00",
-      "speedLimitKmh": 80,
-      "lengthKm": 2.96,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.81916140252675,
-        "lon": 9.565183232902402
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 408,
-          "distanceMeters": 1014
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 409,
-          "distanceMeters": 44
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 410,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 411,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 412,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 413,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 414,
-          "distanceMeters": 955
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 425,
-          "distanceMeters": 761
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 426,
-          "distanceMeters": 19
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 427,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 428,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 429,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 430,
-          "distanceMeters": 218
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 431,
-          "distanceMeters": 1214
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 468,
-          "distanceMeters": 425
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 469,
-          "distanceMeters": 1421
-        }
-      ]
-    },
-    {
-      "id": "A7-roadworks-2026-016612--vi-bs.2026-11-18_22-00-00-000.devi-zus.2026-05-01_07-00-00-000.de153",
       "ref": "A7",
       "type": "roadworks",
       "title": "A7 | Hattenbacher Dreieck - Bad Hersfeld-West",
@@ -27724,28 +27541,28 @@
       ]
     },
     {
-      "id": "A7-roadworks-2024-033255--vi-bs.2026-03-13_00-00-00-000.devi-zus.2024-07-22_00-00-00-000.f_003.de39",
+      "id": "A7-roadworks-2024-033255--vi-bs.2026-11-25_00-00-00-000.devi-zus.2024-07-22_00-00-00-000.f_003.de43",
       "ref": "A7",
       "type": "roadworks",
-      "title": "A7 | Hildesheimer Börde - An der Alpe",
+      "title": "A7 | Hildesheimer Börde - Hildesheim-Drispenstedt",
       "subtitle": " Kassel -> Hannover",
       "description": [
         "Zeitraum dieser Bauphase:",
-        "Beginn: 13.03.26 um 00:00 Uhr",
-        "Ende: 25.11.26 um 00:00 Uhr",
+        "Beginn: 25.11.26 um 00:00 Uhr",
+        "Ende: 10.05.27 um 17:00 Uhr",
         "(Ende der Gesamtmaßnahme: 10.05.27)",
         "",
-        "A7: Kassel -> Hannover, zwischen 3.1 km hinter Hildesheimer Börde und 2.0 km vor An der Alpe",
+        "A7: Kassel -> Hannover, zwischen 3.1 km hinter Hildesheimer Börde und 0.6 km vor AS Hildesheim-Drispenstedt",
         "",
-        "Länge: 11.36 km | Maximale Durchfahrtsbreite: 6 m",
+        "Länge: 5.89 km | Maximale Durchfahrtsbreite: 6 m",
         "",
         "A7 Grundhafte Erneuerung Bauphase 2"
       ],
       "isBlocked": false,
-      "von": "2026-03-13T00:00",
-      "bis": "2026-11-25T00:00",
+      "von": "2026-11-25T00:00",
+      "bis": "2027-05-10T17:00",
       "speedLimitKmh": null,
-      "lengthKm": 11.36,
+      "lengthKm": 5.89,
       "windows": [],
       "ausnahmen": [],
       "coordinate": {
@@ -27811,37 +27628,7 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a3-a7",
           "segmentIndex": 604,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 605,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 606,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 607,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 608,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 609,
-          "distanceMeters": 529
+          "distanceMeters": 987
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -27889,49 +27676,19 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 619,
-          "distanceMeters": 2
+          "distanceMeters": 12
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 620,
-          "distanceMeters": 1
+          "distanceMeters": 249
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a8-a7",
           "segmentIndex": 621,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 622,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 623,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 624,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 625,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 626,
-          "distanceMeters": 789
+          "distanceMeters": 1246
         },
         {
           "corridorId": "muenchen-norddeich",
@@ -27985,43 +27742,13 @@
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 658,
-          "distanceMeters": 0
+          "distanceMeters": 455
         },
         {
           "corridorId": "muenchen-norddeich",
           "routeId": "a9-a71-a7",
           "segmentIndex": 659,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 660,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 661,
-          "distanceMeters": 11
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 662,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 663,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 664,
-          "distanceMeters": 996
+          "distanceMeters": 1453
         }
       ]
     },
@@ -28581,7 +28308,7 @@
       "subtitle": " Kassel -> Hamburg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 18:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A7: Kassel -> Hamburg, zwischen 3.0 km hinter AS Hannover-Anderten und AK Hannover-Kirchhorst",
         "",
@@ -28596,9 +28323,10 @@
       "lengthKm": 4.93,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T18:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -28803,7 +28531,7 @@
       "subtitle": " Kassel -> Hamburg",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 18:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A7: Kassel -> Hamburg, zwischen 3.0 km hinter AS Hannover-Anderten und AK Hannover-Kirchhorst",
         "",
@@ -28818,9 +28546,10 @@
       "lengthKm": 4.93,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T18:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -31413,7 +31142,6 @@
       "subtitle": " AK Walldorf (aus Richtung Am Hockenheimring)",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 22:00 bis zum 25.11.26 05:00 Uhr.",
         "25.11.26 22:00 bis zum 26.11.26 05:00 Uhr.",
         "26.11.26 22:00 bis zum 27.11.26 05:00 Uhr.",
         "(Ende der Gesamtmaßnahme: 12.12.26)",
@@ -31430,11 +31158,6 @@
       "speedLimitKmh": null,
       "lengthKm": null,
       "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T22:00",
-          "bis": "2026-11-25T05:00"
-        },
         {
           "art": "zeitraum",
           "von": "2026-11-25T22:00",
@@ -31457,49 +31180,6 @@
           "routeId": "a61",
           "segmentIndex": 310,
           "distanceMeters": 555
-        }
-      ]
-    },
-    {
-      "id": "A6-closure-2026-060808--vi-fbm.2026-11-24_21-00-00-000.devi-bs.2026-11-24_21-00-00-000_001.de0",
-      "ref": "A6",
-      "type": "closure-ramp",
-      "title": "A5-A6 AK Walldorf - Rodungsarbeiten ",
-      "subtitle": " AK Walldorf (aus Richtung Am Hockenheimring)",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 21:00 bis zum 25.11.26 05:00 Uhr.",
-        "(Ende der Gesamtmaßnahme: 25.11.26)",
-        "",
-        "Abfahrt von der A6: AK Walldorf (aus Richtung Am Hockenheimring)",
-        "",
-        "Länge: konnte nicht ermittelt werden",
-        "",
-        "A5-A6 AK Walldorf - Rodungsarbeiten "
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T21:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.28017656648339,
-        "lon": 8.62169225678412
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 310,
-          "distanceMeters": 752
         }
       ]
     },
@@ -32160,134 +31840,6 @@
           "routeId": "a61",
           "segmentIndex": 557,
           "distanceMeters": 670
-        }
-      ]
-    },
-    {
-      "id": "A61-closure-2026-060646--vi-fbm.2026-11-23_20-00-00-000.devi-bs.2026-11-23_20-00-00-000_014.de0",
-      "ref": "A61",
-      "type": "closure-ramp",
-      "title": "A61 | Rheinbach - Peppenhoven",
-      "subtitle": " Koblenz -> Mönchengladbach",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 05:00 Uhr.",
-        "(Ende der Gesamtmaßnahme: 25.11.26)",
-        "",
-        "A61: Koblenz -> Mönchengladbach, zwischen 2.8 km hinter AS Rheinbach und 0.2 km vor Peppenhoven",
-        "",
-        "Länge: konnte nicht ermittelt werden",
-        "",
-        "A61 von Rheinbach (AS) nach Peppenhoven (Raststaette) Fahrbahninstandhaltung"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.63896502180357,
-        "lon": 6.954352683642947
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 536,
-          "distanceMeters": 543
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 537,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 538,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-koeln",
-          "routeId": "a61",
-          "segmentIndex": 539,
-          "distanceMeters": 607
-        }
-      ]
-    },
-    {
-      "id": "A61-closure-2026-058257--vi-fbm.2026-11-24_14-00-00-000.devi-fbm.2026-11-24_22-00-00-000.de6",
-      "ref": "A61",
-      "type": "closure-ramp",
-      "title": "Erneuerung dWiSta AK Walldorf",
-      "subtitle": " Speyer -> Hockenheim",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 21:00 bis zum 25.11.26 05:00 Uhr.",
-        "(Ende der Gesamtmaßnahme: 25.11.26)",
-        "",
-        "Von A61: Speyer -> Hockenheim, 1.3 km vor AD Hockenheim, aus Richtung Hockenheim; Abfahrt von der A61 in AD Hockenheim; nach Auffahrt auf die A6: AD Hockenheim (aus Richtung Schwetzingen/Hockenheim)",
-        "",
-        "Länge: konnte nicht ermittelt werden",
-        "",
-        "Erneuerung dWiSta AK Walldorf"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T21:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 49.33218232417305,
-        "lon": 8.543309266163897
-      },
-      "affects": [
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 273,
-          "distanceMeters": 847
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 274,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 275,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 276,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "koeln-muenchen",
-          "routeId": "a61",
-          "segmentIndex": 277,
-          "distanceMeters": 634
         }
       ]
     },
@@ -34346,7 +33898,7 @@
       "subtitle": " Dortmund -> Münster",
       "description": [
         "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 20:00 bis zum 25.11.26 06:00 Uhr.",
+        "25.11.26 von 00:00 bis 06:00 Uhr",
         "",
         "A1: Dortmund -> Münster, zwischen 3.3 km hinter Weißes Venn und 0.8 km vor AS Münster-Hiltrup",
         "",
@@ -34361,9 +33913,10 @@
       "lengthKm": 1.15,
       "windows": [
         {
-          "art": "zeitraum",
-          "von": "2026-11-24T20:00",
-          "bis": "2026-11-25T06:00"
+          "art": "datum",
+          "datum": "2026-11-25",
+          "vonMin": 0,
+          "bisMin": 360
         }
       ],
       "ausnahmen": [],
@@ -34401,134 +33954,6 @@
           "routeId": "a45-a31",
           "segmentIndex": 656,
           "distanceMeters": 714
-        }
-      ]
-    },
-    {
-      "id": "A1-roadworks-2026-058769--vi-bs.2026-11-15_02-00-00-000_001.de0",
-      "ref": "A1",
-      "type": "roadworks",
-      "title": "A1 | Bremen-Arsten - Ahlken",
-      "subtitle": " Bremen -> Osnabrück",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 15.11.26 um 02:00 Uhr",
-        "Ende: 25.11.26 um 03:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 25.11.26)",
-        "",
-        "A1: Bremen -> Osnabrück, zwischen 0.6 km hinter AS Bremen-Arsten und 0.6 km vor Ahlken",
-        "",
-        "Länge: 0.03 km | Maximale Durchfahrtsbreite: 6.5 m",
-        "",
-        "A1 - Erneuerung Lärmschutzwand AS Arsten"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-15T02:00",
-      "bis": "2026-11-25T03:00",
-      "speedLimitKmh": null,
-      "lengthKm": 0.03,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 53.02635247453809,
-        "lon": 8.851960343616904
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 741,
-          "distanceMeters": 1210
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 742,
-          "distanceMeters": 210
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 743,
-          "distanceMeters": 40
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 744,
-          "distanceMeters": 750
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 758,
-          "distanceMeters": 950
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 759,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 760,
-          "distanceMeters": 15
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 761,
-          "distanceMeters": 1003
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 796,
-          "distanceMeters": 743
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 797,
-          "distanceMeters": 22
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 798,
-          "distanceMeters": 222
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 799,
-          "distanceMeters": 1204
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 757,
-          "distanceMeters": 1110
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 758,
-          "distanceMeters": 110
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 759,
-          "distanceMeters": 24
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 760,
-          "distanceMeters": 848
         }
       ]
     },
@@ -38081,646 +37506,6 @@
       ]
     },
     {
-      "id": "A31-roadworks-2026-021191--vi-fbm.2026-11-16_06-00-00-000.devi-zus.2026-08-03_00-00-00-000_005.de44",
-      "ref": "A31",
-      "type": "roadworks",
-      "title": "A31 | Neermoor - Emden-Ost",
-      "subtitle": " Leer -> Emden",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 16.11.26 um 06:00 Uhr",
-        "Ende: 25.11.26 um 18:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 05.04.27)",
-        "",
-        "A31: Leer -> Emden, zwischen 9.9 km hinter AS Neermoor und 0.5 km vor AS Emden-Ost",
-        "",
-        "Länge: 6.92 km | Maximale Durchfahrtsbreite: 3.1 m",
-        "",
-        "A31, Ern. Asphaltdecke u. -binder AS Riepe bis AS Emden-Ost sowie Grundern. AS Pewsum"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-16T06:00",
-      "bis": "2026-11-25T18:00",
-      "speedLimitKmh": null,
-      "lengthKm": 6.92,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 53.367455373109074,
-        "lon": 7.351088548587646
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 863,
-          "distanceMeters": 1405
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 864,
-          "distanceMeters": 406
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 865,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 866,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 867,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 868,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 869,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 870,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 871,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 872,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 873,
-          "distanceMeters": 647
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 880,
-          "distanceMeters": 1146
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 881,
-          "distanceMeters": 146
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 882,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 883,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 884,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 885,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 886,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 887,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 888,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 889,
-          "distanceMeters": 29
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 890,
-          "distanceMeters": 853
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 918,
-          "distanceMeters": 939
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 919,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 920,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 921,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 922,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 923,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 924,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 925,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 926,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 927,
-          "distanceMeters": 163
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 928,
-          "distanceMeters": 1034
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 860,
-          "distanceMeters": 1084
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 861,
-          "distanceMeters": 84
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 862,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 863,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 864,
-          "distanceMeters": 8
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 865,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 866,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 867,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 868,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 869,
-          "distanceMeters": 19
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 870,
-          "distanceMeters": 905
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 888,
-          "distanceMeters": 1440
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 889,
-          "distanceMeters": 442
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 890,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 891,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 892,
-          "distanceMeters": 14
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 893,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 894,
-          "distanceMeters": 4
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 895,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 896,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 897,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 898,
-          "distanceMeters": 619
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 879,
-          "distanceMeters": 1305
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 880,
-          "distanceMeters": 307
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 881,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 882,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 883,
-          "distanceMeters": 7
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 884,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 885,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 886,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 887,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 888,
-          "distanceMeters": 6
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 889,
-          "distanceMeters": 725
-        }
-      ]
-    },
-    {
-      "id": "A31-roadworks-2026-021191--vi-fbm.2026-11-16_06-00-00-000.devi-zus.2026-08-03_00-00-00-000_005.de40",
-      "ref": "A31",
-      "type": "roadworks",
-      "title": "A31 | Neermoor - Riepe",
-      "subtitle": " Leer -> Emden",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 16.11.26 um 06:00 Uhr",
-        "Ende: 25.11.26 um 18:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 05.04.27)",
-        "",
-        "A31: Leer -> Emden, zwischen 8.9 km hinter AS Neermoor und 0.2 km vor AS Riepe",
-        "",
-        "Länge: 1 km | Maximale Durchfahrtsbreite: 5 m",
-        "",
-        "A31, Ern. Asphaltdecke u. -binder AS Riepe bis AS Emden-Ost sowie Grundern. AS Pewsum"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-16T06:00",
-      "bis": "2026-11-25T18:00",
-      "speedLimitKmh": null,
-      "lengthKm": 1,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 53.36620466510734,
-        "lon": 7.366012886308477
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 862,
-          "distanceMeters": 1404
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 863,
-          "distanceMeters": 406
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 864,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 865,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 866,
-          "distanceMeters": 594
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 879,
-          "distanceMeters": 1145
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 880,
-          "distanceMeters": 146
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 881,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 882,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 883,
-          "distanceMeters": 853
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 917,
-          "distanceMeters": 938
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 918,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 919,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 920,
-          "distanceMeters": 61
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 921,
-          "distanceMeters": 1060
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 859,
-          "distanceMeters": 1083
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 860,
-          "distanceMeters": 84
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 861,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 862,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 863,
-          "distanceMeters": 915
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 887,
-          "distanceMeters": 1440
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 888,
-          "distanceMeters": 442
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 889,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 890,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 891,
-          "distanceMeters": 558
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 878,
-          "distanceMeters": 1305
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 879,
-          "distanceMeters": 306
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 880,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 881,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 882,
-          "distanceMeters": 693
-        }
-      ]
-    },
-    {
       "id": "A31-roadworks-2026-052731--vi-bs.2026-11-13_19-00-00-000.devi-zus.2026-10-26_09-00-00-000.de5",
       "ref": "A31",
       "type": "roadworks",
@@ -38797,200 +37582,6 @@
           "routeId": "a3-a1-a31",
           "segmentIndex": 822,
           "distanceMeters": 847
-        }
-      ]
-    },
-    {
-      "id": "A31-closure-2026-021191--vi-fbm.2026-11-16_06-00-00-000.devi-zus.2026-08-03_00-00-00-000_005.de46",
-      "ref": "A31",
-      "type": "closure-ramp",
-      "title": "A31, Ern. Asphaltdecke u. -binder AS Riepe bis AS Emden-Ost sowie Grundern. AS Pewsum",
-      "subtitle": " AS Riepe (aus Richtung Neermoor) nach A31",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 16.11.26 um 06:00 Uhr",
-        "Ende: 25.11.26 um 18:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 05.04.27)",
-        "",
-        "Von Auffahrt auf die A31: AS Riepe (aus Richtung Neermoor) nach A31: Leer -> Emden, zwischen AS Neermoor und 7.1 km vor AS Emden-Ost",
-        "",
-        "Länge: konnte nicht ermittelt werden",
-        "",
-        "A31, Ern. Asphaltdecke u. -binder AS Riepe bis AS Emden-Ost sowie Grundern. AS Pewsum"
-      ],
-      "isBlocked": false,
-      "von": "2026-11-16T06:00",
-      "bis": "2026-11-25T18:00",
-      "speedLimitKmh": null,
-      "lengthKm": null,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 53.36856653531017,
-        "lon": 7.348080182525476
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 863,
-          "distanceMeters": 1494
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 864,
-          "distanceMeters": 495
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 865,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 866,
-          "distanceMeters": 210
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a3-a7",
-          "segmentIndex": 867,
-          "distanceMeters": 1208
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 880,
-          "distanceMeters": 1234
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 881,
-          "distanceMeters": 236
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 882,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 883,
-          "distanceMeters": 470
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a8-a7",
-          "segmentIndex": 884,
-          "distanceMeters": 1467
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 918,
-          "distanceMeters": 1027
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 919,
-          "distanceMeters": 43
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 920,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a71-a7",
-          "segmentIndex": 921,
-          "distanceMeters": 676
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 860,
-          "distanceMeters": 1172
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 861,
-          "distanceMeters": 176
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 862,
-          "distanceMeters": 3
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 863,
-          "distanceMeters": 532
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 889,
-          "distanceMeters": 530
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 890,
-          "distanceMeters": 0
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 891,
-          "distanceMeters": 174
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a3-a1-a31",
-          "segmentIndex": 892,
-          "distanceMeters": 1172
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 879,
-          "distanceMeters": 1394
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 880,
-          "distanceMeters": 395
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 881,
-          "distanceMeters": 1
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 882,
-          "distanceMeters": 310
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a9-a14-a2",
-          "segmentIndex": 883,
-          "distanceMeters": 1307
         }
       ]
     },
@@ -41798,138 +40389,6 @@
       ]
     },
     {
-      "id": "A45-roadworks-2026-059632--vi-bs.2026-11-21_19-00-00-000.devi-zus.2026-11-21_19-00-00-000.de7",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Burgerhain - Dillenburg",
-      "subtitle": " Gießen -> Hagen",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A45: Gießen -> Hagen, zwischen 1.6 km hinter Burgerhain und 2.2 km vor AS Dillenburg",
-        "",
-        "Länge: 1 km | Maximale Durchfahrtsbreite: 3.75 m",
-        "",
-        "A45 - Gerüstarbeiten - AkD 59632"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 1,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.722698365235445,
-        "lon": 8.28348568000022
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 485,
-          "distanceMeters": 599
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 486,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 487,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 488,
-          "distanceMeters": 389
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 489,
-          "distanceMeters": 1320
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2026-059632--vi-bs.2026-11-21_19-00-00-000.devi-zus.2026-11-21_19-00-00-000.de5",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Burgerhain - Dillenburg",
-      "subtitle": " Gießen -> Hagen",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 19:00 bis zum 25.11.26 05:00 Uhr.",
-        "",
-        "A45: Gießen -> Hagen, zwischen 1.6 km hinter Burgerhain und 2.2 km vor AS Dillenburg",
-        "",
-        "Länge: 1 km | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Gerüstarbeiten - AkD 59632"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 1,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T19:00",
-          "bis": "2026-11-25T05:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.722698365235445,
-        "lon": 8.28348568000022
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 485,
-          "distanceMeters": 599
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 486,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 487,
-          "distanceMeters": 2
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 488,
-          "distanceMeters": 389
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 489,
-          "distanceMeters": 1320
-        }
-      ]
-    },
-    {
       "id": "A45-roadworks-2023-002196--vi-bs.2024-12-10_05-00-00-000.devi-zus.2023-09-01_19-00-00-000.f_001.de58",
       "ref": "A45",
       "type": "roadworks",
@@ -43509,6 +41968,44 @@
       ]
     },
     {
+      "id": "A45-roadworks-2023-004446--vi-bs.2026-09-11_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de7",
+      "ref": "A45",
+      "type": "roadworks",
+      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
+      "subtitle": " Hagen -> Dortmund",
+      "description": [
+        "Zeitraum dieser Bauphase:",
+        "Beginn: 11.09.26 um 20:00 Uhr",
+        "Ende: 11.12.26 um 20:00 Uhr",
+        "(Ende der Gesamtmaßnahme: 21.12.26)",
+        "",
+        "A45: Hagen -> Dortmund, zwischen 0.9 km hinter AK Westhofener Kreuz und 1.4 km vor AS Dortmund-Süd",
+        "",
+        "Länge: 1.27 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
+        "",
+        "A45 - Instandsetzung BW Wannebach - AlD 4446"
+      ],
+      "isBlocked": false,
+      "von": "2026-09-11T20:00",
+      "bis": "2026-12-11T20:00",
+      "speedLimitKmh": 80,
+      "lengthKm": 1.27,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 51.43693258818502,
+        "lon": 7.522120090109826
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a45-a31",
+          "segmentIndex": 599,
+          "distanceMeters": 827
+        }
+      ]
+    },
+    {
       "id": "A45-roadworks-2023-004446--vi-bs.2026-09-11_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de11",
       "ref": "A45",
       "type": "roadworks",
@@ -43549,147 +42046,6 @@
           "routeId": "a45-a31",
           "segmentIndex": 599,
           "distanceMeters": 542
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2023-004446--vi-bs.2026-09-11_20-00-00-000.devi-zus.2025-03-03_20-00-00-000_009.f.de7",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 | Westhofener Kreuz - Dortmund-Süd",
-      "subtitle": " Hagen -> Dortmund",
-      "description": [
-        "Zeitraum dieser Bauphase:",
-        "Beginn: 11.09.26 um 20:00 Uhr",
-        "Ende: 11.12.26 um 20:00 Uhr",
-        "(Ende der Gesamtmaßnahme: 21.12.26)",
-        "",
-        "A45: Hagen -> Dortmund, zwischen 0.9 km hinter AK Westhofener Kreuz und 1.4 km vor AS Dortmund-Süd",
-        "",
-        "Länge: 1.27 km | Max. 80 km/h | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Instandsetzung BW Wannebach - AlD 4446"
-      ],
-      "isBlocked": false,
-      "von": "2026-09-11T20:00",
-      "bis": "2026-12-11T20:00",
-      "speedLimitKmh": 80,
-      "lengthKm": 1.27,
-      "windows": [],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 51.43693258818502,
-        "lon": 7.522120090109826
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 599,
-          "distanceMeters": 827
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2026-060266--vi-bs.2026-11-23_20-00-00-000.devi-zus.2026-11-23_20-00-00-000_006.de7",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 - Leitungsarbeiten - AkD 60266",
-      "subtitle": " AS Dillenburg (aus Richtung Schlierberg)",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 23:00 bis zum 25.11.26 04:00 Uhr.",
-        "",
-        "Auffahrt auf die A45: AS Dillenburg (aus Richtung Schlierberg)",
-        "",
-        "Länge: 0.09 km | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Leitungsarbeiten - AkD 60266"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.09,
-      "windows": [
-        {
-          "art": "zeitraum",
-          "von": "2026-11-24T23:00",
-          "bis": "2026-11-25T04:00"
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.7435902188395,
-        "lon": 8.259864611843732
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 489,
-          "distanceMeters": 5
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 490,
-          "distanceMeters": 230
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 491,
-          "distanceMeters": 1136
-        }
-      ]
-    },
-    {
-      "id": "A45-roadworks-2026-060266--vi-bs.2026-11-23_20-00-00-000.devi-zus.2026-11-23_20-00-00-000_006.de5",
-      "ref": "A45",
-      "type": "roadworks",
-      "title": "A45 - Leitungsarbeiten - AkD 60266",
-      "subtitle": " AS Dillenburg (aus Richtung Schlierberg)",
-      "description": [
-        "Die Baustelle ist zu folgenden Zeiträumen gültig:",
-        "24.11.26 von 20:00 bis 23:00 Uhr",
-        "",
-        "Abfahrt von der A45: AS Dillenburg (aus Richtung Schlierberg)",
-        "",
-        "Länge: 0.14 km | Maximale Durchfahrtsbreite: 3.5 m",
-        "",
-        "A45 - Leitungsarbeiten - AkD 60266"
-      ],
-      "isBlocked": false,
-      "von": null,
-      "bis": null,
-      "speedLimitKmh": null,
-      "lengthKm": 0.14,
-      "windows": [
-        {
-          "art": "datum",
-          "datum": "2026-11-24",
-          "vonMin": 1200,
-          "bisMin": 1380
-        }
-      ],
-      "ausnahmen": [],
-      "coordinate": {
-        "lat": 50.742346436704665,
-        "lon": 8.259020077214482
-      },
-      "affects": [
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 487,
-          "distanceMeters": 1446
-        },
-        {
-          "corridorId": "muenchen-norddeich",
-          "routeId": "a45-a31",
-          "segmentIndex": 488,
-          "distanceMeters": 737
         }
       ]
     },
@@ -44763,6 +43119,176 @@
           "routeId": "a9-a14-a2",
           "segmentIndex": 529,
           "distanceMeters": 1387
+        }
+      ]
+    },
+    {
+      "id": "A2-warning-INRIX--vi-avl.2026-11-25_04-16-00-000_004.de0",
+      "ref": "A2",
+      "type": "warning",
+      "title": "A2 | Braunschweig-Hafen - Zweidorfer Holz Nord",
+      "subtitle": " Braunschweig -> Hannover",
+      "description": [
+        "Beginn: 25.11.26 um 05:16 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 25.11.2026, 04:16",
+        "A2: Braunschweig -> Hannover, zwischen 0.7 km hinter AS Braunschweig-Hafen und 0.1 km vor Zweidorfer Holz Nord",
+        "",
+        "Ereignismeldung:",
+        "- Stockender Verkehr",
+        "- Durchschnittsgeschwindigkeit: 55 km/h",
+        "- Reisezeitverlust: 3 Minuten"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T05:16",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 52.327929242498755,
+        "lon": 10.461495322260253
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 604,
+          "distanceMeters": 1262
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 605,
+          "distanceMeters": 262
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 606,
+          "distanceMeters": 7
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 607,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 608,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 609,
+          "distanceMeters": 5
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 610,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 611,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 612,
+          "distanceMeters": 1
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 613,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 614,
+          "distanceMeters": 881
+        }
+      ]
+    },
+    {
+      "id": "A2-warning-INRIX--vi-avl.2026-11-25_04-10-00-000_003.de0",
+      "ref": "A2",
+      "type": "warning",
+      "title": "A2 | Börde - Eilsleben",
+      "subtitle": " Magdeburg -> Braunschweig",
+      "description": [
+        "Beginn: 25.11.26 um 05:10 Uhr",
+        "",
+        "Angespannte Verkehrslage, seit 25.11.2026, 04:10",
+        "A2: Magdeburg -> Braunschweig, zwischen 5.0 km hinter Börde und 5.0 km vor AS Eilsleben",
+        "",
+        "Ereignismeldung:",
+        "- Langsamer Verkehr",
+        "- Durchschnittsgeschwindigkeit: 40 km/h",
+        "- Reisezeitverlust: 2 Minuten"
+      ],
+      "isBlocked": false,
+      "von": "2026-11-25T05:10",
+      "bis": null,
+      "speedLimitKmh": null,
+      "lengthKm": null,
+      "windows": [],
+      "ausnahmen": [],
+      "coordinate": {
+        "lat": 52.18724216501447,
+        "lon": 11.380404447299878
+      },
+      "affects": [
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 537,
+          "distanceMeters": 1401
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 538,
+          "distanceMeters": 401
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 539,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 540,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 541,
+          "distanceMeters": 2
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 542,
+          "distanceMeters": 0
+        },
+        {
+          "corridorId": "muenchen-norddeich",
+          "routeId": "a9-a14-a2",
+          "segmentIndex": 543,
+          "distanceMeters": 942
         }
       ]
     },
